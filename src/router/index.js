@@ -69,7 +69,6 @@ export const constantRoutes = [
 // 动态显示的路由表
 export const asyncRoutes = [
   appointment,
-  appointment,
   visit,
   {
     path: '/template',
