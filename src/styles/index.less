@@ -1,0 +1,56 @@
+/*
+ * Created: 2021-02-23 14:39:18
+ * Author : Jan
+ * Last Modified: 2021-03-12 10:21:01
+ * Modified By: Jan
+ * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
+ */
+@import './reset.less';
+@import './variables.less';
+@import './sidebar.less';
+
+
+.no-padding {
+  padding: 0px !important;
+}
+
+// 清除浮动
+.clearfix {
+  *zoom: 1;
+
+  &:after {
+    display: block;
+    clear: both;
+    content: '';
+    visibility: hidden;
+    height: 0;
+  }
+}
+
+// 禁止文本被选择
+.user-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+// 全局样式
+.app-container {
+  padding: 20px;
+}
+
+.pagination-container {
+  margin-top: 30px;
+}
+
+.filter-container {
+  padding-bottom: 10px;
+
+  .filter-item {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
+    // margin-left: 10px;
+  }
+}
