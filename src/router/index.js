@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Layout from '@/layout'
-import nestedRouter from './modules/nested'
+import appointment from './modules/appointment'
+import visit from './modules/visit'
 
 Vue.use(VueRouter);
 
@@ -67,59 +68,9 @@ export const constantRoutes = [
 
 // 动态显示的路由表
 export const asyncRoutes = [
-  nestedRouter,
-  {
-    path: '/user',
-    component: Layout,
-    redirect: '/user/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@views/user/index'),
-        name: 'User',
-        meta: { title: '用户管理', icon: 'username', role: 'admin' }
-      }
-    ]
-  },
-  {
-    path: '/appointment',
-    component: Layout,
-    redirect: '/appointment/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@views/appointment/index'),
-        name: 'Appointment',
-        meta: { title: '会易订', icon: 'username', role: 'admin' }
-      }
-    ]
-  },
-  {
-    path: '/visit',
-    component: Layout,
-    redirect: '/visit/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@views/visit/index'),
-        name: 'Visit',
-        meta: { title: '访客通', icon: 'username', role: 'admin' }
-      }
-    ]
-  },
-  {
-    path: '/system',
-    component: Layout,
-    redirect: '/system/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@views/system/index'),
-        name: 'System',
-        meta: { title: '系统管理', icon: 'username' }
-      }
-    ]
-  },
+  appointment,
+  appointment,
+  visit,
   {
     path: '/template',
     component: Layout,

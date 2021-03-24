@@ -1,13 +1,16 @@
 /*
- * Created: 2021-03-17 09:56:43
+ * Created: 2021-03-24 09:40:27
  * Author : Jan
- * Last Modified: 2021-03-24 10:39:43
+ * Last Modified: 2021-03-24 10:38:51
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
+/**
+  预约会议页面
+ */
 
 <template>
-  <div class="app-container">个人中心</div>
+  <div class="app-container">预约会议</div>
 </template>
 <script>
 export default {

@@ -1,7 +1,7 @@
 /*
  * Created: 2021-02-22 09:19:43
  * Author : Jan
- * Last Modified: 2021-03-12 14:25:24
+ * Last Modified: 2021-03-24 10:34:04
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
@@ -10,7 +10,7 @@ const path = require('path')
 const defaultSettings = require('./src/settings.js') // 默认设置
 
 // 获取tab的title
-const name = defaultSettings.title || 'Auralabs Admin'
+const name = defaultSettings.title || 'Auralabs数字办公空间'
 // 获取文件地址
 function resolve (dir) {
   return path.join(__dirname, dir)

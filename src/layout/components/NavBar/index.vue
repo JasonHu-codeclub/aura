@@ -1,7 +1,7 @@
 /*
  * Created: 2021-03-01 11:22:15
  * Author : Jan
- * Last Modified: 2021-03-16 17:35:49
+ * Last Modified: 2021-03-24 10:14:00
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
@@ -21,8 +21,6 @@
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
         <!-- <search id="header-search" class="right-menu-item" /> -->
-
-        <!-- <error-log class="errLog-container right-menu-item hover-effect" /> -->
       </template>
       <!-- 头像,名称 -->
       <el-dropdown
@@ -36,25 +34,13 @@
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/profile/index">
-            <el-dropdown-item>Profile</el-dropdown-item>
+            <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
           <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
+            <el-dropdown-item>回到首页</el-dropdown-item>
           </router-link>
-          <a
-            target="_blank"
-            href="https://github.com/PanJiaChen/vue-element-admin/"
-          >
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a
-            target="_blank"
-            href="https://panjiachen.github.io/vue-element-admin-site/#/"
-          >
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">Log Out</span>
+            <span style="display: block">登出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -68,7 +54,6 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from './components/BreadCrumb'
 import Hamburger from './components/Hamburger'
-// import ErrorLog from './components/ErrorLog'
 import Screenfull from './components/Screenfull'
 // import Search from './components/HeaderSearch'
 
@@ -76,7 +61,6 @@ export default {
   components: {
     Breadcrumb,
     Hamburger,
-    // ErrorLog,
     Screenfull,
     // Search
   },

@@ -1,7 +1,7 @@
 /*
  * Created: 2021-02-22 10:16:04
  * Author : Jan
- * Last Modified: 2021-03-16 17:00:12
+ * Last Modified: 2021-03-24 10:32:15
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
@@ -9,7 +9,7 @@
 // 全局设置项
 
 module.exports = {
-  title: 'Auralabs Admin',
+  title: 'Auralabs数字办公空间',
 
   /**
    * @type {boolean} true | false

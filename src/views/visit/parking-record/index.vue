@@ -1,13 +1,17 @@
 /*
- * Created: 2021-03-09 11:46:04
+ * Created: 2021-03-24 10:17:24
  * Author : Jan
- * Last Modified: 2021-03-09 11:46:27
+ * Last Modified: 2021-03-24 10:40:06
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
 
+/** 
+  停车记录
+*/
+
 <template>
-  <div class="app-container">会易订</div>
+  <div class="app-container">停车记录</div>
 </template>
 <script>
 export default {

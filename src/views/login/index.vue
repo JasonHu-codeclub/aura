@@ -1,7 +1,7 @@
 /*
  * Created: 2020-07-09 08:15:26
  * Author : Jan
- * Last Modified: 2021-03-10 14:22:56
+ * Last Modified: 2021-03-24 11:34:13
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
@@ -40,8 +40,8 @@
             <el-button type="primary" @click="handleLogin()">登录</el-button>
           </div>
         </el-form>
-        <div class="switch" @click="showDialog"><span>其他登录方式</span></div>
-        <el-tooltip
+        <div class="switch" @click="showDialog"><el-divider><span>其他登录方式</span></el-divider></div>
+        <!-- <el-tooltip
           class="item"
           effect="light"
           content="企业微信登录"
@@ -49,7 +49,7 @@
           :visible-arrow="false"
         >
           <div class="enchange ex-user" @click="handleLoginTypes('code')"></div>
-        </el-tooltip>
+        </el-tooltip> -->
       </div>
       <div class="login-box" v-show="loginType === 'code'">
         <div class="content">

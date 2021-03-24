@@ -1,7 +1,7 @@
 /*
  * Created: 2021-03-02 11:09:06
  * Author : Jan
- * Last Modified: 2021-03-16 17:55:34
+ * Last Modified: 2021-03-24 11:24:53
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
@@ -87,17 +87,17 @@ const actions = {
     })
   },
   // 登出
-  logout ({ commit }) {
+  logout ({ commit, dispatch }) {
     return new Promise((resolve, reject) => {
       logoutApi().then((response) => {
-        const { data } = response
+        const { code } = response.data.data.meta
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         // 清除cookie中的token
         removeToken()
         resetRouter()
         // 清除tags
-        // dispatch('tagsView/delAllViews', null, { root: true })
+        dispatch('tagsView/delAllViews', null, { root: true })
         resolve()
       }).catch(error => {
         reject(error)

@@ -1,7 +1,7 @@
 /*
  * Created: 2021-02-23 11:50:39
  * Author : Jan
- * Last Modified: 2021-03-02 16:42:28
+ * Last Modified: 2021-03-24 11:19:53
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
@@ -20,7 +20,7 @@ export function loginApi (data) {
 // 登出
 export function logoutApi (data) {
   return request({
-    url: "/auth/sign-out",
+    url: "/sign-out",
     method: "post",
     data
   })

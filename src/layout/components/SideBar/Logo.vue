@@ -1,7 +1,7 @@
 /*
  * Created: 2021-03-01 11:30:22
  * Author : Jan
- * Last Modified: 2021-03-09 10:56:49
+ * Last Modified: 2021-03-24 10:36:22
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
@@ -26,6 +26,7 @@
   </div>
 </template>
 <script>
+const defaultSettings = require('@/settings.js')
 export default {
   components: {},
   props: {
@@ -36,7 +37,7 @@ export default {
   },
   data () {
     return {
-      title: 'Auralabs Admin',
+      title: defaultSettings.title,
       // logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
       logo: require('@/assets/logo.png')
     }

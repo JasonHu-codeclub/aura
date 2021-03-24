@@ -1,13 +1,16 @@
 /*
- * Created: 2021-03-09 11:58:41
+ * Created: 2021-03-24 09:40:35
  * Author : Jan
- * Last Modified: 2021-03-09 11:59:16
+ * Last Modified: 2021-03-24 10:38:58
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
+ /**
+  审批会议主页面
+  */
 
 <template>
-  <div class="app-container">系统设置</div>
+  <div class="app-container">审批会议</div>
 </template>
 <script>
 export default {
