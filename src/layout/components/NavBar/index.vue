@@ -9,15 +9,16 @@
 <template>
   <div class="navbar">
     <!-- 汉堡包-折叠按钮 -->
-    <hamburger
+    <!-- <hamburger
       id="hamburger-container"
       :is-active="sidebar.opened"
       class="hamburger-container"
       @toggleClick="toggleSideBar"
-    />
+    /> -->
     <!-- 面包屑 -->
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
-
+    <!-- <breadcrumb id="breadcrumb-container" class="breadcrumb-container" /> -->
+    <!-- 标题 -->
+    <div class="right-left">会议预约系统</div>
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
         <!-- <search id="header-search" class="right-menu-item" /> -->
@@ -29,21 +30,23 @@
       >
         <div class="avatar-wrapper">
           <span class="user-name">{{ name }}</span>
-          <img :src="avatar" class="user-avatar" />
-          <i class="el-icon-caret-bottom" />
+          <span class="user-avatar" :style="{backgroundImage: 'url('+ avatar +')'}"></span>
+          <!-- <img :src="avatar" class="user-avatar" /> -->
+          <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
+          <!-- <router-link to="/profile/index">
             <el-dropdown-item>个人中心</el-dropdown-item>
-          </router-link>
+          </router-link> 
           <router-link to="/">
             <el-dropdown-item>回到首页</el-dropdown-item>
-          </router-link>
+          </router-link>-->
           <el-dropdown-item divided @click.native="logout">
             <span style="display: block">登出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <span class="division"></span>
       <!-- 全屏按钮 -->
       <screenfull id="screenfull" class="right-menu-item hover-effect" />
     </div>
@@ -87,12 +90,20 @@ export default {
 
 <style lang="less" scoped>
 .navbar {
-  height: 50px;
+  height: 54px;
+  line-height: 54px;
   overflow: hidden;
   position: relative;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-
+  color: #fff;
+  background: #3a3b4c;
+  // box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  .right-left{
+    float: left;
+    font-size: 18px;
+    line-height: 54px;
+    font-weight: 600;
+    margin-left: 44px;
+  }
   .hamburger-container {
     line-height: 46px;
     height: 100%;
@@ -116,9 +127,12 @@ export default {
   }
 
   .right-menu {
+    display: flex;
+    align-items: center;
     float: right;
     height: 100%;
     line-height: 50px;
+    padding: 0 14px;
 
     &:focus {
       outline: none;
@@ -126,9 +140,8 @@ export default {
 
     .right-menu-item {
       display: inline-block;
-      padding: 0 8px;
       height: 100%;
-      font-size: 18px;
+      font-size: 14px;
       color: #5a5e66;
       vertical-align: text-bottom;
 
@@ -142,25 +155,41 @@ export default {
       }
     }
 
-    .avatar-container {
-      margin-right: 30px;
+    .language{
+      width: 86px;
+      color: #fff;
+      margin-right: 10px;
+      cursor: pointer;
+    }
 
+    .division{
+      width: 1px;
+      background: #979797;
+      display: inline-block;
+      height: 20px;
+      margin: 0 18px;
+    }
+
+    .avatar-container {
       .avatar-wrapper {
-        margin-top: 5px;
         position: relative;
         display: flex;
         align-items: flex-start;
 
         .user-name {
-          font-size: 18px;
-          font-weight: bold;
+          font-size: 14px;
+          color: #FFFFFF;
         }
         .user-avatar {
           cursor: pointer;
           width: 40px;
           height: 40px;
+          margin-top: 5px;
           border-radius: 20px;
           margin-left: 18px;
+          background-color: #dddddd;
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
         }
 
         .el-icon-caret-bottom {

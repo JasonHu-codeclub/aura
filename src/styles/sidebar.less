@@ -20,7 +20,7 @@
     width: @sideBarWidth !important;
     background-color: @menuBg;
     height: 100%;
-    position: fixed;
+    position: absolute;
     font-size: 0px;
     top: 0;
     bottom: 0;
@@ -42,7 +42,8 @@
     }
 
     .el-scrollbar {
-      height: calc(100% - 50px);
+      height: calc(100% - 180px);
+      padding-top: 18px;
     }
 
     // &.has-logo {
@@ -79,6 +80,8 @@
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
+      height: 50px;
+      line-height: 50px;
       &:hover {
         background-color: @menuHover !important;
       }
@@ -86,16 +89,64 @@
 
     .is-active>.el-submenu__title {
       color: @subMenuActiveText !important;
+      background-color: @subMenuActiveBg !important;
     }
 
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {
+      font-size: 16px;
       min-width: @sideBarWidth !important;
       background-color: @subMenuBg !important;
-
+      &.is-active{
+        background-color:@subMenuActiveBg !important;
+      }
       &:hover {
         background-color: @subMenuHover !important;
       }
+    }
+
+    .el-menu-item.is-active{
+      background-color:@subMenuActiveBg !important;
+    }
+
+    .el-submenu__title, .el-menu-item{
+      font-size: 16px;
+      padding-left: 32px !important;
+    }
+
+    .nest-menu {
+      padding: 10px 0 0;
+      .el-menu-item{
+        height: 30px;
+        line-height: 26px;
+        font-size: 16px;
+        padding-left: 71px !important;
+      }
+    }
+    .router-link-active>.submenu-title-noDropdown:before{
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 6px;
+      background: #5c7bea;
+      height: 100%;
+    }
+
+    .is-active.is-opened>.el-submenu__title:before{
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 6px;
+      background: #5c7bea;
+      height: 100%;
+    }
+
+    .is-active .svg-icon {
+      color: #5c7bea;
     }
   }
 
@@ -207,6 +258,8 @@
 
   .nest-menu .el-submenu>.el-submenu__title,
   .el-menu-item {
+    position: relative;
+    font-size: 16px;
     &:hover {
       // you can use $subMenuHover
       background-color: @menuHover !important;

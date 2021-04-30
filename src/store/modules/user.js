@@ -75,6 +75,7 @@ const actions = {
           reject('需要重新登录')
         }
         const { name, roles, id } = data.data.meta
+        console.log(data.data.meta,'data.data.meta')
         commit('SET_ROLES', roles)
         commit('SET_NAME', name)
         commit('SET_USERID', id)

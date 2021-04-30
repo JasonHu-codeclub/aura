@@ -63,10 +63,9 @@ export default {
 </script>
 <style lang='less' scoped>
 .app-wrapper {
-  // @include clearfix;
   position: relative;
   height: 100%;
-  width: 100%;
+  background-color: #eaedf6;
   .main-container {
     min-height: 100%;
     transition: margin-left 0.28s;
@@ -76,9 +75,9 @@ export default {
   .sidebar-container {
     transition: width 0.28s;
     width: 210px !important;
-    // background-color: red;
+    background-color: #FFFFFF;
     height: 100%;
-    position: fixed;
+    position: absolute;
     font-size: 0px;
     top: 0;
     bottom: 0;

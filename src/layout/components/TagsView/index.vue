@@ -226,9 +226,11 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+@import '../../../styles/variables.less';
 .tags-view-container {
-  height: 34px;
+  height: 40px;
   width: 100%;
+  margin-left: 20px;
   background: #fff;
   border-bottom: 1px solid #d8dce5;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 0 3px 0 rgba(0, 0, 0, 0.04);
@@ -237,15 +239,14 @@ export default {
       display: inline-block;
       position: relative;
       cursor: pointer;
-      height: 26px;
-      line-height: 26px;
       border: 1px solid #d8dce5;
       color: #495060;
       background: #fff;
-      padding: 0 8px;
-      font-size: 12px;
-      margin-left: 5px;
-      margin-top: 4px;
+      padding: 5px 12px;
+      font-size: 16px;
+      margin-left: 7px;
+      border-radius: 4px;
+      box-sizing: content-box;
       &:first-of-type {
         margin-left: 15px;
       }
@@ -253,9 +254,9 @@ export default {
         margin-right: 15px;
       }
       &.active {
-        background-color: #00a0e9;
+        background-color: @btnActiveBg;
         color: #fff;
-        border-color: #00a0e9;
+        border-color: @btnActiveBg;
         &::before {
           content: "";
           background: #fff;

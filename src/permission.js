@@ -26,6 +26,7 @@ router.beforeEach(async (to, from, next) => {
   document.title = getPageTitle(to.meta.title)
   // 1.获得已经登录的包含用户信息的标识
   const hasToken = getToken()
+  console.log(hasToken,'hastoken')
   // 2.判断登录情况
   if (hasToken) {
     if (to.path === '/login') {

@@ -95,7 +95,12 @@ export default {
       bottom: 0px;
     }
     .el-scrollbar__wrap {
-      height: 49px;
+      height: 40px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      overflow-x: hidden;
+      margin-bottom: 0!important;
     }
   }
 }
