@@ -11,7 +11,7 @@
  */
 import router from './router'
 import store from './store'
-import { getToken } from './utils/auth'
+import { getUserName } from './utils/auth'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/page-title'
@@ -25,10 +25,9 @@ router.beforeEach(async (to, from, next) => {
   // 动态设置标签页的title
   document.title = getPageTitle(to.meta.title)
   // 1.获得已经登录的包含用户信息的标识
-  const hasToken = getToken()
-  console.log(hasToken,'hastoken')
+  const hasName = getUserName()
   // 2.判断登录情况
-  if (hasToken) {
+  if (hasName) {
     if (to.path === '/login') {
       next({ path: '/' })
       NProgress.done()

@@ -24,7 +24,7 @@
         @click.middle.native="!isAffix(tag) ? closeSelectedTag(tag) : ''"
         @contextmenu.prevent.native="openMenu(tag, $event)"
       >
-        {{ tag.title }}
+        {{ generateTitle(tag.title) }}
         <span
           v-if="!isAffix(tag)"
           class="el-icon-close"
@@ -48,6 +48,7 @@
   </div>
 </template>
 <script>
+import { generateTitle } from '@/utils/i18n'
 import ScrollPane from './ScrollPane'
 import path from 'path'
 
@@ -88,6 +89,7 @@ export default {
     this.addTags()
   },
   methods: {
+    generateTitle,
     isActive (route) {
       return route.path === this.$route.path
     },
@@ -229,7 +231,6 @@ export default {
 @import '../../../styles/variables.less';
 .tags-view-container {
   height: 40px;
-  width: 100%;
   margin-left: 20px;
   background: #fff;
   border-bottom: 1px solid #d8dce5;
@@ -257,16 +258,16 @@ export default {
         background-color: @btnActiveBg;
         color: #fff;
         border-color: @btnActiveBg;
-        &::before {
-          content: "";
-          background: #fff;
-          display: inline-block;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          position: relative;
-          margin-right: 2px;
-        }
+        // &::before {
+        //   content: "";
+        //   background: #fff;
+        //   display: inline-block;
+        //   width: 8px;
+        //   height: 8px;
+        //   border-radius: 50%;
+        //   position: relative;
+        //   margin-right: 2px;
+        // }
       }
     }
   }
@@ -301,7 +302,6 @@ export default {
     .el-icon-close {
       width: 16px;
       height: 16px;
-      vertical-align: 2px;
       border-radius: 50%;
       text-align: center;
       transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -309,7 +309,6 @@ export default {
       &:before {
         transform: scale(0.6);
         display: inline-block;
-        vertical-align: -3px;
       }
       &:hover {
         background-color: #b4bccc;

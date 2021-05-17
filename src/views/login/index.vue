@@ -8,10 +8,52 @@
 
 <template>
   <div id="login">
-    <el-card class="box-card">
+    <div class="login-content">
+      
+      <h3 class="login-content-title">{{$t('message.loginTitle')}}</h3>
+      <div class="login-content-box">
+        <div class="login-content-form">
+          <div class="login-content-divider">
+            <span class="divider-text">使用第三方账号登录</span>
+          </div>
+          <div class="login-content-type">
+            <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20"></span>
+            <span class="login-content-type-icon login-content-type-weixin-2"></span>
+          </div>
+          <div class="login-content-divider">
+            <span class="divider-text">使用账号密码登录</span>
+          </div>
+          <div class="login-form">
+              <el-form
+              ref="ruleForm"
+              :model="ruleForm"
+              :rules="rules"
+              label-width="80px"
+              hide-required-asterisk
+            >
+                <el-form-item label="" prop="username">
+                  <!-- <input  class="myinput"  v-model="ruleForm.username"> -->
+                  <el-input placeholder="请输入用户名" v-model="ruleForm.username">
+                    <template slot="prepend"><svg-icon icon-class="username" slot="label" /></template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="" prop="password">
+                  <el-input type="password" show-password placeholder="请输入密码" v-model="ruleForm.password" >
+                    <template slot="prepend"><svg-icon icon-class="password" slot="label" /></template>
+                  </el-input>
+                </el-form-item>
+                <div class="submit-btn">
+                  <el-button type="primary" @click.native.prevent="handleLogin()" :loading="loginLoading">登录</el-button>
+                </div>
+              </el-form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <el-card class="box-card">
       <div class="login-box"></div>
-      <div class="login-box" v-show="loginType === 'user'">
-        <h3 class="welcome">欢迎登录</h3>
+      <div class="login-box" >
+        <h3 class="welcome">登录</h3>
         <el-form
           ref="ruleForm"
           :model="ruleForm"
@@ -34,95 +76,37 @@
               type="password"
               v-model="ruleForm.password"
               placeholder="请输入密码"
+              @keyup.enter.native="handleLogin"
             ></el-input>
           </el-form-item>
           <div class="submit-btn">
-            <el-button type="primary" @click="handleLogin()">登录</el-button>
+            <el-button type="primary" @click.native.prevent="handleLogin()" :loading="loginLoading">登录</el-button>
           </div>
         </el-form>
-        <div class="switch" @click="showDialog"><el-divider><span>其他登录方式</span></el-divider></div>
-        <!-- <el-tooltip
-          class="item"
-          effect="light"
-          content="企业微信登录"
-          placement="top-start"
-          :visible-arrow="false"
-        >
-          <div class="enchange ex-user" @click="handleLoginTypes('code')"></div>
-        </el-tooltip> -->
       </div>
-      <div class="login-box" v-show="loginType === 'code'">
-        <div class="content">
-          <div id="wx_login"></div>
-          <!-- <p class="error" v-show="error">
-          {{ $t('message.login.tips') }}：{{ msg }}
-        </p> -->
-        </div>
-        <el-tooltip
-          class="item"
-          effect="light"
-          content="密码登录"
-          placement="top-start"
-          :visible-arrow="false"
-        >
-          <div class="enchange ex-code" @click="handleLoginTypes('user')"></div>
-        </el-tooltip>
-      </div>
-    </el-card>
-    <el-dialog title="选择登录方式" :visible.sync="dialogIsShow">
-      <template>
-        <div class="social-signup-container">
-          <div class="sign-btn" @click="handleOtherLogin('wechat')">
-            <span class="wx-svg-container"
-              ><svg-icon icon-class="wechat" class="icon"
-            /></span>
-            微信
-          </div>
-          <div class="sign-btn" @click="handleOtherLogin('qq')">
-            <span class="qq-svg-container"
-              ><svg-icon icon-class="qq" class="icon"
-            /></span>
-            QQ
-          </div>
-          <div class="sign-btn" @click="handleOtherLogin('dingding')">
-            <span class="ding-svg-container"
-              ><svg-icon icon-class="dingding" class="icon"
-            /></span>
-            钉钉
-          </div>
-          <div class="sign-btn" @click="handleOtherLogin('qiye')">
-            <span class="qiye-svg-container"
-              ><svg-icon icon-class="qiye" class="icon"
-            /></span>
-            企业微信
-          </div>
-        </div>
-      </template>
-    </el-dialog>
+    </el-card> -->
   </div>
 </template>
 <script>
-import { getHost } from '@/utils/tool'
 export default {
   components: {},
   data () {
     return {
+      loginLoading : false,
       ruleForm: {
-        username: 'admin',
-        password: '123456'
+        username: '',
+        password: ''
       },
       rules: {
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
+          { required: true, message: this.$t('tip.userNameNotEmpty'), trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
+          { required: true, message: this.$t('tip.pwdNotEmpty'), trigger: 'blur' }
         ]
       },
       redirect: undefined,
       otherQuery: {},
-      loginType: 'user',
-      dialogIsShow: false
     }
   },
   computed: {},
@@ -139,25 +123,28 @@ export default {
     }
   },
   methods: {
+    // 登录
     handleLogin () {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
-          this.$store.dispatch('user/login', { username: this.ruleForm.username, password: this.ruleForm.password }).then(() => {
-            // console.log('login-data===',data)
-            this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+          this.loginLoading = true
+          this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((result) => {
+            this.loginLoading = false
+            if(result.ret === '0'){
+              // 登录成功
+              this.$router.replace({ path: '/' })
+              console.log('login')
+            } else {
+              console.log('login222')
+              this.$message({
+                message: result.msg,
+                type: 'error'
+              })
+              return false
+            }
           })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+        } 
       })
-    },
-    handleOtherLogin (type) {
-      if (type === 'wechat') {
-
-      } else if (type === 'qq') {
-
-      }
     },
     getOtherQuery (query) {
       return Object.keys(query).reduce((acc, cur) => {
@@ -167,159 +154,107 @@ export default {
         return acc
       }, {})
     },
-    handleLoginTypes (type) {
-      if (type === 'code') {
-        // ....
-        this.loginType = type
-        // encodeURI
-      } else {
-        // ...
-        this.loginType = type
-      }
-    },
-    showDialog () {
-      this.dialogIsShow = true
-    }
   },
-  mounted () {
-    window.WwLogin({
-      id: 'wx_login',
-      appid: 'ww63beae6c0cd72cf1',
-      agentid: '1000010',
-      redirect_uri: encodeURIComponent(`https://bshtest.aa-iot.com`),
-      state: '',
-      href: '',
-    })
-  }
+  mounted () {}
 }
 </script>
 <style lang='less' scoped>
 #login {
+  position: relative;
   height: 100%;
   width: 100%;
   background-image: url("../../assets/login-bg.png");
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .box-card {
-    width: 800px;
-    height: 420px;
-    padding-top: 36px;
-    /deep/.el-card__body {
-      display: flex;
-      .login-box {
-        position: relative;
-        flex: 1;
-        &:first-child {
-          background-image: url("../../assets/login-box-bg.png");
-          background-size: 100% 100%;
-          background-repeat: no-repeat;
+  .login-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 550px;
+    background: rgba(13, 80, 188 ,.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 0 32px #191633;
+    .login-content-title {
+      position: absolute;
+      top: 10%;
+      color: #fff;
+    }
+    .login-content-box{
+      width: 300px;
+      text-align: center;
+      .login-content-form{
+        .login-content-divider {
+          position: relative;
+          height: 0.5px;
+          background: #82ADF1;
         }
-        .welcome {
-          text-align: center;
-          font-size: 24px;
-        }
-        .el-form {
-          .el-form-item {
-            .el-form-item__content {
-              .el-input {
-                .el-input__inner {
-                  border: none;
-                  border-bottom: solid 1px #dddddd;
-                  border-radius: unset;
-                }
-              }
-            }
-          }
-          .submit-btn {
-            margin-top: 36px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            .el-button {
-              width: 280px;
-            }
-          }
-        }
-        .switch {
-          display: flex;
-          justify-content: center;
-          span {
-            color: #027aff;
-            cursor: pointer;
-            &:hover {
-              color: gray;
-            }
-          }
-        }
-        .enchange {
-          cursor: pointer;
+        .divider-text {
           position: absolute;
-          right: 0;
-          top: 0;
-          width: 48px;
-          height: 48px;
-          line-height: 30px;
-          background-size: 100% 100%;
-          background-repeat: no-repeat;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          background: #16459a;
+          padding: 3px 12px;
+          color: #82ADF1;
         }
-        .ex-user {
-          background-image: url("../../assets/wx_hellorf_l.svg");
-        }
-        .ex-code {
-          background-image: url("../../assets/web_hellorf_l.svg");
-        }
-      }
-    }
-  }
-  /deep/.el-dialog__wrapper {
-    .el-dialog {
-      .el-dialog__body {
-        .social-signup-container {
-          margin: 20px 0;
-          .sign-btn {
+        .login-content-type{
+          padding: 20px 0 38px;
+          .login-content-type-icon{
             display: inline-block;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
             cursor: pointer;
+            background-color: #eee;
+            margin-right: 10px;
           }
-          .icon {
-            color: #fff;
-            font-size: 24px;
-            margin-top: 8px;
+          .login-content-type-weixin-1{
+            background: url("../../assets/weixin-1.png") no-repeat;
+            background-size: 100% 100%;
           }
-          .qiye-svg-container,
-          .ding-svg-container,
-          .wx-svg-container,
-          .qq-svg-container {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
-            text-align: center;
-            padding-top: 1px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            margin-right: 5px;
+          .login-content-type-weixin-2{
+            background: url("../../assets/weixin-2.png") no-repeat;
+            background-size: 100% 100%;
           }
-          .wx-svg-container {
-            background-color: #24da70;
+          .margin-r-20{
+            margin-right: 38px;
           }
-          .qq-svg-container {
-            background-color: #6ba2d6;
-            margin-left: 50px;
-          }
-          .ding-svg-container {
-            background-color: #268df9;
-            margin-left: 50px;
-          }
-          .qiye-svg-container {
-            background-color: #6ba2d6;
-            margin-left: 50px;
-          }
+        }
+      }
+      
+      .login-form{
+        margin-top: 20px;
+        /deep/.el-form-item__content {
+          margin: 0 !important;
+        }
+        /deep/.el-button--medium{
+          width: 100%;
+          background: #fff;
+          color: #0D50BC;
+          font-weight: bold;
         }
       }
     }
   }
+}
+/deep/.el-form-item{
+  margin-bottom: 8px;
+}
+/deep/.el-input__inner{
+  height: 40px;
+}
+/deep/.el-button--medium{
+  margin-top: 5px;
+  padding: 12px 20px;
+}
+/deep/input:-internal-autofill-selected{
+  background-color: red !important;
+}
+.myinput{
+  background-color: red !important;
+
 }
 </style>

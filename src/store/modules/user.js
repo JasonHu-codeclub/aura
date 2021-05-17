@@ -6,16 +6,21 @@
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
 
-import { loginApi, logoutApi, getInfoApi } from '@api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { loginApi, logoutApi, getInfoApi, getCodeApi } from '@api/user'
+import { getToken, setToken, removeToken, setUserName, getUserName, removeUserName } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
-
+import qs from 'querystring'
 const state = {
-  token: getToken(), // 用户标识
-  name: '', // 用户名称
+  token: getToken(),//setUserName(), // 用户标识
+  username: '',// 用户名称
   avatar: '', // 用户头像
   userId: '', // 用户id
-  roles: [] // 用户菜单权限列表
+  roles: [], // 用户菜单权限列表
+  roleId: '',  // 角色id
+  userInfo: '',// 用户信息
+  isAutoLogin: true, // 登录方式
+  isQrCode: false,
+  qrCodeImage: ''
 }
 
 const mutations = {
@@ -25,31 +30,37 @@ const mutations = {
   SET_ROLES (state, data) {
     state.roles = data
   },
-  SET_NAME (state, data) {
-    state.name = data
+  SET_USERNAME (state, data) {
+    state.username = data
   },
   SET_AVATAR (state, data) {
     state.avatar = data
   },
   SET_USERID (state, data) {
     state.userId = data
+  },
+  SET_ROLEID (state, data) {
+    state.roleId = data
+  },
+  SET_USERINFO (state, data) {
+    state.userInfo = data
+  },
+  SET_LOGINWAY (state, data) {
+    state.isAutoLogin = data
   }
 }
 
 const actions = {
   // 登录
   login ({ commit }, data) {
-    const { username, password } = data
+    const { username, pwd, company } = data
     return new Promise((resolve, reject) => {
-      loginApi({ name: username.trim(), password: password }).then(response => {
-        const { code, token } = response.data.data.meta
-        console.log('login-data===', data)
-        if (code === 'RESP_OKAY') {
-          commit('SET_TOKEN', token)
-          // cookie保存
-          setToken(token)
-          resolve()
+      loginApi(qs.stringify({ username: username.trim(), pwd: pwd, company: company })).then(response => {
+        if(response.ret === '0'){
+          commit('SET_USERNAME', username)
+          setUserName(username)
         }
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -70,20 +81,33 @@ const actions = {
       // resolve(data)
       // 获取个人信息
       getInfoApi().then(response => {
-        const { data } = response
+        const data = response
         if (!data) {
           reject('需要重新登录')
         }
-        const { name, roles, id } = data.data.meta
-        console.log(data.data.meta,'data.data.meta')
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_USERID', id)
-        // commit('SET_AVATAR', `https://ui-avatars.com/api/?name=${name}&background=random`)
-        commit('SET_AVATAR', `http://up.enterdesk.com/edpic/31/c3/fd/31c3fdc63511cabedd6415d121fa2d58.jpg`)
-        resolve(data.data.meta)
+        data.roles = [data.username]
+        const { username, role_id, user_guid,  image_url} = data
+        commit('SET_ROLES', [data.username])
+        commit('SET_USERNAME', username)
+        commit('SET_USERID', user_guid)
+        commit('SET_ROLEID', role_id)
+        commit('SET_USERINFO', data)
+        commit('SET_AVATAR', image_url)
+        resolve(data)
       }).catch(error => {
         reject(error)
+      })
+    })
+  },
+  // 登录方式
+  updateLoginWay ({ commit }, data) {
+    commit('SET_LOGINWAY', data)
+  },
+  // 登录方式
+  getCode ({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      getCodeApi({code: data}).then(response => {
+        resolve(response)
       })
     })
   },
@@ -91,11 +115,13 @@ const actions = {
   logout ({ commit, dispatch }) {
     return new Promise((resolve, reject) => {
       logoutApi().then((response) => {
-        const { code } = response.data.data.meta
-        commit('SET_TOKEN', '')
+        // const { code } = response.data.data.meta
+        commit('SET_USERNAME', '')
         commit('SET_ROLES', [])
         // 清除cookie中的token
-        removeToken()
+        // removeToken()
+        // 清除username
+        removeUserName()
         resetRouter()
         // 清除tags
         dispatch('tagsView/delAllViews', null, { root: true })
@@ -106,11 +132,11 @@ const actions = {
     })
   },
   // 重置所有token标识
-  resetToken ({ commit }) {
+  resetUserInfo ({ commit }) {
     return new Promise(resolve => {
-      commit('SET_TOKEN', '')
+      commit('SET_USERNAME', '')
       commit('SET_ROLES', [])
-      removeToken()
+      removeUserName()
       resolve()
     })
   },
@@ -131,7 +157,7 @@ const actions = {
       const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
 
       // dynamically add accessible routes
-      router.addRoutes(accessRoutes)
+      router.addRoute(accessRoutes)
 
       // reset visited views and cached views
       dispatch('tagsView/delAllViews', null, { root: true })

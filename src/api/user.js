@@ -11,25 +11,48 @@ import request from "@utils/request.js"
 // 登录
 export function loginApi (data) {
   return request({
-    url: "/login",
+    url: "/user/login/",
     method: "post",
-    headers: { 'X-USER-TOKEN': 'PfWwwOUtZgJv5YSZDoxseCZJzjB1LnvhlPJQcZjnOpvfs7Ej7njhYDA4ntgR7djrx9nXiAFtrneVZb9SyAMTAslFnGO1n9X4xhlYAF5TO55qhpGN8gvkYoRmio8ReBPq' },
+    // headers: { 'X-USER-TOKEN': 'PfWwwOUtZgJv5YSZDoxseCZJzjB1LnvhlPJQcZjnOpvfs7Ej7njhYDA4ntgR7djrx9nXiAFtrneVZb9SyAMTAslFnGO1n9X4xhlYAF5TO55qhpGN8gvkYoRmio8ReBPq' },
     data
   })
 }
 // 登出
 export function logoutApi (data) {
   return request({
-    url: "/sign-out",
+    url: "/user/logout/",
+    method: "get",
+    params: data || {}
+  })
+}
+
+// 获取用户信息
+export function getInfoApi (data) {
+  return request({
+    url: "/user/get_me/",
+    method: "get",
+    params: data || {}
+  })
+}
+
+// 获取是否已经登录凭证
+export function getCodeApi (data) {
+  return request({
+    url: "/user/get_code",
+    method: "get",
+    params: data || {}
+  })
+}
+
+// 修改密码
+export function resetPassReq (data) {
+  return request({
+    url: "/user/changepassword/",
     method: "post",
     data
   })
 }
-// 获取用户信息
-export function getInfoApi (data) {
-  return request({
-    url: "/get-me",
-    method: "get",
-    params: { data }
-  })
-}
+
+// export const sendCodeReq = function (data) {
+//   return ajax(`${baseURL}/user/get_code`, data)
+// }

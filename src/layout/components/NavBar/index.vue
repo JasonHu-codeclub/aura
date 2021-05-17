@@ -35,20 +35,71 @@
           <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
         <el-dropdown-menu slot="dropdown">
-          <!-- <router-link to="/profile/index">
+          <router-link to="/profile/index">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link> 
-          <router-link to="/">
-            <el-dropdown-item>回到首页</el-dropdown-item>
-          </router-link>-->
+          <el-dropdown-item @click.native="dialogVisible=true">修改密码</el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span style="display: block">登出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <span class="division"></span>
+      <lang-select class="language"  />
       <!-- 全屏按钮 -->
       <screenfull id="screenfull" class="right-menu-item hover-effect" />
+
+      <el-dialog
+        :title="$t('message.setPassord')"
+        :visible.sync="dialogVisible"
+        width="500"
+        @close="handleClose"
+      >
+        <el-form
+          :model="ruleForm"
+          status-icon
+          :rules="rules"
+          ref="ruleForm"
+          label-width="100px"
+          class="demo-ruleForm"
+        >
+          <el-form-item :label="$t('message.oldPwd')" prop="oldPass">
+            <el-input
+              type="password"
+              v-model.number="ruleForm.oldPass"
+              autocomplete="off"
+              :placeholder="$t('message.oldPassword')"
+            ></el-input>
+          </el-form-item>
+          <el-form-item :label="$t('message.newPwd')" prop="pass">
+            <el-input
+              type="password"
+              v-model="ruleForm.pass"
+              autocomplete="off"
+              :placeholder="$t('message.newPassword')"
+            ></el-input>
+          </el-form-item>
+          <el-form-item :label="$t('message.againNewPwd')" prop="checkPass">
+            <el-input
+              type="password"
+              v-model="ruleForm.checkPass"
+              autocomplete="off"
+              :placeholder="$t('message.againPassword')"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('ruleForm')">{{
+              $t("button.submit")
+            }}</el-button>
+            <el-button @click="resetForm('ruleForm')">{{
+              $t("button.reset")
+            }}</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
+
+
+
     </div>
   </div>
 </template>
@@ -58,14 +109,63 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from './components/BreadCrumb'
 import Hamburger from './components/Hamburger'
 import Screenfull from './components/Screenfull'
+import LangSelect from '@/components/LangSelect'
 // import Search from './components/HeaderSearch'
-
+import { resetPassReq } from '@/api/user' 
 export default {
   components: {
     Breadcrumb,
     Hamburger,
     Screenfull,
+    LangSelect
     // Search
+  },
+  data() {
+    var checkOldPass = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('密码不能为空'))
+      } else {
+        callback()
+      }
+    }
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入新密码'))
+      } else {
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('checkPass')
+        }
+        callback()
+      }
+    }
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.ruleForm.pass) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
+    return {
+      dialogVisible: false,
+      ruleForm: {
+        pass: '',
+        checkPass: '',
+        oldPass: ''
+      },
+      rules: {
+        pass: [
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { validator: validatePass2, trigger: 'blur' }
+        ],
+        oldPass: [
+          { validator: checkOldPass, trigger: 'blur' }
+        ]
+      }
+    }
   },
   computed: {
     ...mapGetters([
@@ -83,7 +183,53 @@ export default {
     async logout () {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
-    }
+    },
+    // 切换头像选项
+    async handleMyself (command) {
+      if (command === 'home') {
+      } else if (command === 'setting') {
+        this.dialogVisible = true
+      } else if (command === 'logout') {
+        const result = await logoutReq()
+        if (result.ret === '0') {
+          // 移除用户
+          // localStorage.removeItem('username')
+          // // 移除cookie
+          // document.cookie = 'sessionid=; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+          // this.$router.replace('/login')
+        }
+      }
+    },
+    // 修改密码
+    submitForm (formName) {
+      this.$refs[formName].validate(async (valid) => {
+        if (valid) {
+          const result = await resetPassReq({ old_password: this.ruleForm.oldPass, new_password: this.ruleForm.pass })
+          if (result.ret === '0') {
+            this.$message({
+              message: this.$t('tip.resetPwdSuccess'),
+              type: 'success'
+            })
+            // this.handleMyself('logout')
+          } else {
+            this.$message({
+              message: result.msg,
+              type: 'error'
+            })
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    // 重置修改密码框
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+    },
+    // 弹窗关闭回调
+    handleClose () {
+      this.$refs['ruleForm'].resetFields()
+    },
   }
 }
 </script>

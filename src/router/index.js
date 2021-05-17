@@ -31,21 +31,22 @@ export const constantRoutes = [
     component: () => import('@views/login'),
     hidden: true
   },
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/home',
-    children: [{
-      path: 'home',
-      component: () => import('@views/home'),
-      name: 'Home',
-      meta: {
-        title: '首页',
-        icon: 'username',
-        affix: true
-      }
-    }]
-  },
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/home',
+  //   children: [{
+  //     path: 'home',
+  //     component: () => import('@views/home'),
+  //     name: 'Home',
+  //     meta: {
+  //       title: '首页',
+  //       icon: 'username',
+  //       affix: true
+  //     }
+  //   }]
+  // },
+  
   {
     path: '/profile',
     component: Layout,
@@ -68,33 +69,109 @@ export const constantRoutes = [
 
 // 动态显示的路由表
 export const asyncRoutes = [
-  appointment,
-  visit,
   {
-    path: '/template',
+    path: '/',
     component: Layout,
-    redirect: '/template/table',
-    name: 'Template',
-    alwaysShow: true,
-    meta: {
-      title: 'Template',
-      icon: 'username'
-    },
-    children: [
-      {
-        path: 'table',
-        component: () => import('@views/template/table'),
-        name: 'Table',
-        meta: { title: '表格功能' }
-      },
-      {
-        path: 'upload_excel',
-        component: () => import('@views/template/uploadExcel'),
-        name: 'UploadExcel',
-        meta: { title: '上传表格' }
+    redirect: '/home',
+    children: [{
+      path: 'home',
+      component: () => import('@views/appointment/appoint'),
+      name: 'Home',
+      meta: {
+        title: 'home',
+        icon: 'appo',
+        affix: true
       }
-    ]
+    }]
   },
+  {
+    path: '/current',
+    component: Layout,
+    redirect: '/current/current_list',
+    children: [{
+      path: 'current_list',
+      component: () => import('@views/appointment/current-meet'),
+      name: 'CurrentMeet',
+      meta: {
+        title: 'current',
+        icon: 'current',
+        affix: false
+      }
+    }]
+  },
+  {
+    path: '/history',
+    component: Layout,
+    redirect: '/history/history_list',
+    children: [{
+      path: 'history_list',
+      component: () => import('@views/appointment/history-record'),
+      name: 'HistoryRecord',
+      meta: {
+        title: 'history',
+        icon: 'history',
+        affix: false
+      }
+    }]
+  },
+  {
+    path: '/approve',
+    component: Layout,
+    redirect: '/approve/approve_list',
+    children: [{
+      path: 'approve_list',
+      component: () => import('@views/appointment/approve'),
+      name: 'Approve',
+      meta: {
+        title: 'Approve',
+        icon: 'history',
+        affix: false
+      }
+    }]
+  },
+  {
+    path: '/service',
+    component: Layout,
+    redirect: '/service/service_list',
+    children: [{
+      path: 'service_list',
+      component: () => import('@views/appointment/service'),
+      name: 'service',
+      meta: {
+        title: 'service',
+        icon: 'history',
+        affix: false
+      }
+    }]
+  },
+  // appointment,
+  // visit,
+  
+  // {
+  //   path: '/template',
+  //   component: Layout,
+  //   redirect: '/template/table',
+  //   name: 'Template',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: 'Template',
+  //     icon: 'username'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       component: () => import('@views/template/table'),
+  //       name: 'Table',
+  //       meta: { title: '表格功能' }
+  //     },
+  //     {
+  //       path: 'upload_excel',
+  //       component: () => import('@views/template/uploadExcel'),
+  //       name: 'UploadExcel',
+  //       meta: { title: '上传表格' }
+  //     }
+  //   ]
+  // },
   {
     path: '*',
     redirect: '/404',

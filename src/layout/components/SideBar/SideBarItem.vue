@@ -3,14 +3,18 @@
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
+          <i class="icon iconfont" :class="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" />
+          <span>&nbsp;{{ generateTitle(onlyOneChild.meta.title) }}</span>
+          <!-- <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" /> -->
         </el-menu-item>
       </app-link>
     </template>
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
+        <i v-if="item.meta" class="icon iconfont" :class="item.meta && item.meta.icon" />
+        <span>&nbsp;{{ generateTitle(item.meta.title) }}</span>
+        <!-- <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" /> -->
       </template>
       <side-bar-item
         v-for="child in item.children"
@@ -27,6 +31,7 @@
 <script>
 import path from 'path'
 import { isExternal } from '@/utils/validate'
+import { generateTitle } from '@/utils/i18n'
 import Item from './Item'
 import AppLink from './Link'
 // import FixiOSBug from './FixiOSBug'
@@ -89,7 +94,50 @@ export default {
         return this.basePath
       }
       return path.resolve(this.basePath, routePath)
-    }
+    },
+    generateTitle
   }
 }
 </script>
+<style lang="less" scoped>
+.submenu-title-noDropdown>.iconfont, .el-submenu__title>.iconfont{
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 16px;
+  }
+
+  .appo{
+    background: url('../../../assets/icon/appo.png') no-repeat;
+    background-size: contain;
+  }
+  .is-active .appo{
+    background: url('../../../assets/icon/appo-active.png') no-repeat;
+    background-size: contain;
+  }
+  .current{
+    background: url('../../../assets/icon/current.png') no-repeat;
+    background-size: contain;
+  }
+  .is-active .current{
+    background: url('../../../assets/icon/current-active.png') no-repeat;
+    background-size: contain;
+  }
+  .data{
+    background: url('../../../assets/icon/data.png') no-repeat;
+    background-size: contain;
+  }
+  .is-active .data{
+    background: url('../../../assets/icon/data-active.png') no-repeat;
+    background-size: contain;
+  }
+  .history{
+    background: url('../../../assets/icon/history.png') no-repeat;
+    background-size: contain;
+  }
+  .is-active .history{
+    background: url('../../../assets/icon/history-active.png') no-repeat;
+    background-size: contain;
+  }
+
+</style>
