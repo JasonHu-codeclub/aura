@@ -18,6 +18,15 @@ export default {
     language: 'language',
     logOut: '退出登录',
   },
+  labe: {
+    floor: '楼层',
+    numberPeople: '容纳人数',
+    equipment: '设备',
+    date: '日期',
+    status: '状态',
+    name: '名称',
+    type: '发起方式',
+  },
   button: {
     search: '查询',
     BookMeeting: '预约会议',
@@ -43,12 +52,11 @@ export default {
     save: '保存',
     meetingClosed: '结束',
     details: '详情',
-
-
-
   },
   message: {
     loginTitle: 'XXX数字办公空间',
+    personalCenter: '个人中心',
+    loginOut:'登出',
     setPassord: '修改密码',
     pwd: '密码',
     oldPwd: '旧密码',
@@ -155,6 +163,7 @@ export default {
   placeholder: {
     MeetingFloor: '会议室所在楼层',
     capacity: '可容纳人数',
+    equipment: '选择设备',
     status: '状态',
     date: '选择时间',
     theme: '请输入会议主题',

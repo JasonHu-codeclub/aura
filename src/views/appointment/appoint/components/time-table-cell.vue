@@ -24,29 +24,29 @@
         <el-popover :disabled="scope.row.message[index].status === 0"  placement="bottom" effect="light" trigger="hover">
           <div >
             <div class="tip-list">
-              <span class="tip-list-label">会议主题：</span>
+              <span class="tip-list-label">{{$t('message.theme')}}：</span>
               {{scope.row.message[index].title}}
             </div>
             <div class="tip-list">
-              <span class="tip-list-label">发起人员：</span>
+              <span class="tip-list-label">{{$t('message.sender')}}：</span>
               {{scope.row.message[index].sender}}
             </div>
             <div class="tip-list">
-              <span class="tip-list-label">开始时间：</span>
+              <span class="tip-list-label">{{$t('message.startTime')}}：</span>
               {{scope.row.message[index].start_time}}
             </div>
             <div class="tip-list">
-              <span class="tip-list-label">结束时间：</span>
+              <span class="tip-list-label">{{$t('message.endTime')}}：</span>
               {{scope.row.message[index].stop_time}}
             </div>
-            <div class="tip-list">
+            <!-- <div class="tip-list">
               <span class="tip-list-label">会议时长：</span>
               {{scope.row.message[index].long}}
-            </div>
+            </div> 
             <div class="tip-list">
               <span class="tip-list-label">会议类型：</span>
               {{scope.row.message[index].type||$t('message.LocalMeetings')}}
-            </div>
+            </div>-->
           </div>
           <span slot="reference" :class="['time-cell-status time-chil', 
                 {meetings: scope.row.message[index].status === 1,
@@ -129,7 +129,7 @@ export default {
       }
       // 处理时间冲突逻辑
       const period = timeStatus.slice(this.startIndex, this.endIndex + 1)
-      if (period.some((item, index) => item === 1)) {
+      if (this.startIndex && this.endIndex && period.some((item, index) => item === 1)) {
         this.startTime = times[index].time
         this.startIndex = index
         this.endTime = index === 23 ? '20:00' : times[index + 1].time

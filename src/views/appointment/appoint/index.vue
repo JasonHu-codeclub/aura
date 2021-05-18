@@ -16,11 +16,14 @@
       <div class="filter-item">
         <!-- 楼层 -->
         <div class="filter-item-box">
+          {{$t('labe.floor')}}：
           <el-cascader 
           class="filter-cascader" 
-          v-model="chooseFloor" 
+          v-model="searchData.floor" 
+          :options="optionsFloor"
           :props="props" 
           :placeholder="$t('placeholder.MeetingFloor')"
+          :show-all-levels="true"
           @change="searchMeetingRoom"
           @clear="searchMeetingRoom"
           clearable
@@ -28,42 +31,45 @@
         </div>
         <!-- 容纳人数 -->
         <div class="filter-item-box">
+           {{$t('labe.numberPeople')}}：
           <el-select
-            v-model="chooseCategory"
+            v-model="searchData.peopleNum"
             :placeholder="$t('placeholder.capacity')"
             @change="searchMeetingRoom"
             @clear="searchMeetingRoom"
             clearable
           >
             <el-option
-              v-for="item in category"
+              v-for="item in peopleNumList"
+              :key="item.key"
+              :label="item.name"
+              :value="item.key"
+            ></el-option>
+          </el-select>
+        </div>
+        <!-- 设备 -->
+        <div class="filter-item-box">
+          {{$t('labe.equipment')}}：
+          <el-select
+            v-model="searchData.equipment"
+            :placeholder="$t('placeholder.equipment')"
+            @change="searchMeetingRoom"
+            @clear="searchMeetingRoom"
+            clearable
+          >
+            <el-option
+              v-for="item in equipmentList"
               :key="item.guid"
               :label="item.name"
               :value="item.guid"
             ></el-option>
           </el-select>
         </div>
-        <!-- 状态 -->
-        <!-- <div class="filter-item-box">
-          <el-select
-            v-model="chooseStatus"
-            :placeholder="$t('placeholder.status')"
-            @change="searchMeetingRoom"
-            @clear="searchMeetingRoom"
-            clearable
-          >
-            <el-option
-              v-for="item in status"
-              :key="item.guid"
-              :label="item.name"
-              :value="item.guid"
-            ></el-option>
-          </el-select>
-        </div> -->
         <!-- 选择时间 -->
         <div class="filter-item-box">
+           {{$t('labe.date')}}：
           <el-date-picker
-            v-model="chooseDate"
+            v-model="searchData.chooseDate"
             type="date"
             :placeholder="$t('placeholder.date')"
             value-format="yyyy-MM-dd"
@@ -84,7 +90,16 @@
             :loading="searchBtnStatus"
             >{{$t('button.search')}}</el-button
           >
-          
+        </div>
+        <div class="filter-item-box">
+          <!-- 查询 -->
+          <el-button
+            type="default"
+            class="search"
+            @click="resetMeetingRoom"
+            :loading="resetBtnStatus"
+            >{{$t('button.reset')}}</el-button
+          >
         </div>
       </div>
 
@@ -195,13 +210,14 @@ import TimeTableCell from './components/time-table-cell'
 import qs from 'querystring'
 import { mapGetters } from 'vuex'
 import { 
-  getCityApi,
-  getBuildingApi, 
   getCategoryApi, 
   getStatusApi,
-  getMeetingsApi,
   reserveApi,
-  getMeetingInfoApi
+  getAppointmentApi,
+  getEquipmentApi,
+  getMansionFloorApi,
+  getReservableApi,
+  appointmentApi
 } from '@api/appoint'
 import { constants } from 'crypto'
 export default {
@@ -212,6 +228,13 @@ export default {
     return {
       tableLoading: false,
       btnLoading: false,
+      searchData: {
+        floor: [],// 楼层
+        peopleNum: '',// 人数
+        equipment: '',// 设备
+        date: dayjs().format('YYYY-MM-DD'), // 选择时间
+      },
+      optionsFloor: [], // 大厦楼层
       chooseFloor: [],
       // tableHeight: 50,
       citys: [], // 已选择城市
@@ -221,13 +244,15 @@ export default {
       category: [], // 获取的分类数组
       chooseCategory: '', // 选择容纳人数
       status: [], // 获取状态数组
+      equipmentList: [], // 设备
       chooseStatus: '', // 选择状态
       chooseDate: dayjs().format('YYYY-MM-DD'), // 选择时间
       meetingRooms: [], // 获取的会议室信息,
-      props: {
-        lazy: true,
-        lazyLoad: this.lazyLoad
-      }, // 城市列表节点
+      props: { // 楼层级联配置
+        value: 'id',
+        label: 'name',
+        children: 'floor'
+      }, 
       currentPage4: 4,
       selectTimes: [],
       selectRowTime: {
@@ -236,6 +261,7 @@ export default {
       },
       selectRoomData: {}, // 选择会议室进行预约,
       searchBtnStatus: false, // 搜索按钮状态
+      resetBtnStatus: false,// 重置按钮状态
       pollingParams: {
         schedule_info: '1',
         city_guid: '',
@@ -265,7 +291,7 @@ export default {
       let continuity = true // 会议的边界
       let count = 0 // 记录一个会议室的场次
       this.meetingRooms.map((res, idx) => {
-        res.day = this.chooseDate
+        res.day = this.searchData.chooseDate
         // 支持的会议类型
         // res.functionals.map(value => {
         //   switch(value.name) {
@@ -334,33 +360,37 @@ export default {
   },
   watch: {
   },
+  mounted () {
+    // 大厦楼层
+    this.getFloorList()
+    // 获取容纳人数
+    this.getReservableList()
+    // 获取设备列表
+    this.getEquipmentList()
+    const that = this
+    const fn = function () {
+      that.pollingSearchRoom()
+    }
+    fn()
+    this.timer = setInterval(fn, 1000 * 60, true)
+    this.resizeHeight(100)
+  },
   methods: {
     // 大厦信息，楼层
-    async lazyLoad (node, resolve) {
-      const { level } = node
-      let dataJsaon = level ===0 ? node.value : { mansion_guid: node.value, floor_list: 1 }
-      let mansionsKey = level ===0 ? 'mansions' : 'floor_list'
-      const province = await getBuildingApi(dataJsaon)
-      const nodes = province[mansionsKey].map((item, index) => {
-        return {
-          value: item.guid,
-          label: item.name,
-          leaf: level >= 1
+    async getFloorList () {
+      const result = await getMansionFloorApi()
+        let data = result.data.mansion
+        if(data.length > 1){
+          data.unshift({id: '', name: '全部'})
         }
-      })
-      if (level === 0) {
-        resolve([{ value: '', label: this.$t('message.all'), leaf: true }, ...nodes])
-      } else {
-        resolve(nodes)
-      }
+        this.optionsFloor = data
     },
-    
-    handleSizeChange (val) {
-      // console.log(`每页 ${val} 条`);
+    // 获取设备
+    async getEquipmentList() {
+       const result = await getEquipmentApi()
+       this.equipmentList= result.data.equipments
     },
-    handleCurrentChange (val) {
-      // console.log(`当前页: ${val}`);
-    },
+    // 点击表格
     clickTableCell (row, column, cell, event) {
     },
     // 记录选择的时间
@@ -381,10 +411,18 @@ export default {
         start_time: `${this.selectRoomData.day} ${this.selectRowTime.time.startTime}:00`,
         stop_time: `${this.selectRoomData.day} ${this.selectRowTime.time.endTime}:00`,
         room_guid: this.selectRoomData.guid,
+
+        // meeting_room_id	是	number	会议室id
+        // category	是	number	1 单次预约 2重复预约 3跨日预约
+        // repetition_type	否	number	当category=2时才需要传 会议重复类型 1=》每日，2=》每周，3=》每月
+        // repetition_end_date	否	date	当category=2时才需要传 会议重复截止时间
+        // start	是	string	会议预约开始时间
+        // end	是	string	会议预约结束时间（category=2时结束时间只传当天截止））
+        // is_conflict	是	number	是否冲突 0否 1是
       }
       this.btnLoading = true
       // 确定预约
-      const result = await reserveApi(qs.stringify(data))
+      const result = await appointmentApi(qs.stringify(data))
       this.btnLoading = false
       if (result.ret === '0') {
         // 更新会议列表
@@ -400,12 +438,9 @@ export default {
       }
     },
     // 获取容纳人数数据
-    async getCategoryData () {
-      const result = await getCategoryApi()
-      if (result.ret === '0') {
-        this.category = [{ name: this.$t('message.all'), guid: null }, ...result.data]
-        // this.category = result.number_group_list
-      }
+    async getReservableList () {
+      const result = await getReservableApi()
+      this.peopleNumList = [{ name: this.$t('message.all'), guid: null }, ...result.data.reservable]
     },
     // 获取状态数据
     async getStatusData () {
@@ -444,36 +479,37 @@ export default {
     // 搜索会议室
     async searchMeetingRoom (type) {
       let params= {
-        floor_guid: this.chooseFloor[this.chooseFloor.length-1],	//	楼层guid
-        num_guid: this.chooseCategory,	//	人数分组guid
-        status_guid: this.chooseStatus,	//	状态guid
-        day: this.chooseDate,	//	日期,默认当前
+        date: this.searchData.date, // 日期
+        mansion_id: this.searchData.floor[0], // 大厦id
+        floor_id: this.searchData.floor[1], //楼层id
+        equipment: this.searchData.equipment, // 设备id
+        reservable_start: '', // 容纳人数起始
+        reservable_end: '', // 容纳人数结束
       }
       this.tableLoading = true
       this.searchBtnStatus = true
-      const result = await getMeetingsApi(params)
-      if (result.ret === '0') {
-        this.meetingRooms = result.data
-      }
+      const result = await getAppointmentApi(params)
+      this.meetingRooms = result.data.meeting_rooms
       // 清除选择的时间印记
       this.selectRowTime.time.startIndex = null
       this.selectRowTime.time.endIndex = null
       this.tableLoading = false
       this.searchBtnStatus = false
     },
+    
     // 轮询会议室
     async pollingSearchRoom (type) {
       let params= {
-        floor_guid: this.chooseFloor[this.chooseFloor.length-1],	//	楼层guid
-        num_guid: this.chooseCategory,	//	人数分组guid
-        status_guid: this.chooseStatus,	//	状态guid
-        day: this.chooseDate,	//	日期,默认当前
+        date: this.searchData.date, // 日期
+        mansion_id: this.searchData.floor[0], // 大厦id
+        floor_id: this.searchData.floor[1], //楼层id
+        equipment: this.searchData.equipment, // 设备id
+        reservable_start: '', // 容纳人数起始
+        reservable_end: '', // 容纳人数结束
       }
       this.tableLoading = true
-      const result = await getMeetingsApi(params)
-      if (result.ret === '0') {
-        this.meetingRooms = result.data
-      }
+      const result = await getAppointmentApi(params)
+        this.meetingRooms = result.data.meeting_rooms
       // 如果是预约成功后的刷新
       if (type === 'reserveSuccess') {
         // 清除选择的时间印记
@@ -482,10 +518,21 @@ export default {
       }
       this.tableLoading = false
     },
+    // 重置搜索关键字
+    resetMeetingRoom() {
+       this.searchData= {
+        floor: [],// 楼层
+        peopleNum: '',// 人数
+        equipment: '',// 设备
+        date: dayjs().format('YYYY-MM-DD'), // 选择时间
+      }
+      this.searchMeetingRoom()
+    },
+    // 选择日期
     dateChange (value) {
       let that = this
       setTimeout(() => {
-        that.chooseDate = value || dayjs().format('YYYY-MM-DD')
+        that.searchData.chooseDate = value || dayjs().format('YYYY-MM-DD')
         that.searchMeetingRoom()
       }, 100);
     },
@@ -495,21 +542,7 @@ export default {
       return str
     }
   },
-  mounted () {
-    // 获取大厦
-    // this.getBuilding()
-    // 获取分类
-    this.getCategoryData()
-    // 获取状态
-    this.getStatusData()
-    const that = this
-    const fn = function () {
-      that.pollingSearchRoom()
-    }
-    fn()
-    this.timer = setInterval(fn, 1000 * 60, true)
-    this.resizeHeight(100)
-  },
+  // 销毁定时器
   beforeDestroy () {
     clearInterval(this.timer)
   }

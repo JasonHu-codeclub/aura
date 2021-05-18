@@ -14,7 +14,6 @@ const getters = {
   roleId: state => state.user.roleId,
   avatar: state => state.user.avatar,
   userInfo: state => state.user.userInfo,
-  isAutoLogin: state => state.user.isAutoLogin,
   permission_routes: state => state.permission.routes,
   sidebar: state => state.app.sidebar,
   language: state => state.app.language,

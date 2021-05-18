@@ -158,3 +158,51 @@ export function  updateMyMeetingApi (data) {
     data
   })
 }
+
+
+
+// 新代码
+// 预约会议首页
+export function getAppointmentApi (data) {
+  return request({
+    url: "/appointment",
+    method: "get",
+    params: data
+  })
+}
+
+// 获取大厦楼层
+export function getMansionFloorApi (data) {
+  return request({
+    url: "/get-mansion-and-floor",
+    method: "get",
+    params: data
+  })
+}
+
+// 获取设备
+export function getEquipmentApi (data) {
+  return request({
+    url: "/get-equipment",
+    method: "get",
+    params: data
+  })
+}
+
+// 容纳人数
+export function getReservableApi (data) {
+  return request({
+    url: "/get-reservable",
+    method: "get",
+    params: data
+  })
+}
+
+// 预约会议
+export function appointment (data) {
+  return request({
+    url: '/appointment',
+    method: "POST",
+    data
+  })
+}

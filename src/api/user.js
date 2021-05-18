@@ -11,25 +11,25 @@ import request from "@utils/request.js"
 // 登录
 export function loginApi (data) {
   return request({
-    url: "/user/login/",
+    url: "/auth/sign-in",
     method: "post",
-    // headers: { 'X-USER-TOKEN': 'PfWwwOUtZgJv5YSZDoxseCZJzjB1LnvhlPJQcZjnOpvfs7Ej7njhYDA4ntgR7djrx9nXiAFtrneVZb9SyAMTAslFnGO1n9X4xhlYAF5TO55qhpGN8gvkYoRmio8ReBPq' },
+    headers: { 'X-USER-TOKEN': 'PfWwwOUtZgJv5YSZDoxseCZJzjB1LnvhlPJQcZjnOpvfs7Ej7njhYDA4ntgR7djrx9nXiAFtrneVZb9SyAMTAslFnGO1n9X4xhlYAF5TO55qhpGN8gvkYoRmio8ReBPq' },
     data
   })
 }
 // 登出
 export function logoutApi (data) {
   return request({
-    url: "/user/logout/",
-    method: "get",
-    params: data || {}
+    url: "/auth/sign-out",
+    method: "post",
+    data
   })
 }
 
 // 获取用户信息
 export function getInfoApi (data) {
   return request({
-    url: "/user/get_me/",
+    url: "/user/get-me",
     method: "get",
     params: data || {}
   })

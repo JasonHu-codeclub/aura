@@ -36,11 +36,11 @@
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/profile/index">
-            <el-dropdown-item>个人中心</el-dropdown-item>
+            <el-dropdown-item>{{$t('message.personalCenter')}}</el-dropdown-item>
           </router-link> 
-          <el-dropdown-item @click.native="dialogVisible=true">修改密码</el-dropdown-item>
+          <el-dropdown-item @click.native="dialogVisible=true">{{$t('message.setPassord')}}</el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">登出</span>
+            <span style="display: block">{{$t('message.loginOut')}}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -180,6 +180,7 @@ export default {
     toggleSideBar () {
       this.$store.dispatch('app/toggleSideBar')
     },
+    // 登出
     async logout () {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)

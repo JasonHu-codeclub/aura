@@ -18,7 +18,6 @@ const state = {
   roles: [], // 用户菜单权限列表
   roleId: '',  // 角色id
   userInfo: '',// 用户信息
-  isAutoLogin: true, // 登录方式
   isQrCode: false,
   qrCodeImage: ''
 }
@@ -44,9 +43,6 @@ const mutations = {
   },
   SET_USERINFO (state, data) {
     state.userInfo = data
-  },
-  SET_LOGINWAY (state, data) {
-    state.isAutoLogin = data
   }
 }
 
@@ -55,12 +51,11 @@ const actions = {
   login ({ commit }, data) {
     const { username, pwd, company } = data
     return new Promise((resolve, reject) => {
-      loginApi(qs.stringify({ username: username.trim(), pwd: pwd, company: company })).then(response => {
-        if(response.ret === '0'){
-          commit('SET_USERNAME', username)
-          setUserName(username)
-        }
-        resolve(response)
+      loginApi(qs.stringify({ name: username.trim(), password: pwd })).then(response => {
+        const { data: { token } } = response
+        commit('SET_TOKEN', token)
+        setToken(token)
+        resolve()
       }).catch(error => {
         reject(error)
       })
@@ -69,39 +64,21 @@ const actions = {
   // 获取用户个人信息
   getInfo ({ commit }) {
     return new Promise((resolve, reject) => {
-      // const data = {
-      //   roles: ["test6"],
-      //   name: "Surper Man",
-      //   avatar: "http://up.enterdesk.com/edpic/31/c3/fd/31c3fdc63511cabedd6415d121fa2d58.jpg"
-      // }
-      // const { roles, name, avatar } = data
-      // commit('SET_ROLES', roles)
-      // commit('SET_NAME', name)
-      // commit('SET_AVATAR', avatar)
-      // resolve(data)
       // 获取个人信息
       getInfoApi().then(response => {
-        const data = response
-        if (!data) {
+        const { data: { user } } = response
+        if (!user) {
           reject('需要重新登录')
         }
-        data.roles = [data.username]
-        const { username, role_id, user_guid,  image_url} = data
-        commit('SET_ROLES', [data.username])
-        commit('SET_USERNAME', username)
-        commit('SET_USERID', user_guid)
-        commit('SET_ROLEID', role_id)
-        commit('SET_USERINFO', data)
-        commit('SET_AVATAR', image_url)
-        resolve(data)
+        const { nickname, group, id} = user
+        commit('SET_ROLES', group.permissions)
+        commit('SET_USERNAME', nickname)
+        commit('SET_ROLEID', id)
+        resolve(group.permissions)
       }).catch(error => {
         reject(error)
       })
     })
-  },
-  // 登录方式
-  updateLoginWay ({ commit }, data) {
-    commit('SET_LOGINWAY', data)
   },
   // 登录方式
   getCode ({ commit }, data) {
@@ -115,16 +92,10 @@ const actions = {
   logout ({ commit, dispatch }) {
     return new Promise((resolve, reject) => {
       logoutApi().then((response) => {
-        // const { code } = response.data.data.meta
         commit('SET_USERNAME', '')
         commit('SET_ROLES', [])
-        // 清除cookie中的token
-        // removeToken()
-        // 清除username
-        removeUserName()
+        removeToken()
         resetRouter()
-        // 清除tags
-        dispatch('tagsView/delAllViews', null, { root: true })
         resolve()
       }).catch(error => {
         reject(error)
@@ -132,11 +103,11 @@ const actions = {
     })
   },
   // 重置所有token标识
-  resetUserInfo ({ commit }) {
+  resetToken ({ commit }) {
     return new Promise(resolve => {
       commit('SET_USERNAME', '')
       commit('SET_ROLES', [])
-      removeUserName()
+      removeToken()
       resolve()
     })
   },

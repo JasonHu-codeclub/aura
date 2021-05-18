@@ -38,12 +38,19 @@
                   </el-input>
                 </el-form-item>
                 <el-form-item label="" prop="password">
-                  <el-input type="password" show-password placeholder="请输入密码" v-model="ruleForm.password" >
+                  <el-input 
+                  type="password" 
+                  show-password 
+                  placeholder="请输入密码" 
+                  v-model="ruleForm.password" 
+                  @keyup.enter.native="handleLogin"
+                  >
                     <template slot="prepend"><svg-icon icon-class="password" slot="label" /></template>
                   </el-input>
                 </el-form-item>
                 <div class="submit-btn">
-                  <el-button type="primary" @click.native.prevent="handleLogin()" :loading="loginLoading">登录</el-button>
+                  <!-- :loading="loginLoading" -->
+                  <el-button type="primary" @click.native.prevent="handleLogin()" >登录</el-button>
                 </div>
               </el-form>
           </div>
@@ -130,18 +137,7 @@ export default {
           this.loginLoading = true
           this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((result) => {
             this.loginLoading = false
-            if(result.ret === '0'){
-              // 登录成功
-              this.$router.replace({ path: '/' })
-              console.log('login')
-            } else {
-              console.log('login222')
-              this.$message({
-                message: result.msg,
-                type: 'error'
-              })
-              return false
-            }
+            this.$router.replace({ path: '/' })
           })
         } 
       })

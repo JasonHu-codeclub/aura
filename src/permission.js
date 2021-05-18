@@ -11,7 +11,7 @@
  */
 import router from './router'
 import store from './store'
-import { getUserName } from './utils/auth'
+import { getToken } from './utils/auth'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/page-title'
@@ -25,20 +25,21 @@ router.beforeEach(async (to, from, next) => {
   // 动态设置标签页的title
   document.title = getPageTitle(to.meta.title)
   // 1.获得已经登录的包含用户信息的标识
-  const hasName = getUserName()
+  const hasToken = getToken()
   // 2.判断登录情况
-  if (hasName) {
+  if (hasToken) {
     if (to.path === '/login') {
       next({ path: '/' })
       NProgress.done()
     } else {
       // 2.1 判断当前用户的权限是否已生成
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      console.log(hasRoles,'hasRoles')
       if (hasRoles) {
         next()
       } else {
         try {
-          const { roles } = await store.dispatch('user/getInfo')
+          const roles  = await store.dispatch('user/getInfo')
           // 筛选后有权限的路由表
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
           // 动态生成路由

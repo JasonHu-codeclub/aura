@@ -10,6 +10,8 @@ import axios from 'axios'
 import { getHost } from './tool'
 import { getToken } from './auth'
 import store from '../store'
+import { Notification } from 'element-ui'
+
 // import qs from "qs" 
 
 // 创建axios实例
@@ -25,7 +27,7 @@ service.interceptors.request.use(config => {
   // 在发送请求之前进行一些处理
   if (store.getters.token) {
     // 让每个请求携带token--['X-Token']为自定义key 请根据实际情况自行修改
-    config.headers['X-Token'] = getToken()
+    config.headers['X-USER-TOKEN'] = getToken()
   }
   return config
 }, error => {
@@ -38,43 +40,50 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response => {
     // 任何在2xx范围的状态码都会触发此功能
-    return response.data
+    // return response.data
+    /* 常规请求 */
+    const { data, meta: { code, message } } = response.data
+    if (code !== 'RESP_OKAY') {
+      Notification({
+        title: '提示',
+        message: message,
+        type: 'error',
+        duration: 3 * 1000
+      })
+      return Promise.reject('error')
+    } else {
+      if (response.config.method !== 'get') {
+        Notification({
+          title: '提示',
+          message: message,
+          type: 'success',
+          duration: 3 * 1000
+        })
+      }
+      return response.data
+    }
   },
-  /**
-  * 下面的注释为通过response自定义code来标示请求状态，当code返回如下情况为权限有问题，登出并返回到登录页
-  * 如通过xmlhttprequest 状态码标识 逻辑可写在下面error中
-  */
-  //  const res = response.data;
-  //     if (res.code !== 20000) {
-  //       Message({
-  //         message: res.message,
-  //         type: 'error',
-  //         duration: 5 * 1000
-  //       });
-  //       // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
-  //       if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-  //         MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
-  //           confirmButtonText: '重新登录',
-  //           cancelButtonText: '取消',
-  //           type: 'warning'
-  //         }).then(() => {
-  //           store.dispatch('FedLogOut').then(() => {
-  //             location.reload();// 为了重新实例化vue-router对象 避免bug
-  //           });
-  //         })
-  //       }
-  //       return Promise.reject('error');
-  //     } else {
-  //       return response.data;
-  //     }
   error => {
-    // 任何超出2xx范围的状态码都会触发此功能
-    console.log('err' + error)// for debug
-    // Message({
-    //   message: error.message,
-    //   type: 'error',
-    //   duration: 5 * 1000
-    // })
+    // // 任何超出2xx范围的状态码都会触发此功能
+    // console.log('err' + error)// for debug
+    // // Message({
+    // //   message: error.message,
+    // //   type: 'error',
+    // //   duration: 5 * 1000
+    // // })
+    // return Promise.reject(error)
+    // console.log('err' + error.response.data)// for debug
+    Notification({
+      message: error.response.data.meta.message,
+      type: 'error',
+      duration: 3 * 1000
+    })
+    // 未经授权,回到登录页
+    if (error.response.data.meta.code === 'SECU_0001') {
+      store.dispatch('user/resetToken').then(() => {
+        location.reload()
+      })
+    }
     return Promise.reject(error)
   })
 
