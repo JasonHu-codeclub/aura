@@ -199,7 +199,7 @@ export function getReservableApi (data) {
 }
 
 // 预约会议
-export function appointment (data) {
+export function appointmentApi (data) {
   return request({
     url: '/appointment',
     method: "POST",

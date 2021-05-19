@@ -69,7 +69,7 @@
         <div class="filter-item-box">
            {{$t('labe.date')}}：
           <el-date-picker
-            v-model="searchData.chooseDate"
+            v-model="searchData.date"
             type="date"
             :placeholder="$t('placeholder.date')"
             value-format="yyyy-MM-dd"
@@ -101,13 +101,17 @@
             >{{$t('button.reset')}}</el-button
           >
         </div>
-      </div>
-
-      <!-- 预约 -->
-      <div class="filter-item">
+        
+        <!-- 添加预约 -->
         <div class="filter-item-box">
-           <!-- 单次预约 -->
-          <el-button
+            <el-dropdown size="medium" split-button type="primary" @click="handleClick">
+              {{$t('button.reservationSingle')}}
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>{{$t('button.reservationRepeat')}}</el-dropdown-item>
+                <el-dropdown-item>{{$t('button.reservationNext')}}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          <!-- <el-button
             type="primary"
             class="item-right-btn"
             :loading="btnLoading"
@@ -116,8 +120,15 @@
               !selectRowTime.time.endIndex &&
               selectRowTime.time.endIndex !== 0
             "
-            >{{$t('button.BookMeeting')}}</el-button>
+            >{{$t('button.BookMeeting')}}</el-button> -->
         </div>
+
+
+      </div>
+
+        <!-- 预约 -->
+        <div class="filter-item">
+        
         </div> 
       <!-- /预约 -->
       </div>
@@ -142,24 +153,41 @@
           align="center"
         >
           <template slot-scope="scope" >
+            <!-- 楼层 -->
             <div class="floor-number">
-              <span class="floor-number-dec">{{ scope.row.floor_num }}F</span>
+              <span class="floor-number-dec">{{ scope.row.num }}F</span>
               <i class="floor-number-icon"></i>
-            </div>
-            <div class="floor-number-people overhid">
-              <i class="floor-people-icon"></i>
-              <span class="floor-people-dec">{{scope.row.people_num}}</span>
             </div>
             <div class="floor-content">
               <div>
+                <!-- 会议室名字 -->
                 <div class="floor-name">{{ scope.row.name }}</div>
+                <!-- 支持的会议类型 -->
                 <div class="floor-device">
                     <span 
-                      v-for="(item, index) in scope.row.functionals" 
+                      v-for="(item, index) in scope.row.equipment" 
                       :key="index" 
                       class="floor-device-list">
-                      {{item.name}}
+                      {{item}}
                     </span>
+                </div>
+                <!-- 会议室图片 -->
+                <div class="floor-info">
+                  <div class="floor-info-img" v-viewer>
+                    <i class="el-icon-circle-plus-outline plus" @click="enlarge"></i>
+                    <img ref="floorImg" class="floor-info-image" :src="Host + scope.row.image" alt="">
+                  </div>
+                  <div class="floor-info-box">
+                    <div class="floor-info-approve">{{approveLevel[scope.row.approve_level]}}</div>
+                    <div class="floor-info-address">
+                      <i class="el-icon-caret-bottom address-icon"></i>
+                      <span class="address-text overhidden">{{scope.row.mansion.name}}</span>
+                    </div>
+                  </div>
+                  <div class="floor-number-people overhid">
+                    <i class="floor-people-icon"></i>
+                    <span class="floor-people-dec">{{scope.row.reservable}}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -170,7 +198,24 @@
           header-align="center"
         >
           <template slot="header" >
-            {{$t('message.times')}}
+            <div class="res-bottomt">
+              <span class="res-bottomt-box">
+                <i class="res-bottomt-label available"></i>
+                {{$t('message.Bookable')}}
+              </span>
+              <span class="res-bottomt-box">
+                <i class="res-bottomt-label expired"></i>
+                {{$t('message.Expired')}}
+              </span>
+              <span class="res-bottomt-box">
+                <i class="res-bottomt-label reserved"></i>
+                {{$t('message.Reserved')}}
+              </span>
+              <span class="res-bottomt-box">
+                <i class="res-bottomt-label selected"></i>
+                {{$t('message.Selected')}}
+              </span>
+            </div>
           </template>
           <template slot-scope="scope">
             <time-table-cell
@@ -180,25 +225,6 @@
           </template>
         </el-table-column>
       </el-table>
-      </div>
-      
-      <div class="res-bottomt">
-        <span class="res-bottomt-box">
-          <i class="res-bottomt-label available"></i>
-          {{$t('message.Bookable')}}
-        </span>
-        <span class="res-bottomt-box">
-          <i class="res-bottomt-label expired"></i>
-          {{$t('message.Expired')}}
-        </span>
-        <span class="res-bottomt-box">
-          <i class="res-bottomt-label reserved"></i>
-          {{$t('message.Reserved')}}
-        </span>
-        <span class="res-bottomt-box">
-          <i class="res-bottomt-label selected"></i>
-          {{$t('message.Selected')}}
-        </span>
       </div>
     </div>
     <!-- /表格 -->
@@ -226,6 +252,11 @@ export default {
   },
   data () {
     return {
+      srcList: [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+        'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
+      ],
+      Host: 'https://alc01.aa-iot.com/meeting', 
       tableLoading: false,
       btnLoading: false,
       searchData: {
@@ -235,7 +266,7 @@ export default {
         date: dayjs().format('YYYY-MM-DD'), // 选择时间
       },
       optionsFloor: [], // 大厦楼层
-      chooseFloor: [],
+      peopleNumList: [], // 容纳人数
       // tableHeight: 50,
       citys: [], // 已选择城市
       chooseCity: '',
@@ -253,6 +284,7 @@ export default {
         label: 'name',
         children: 'floor'
       }, 
+      approveLevel: ['无需审批', '一级审批 ', '二级审批'],
       currentPage4: 4,
       selectTimes: [],
       selectRowTime: {
@@ -291,24 +323,7 @@ export default {
       let continuity = true // 会议的边界
       let count = 0 // 记录一个会议室的场次
       this.meetingRooms.map((res, idx) => {
-        res.day = this.searchData.chooseDate
-        // 支持的会议类型
-        // res.functionals.map(value => {
-        //   switch(value.name) {
-        //     case '有电视':
-        //       value.className = 'local'
-        //       break;
-        //     case '有投影仪':
-        //       value.className = 'sof'
-        //       break;
-        //     case '有空调':
-        //       value.className = 'har'
-        //       break;
-        //     case '有会议屏':
-        //       value.className = 'phone'
-        //       break;
-        //   }
-        // })
+        res.day = this.searchData.date
         // 筛选出每个预约会议
         res.message.map((value, index) => {
           if( value.status === 1 ){
@@ -395,14 +410,19 @@ export default {
     },
     // 记录选择的时间
     recordSelectTime (obj, scope) {
-      if (this.selectRowTime.id !== '' && (this.selectRowTime.id !== scope.row.guid)) {
+      console.log(obj, scope,999)
+      if (this.selectRowTime.id !== '' && (this.selectRowTime.id !== scope.row.id)) {
         this.selectRowTime.time.startIndex = null
         this.selectRowTime.time.endIndex = null
         // TODO 清空其他行时间
       }
       this.selectRowTime.time = obj
-      this.selectRowTime.id = scope.row.guid
+      this.selectRowTime.id = scope.row.id
       this.selectRoomData = scope.row
+    },
+    // 单次预约
+    handleClick() {
+      console.log('button click');
     },
     // 添加预约
     async addReservation () {
@@ -490,6 +510,9 @@ export default {
       this.searchBtnStatus = true
       const result = await getAppointmentApi(params)
       this.meetingRooms = result.data.meeting_rooms
+      this.meetingRooms.map(res=>{
+        res.equipment = ['电子屏','投影仪','投影仪']
+      })
       // 清除选择的时间印记
       this.selectRowTime.time.startIndex = null
       this.selectRowTime.time.endIndex = null
@@ -510,6 +533,9 @@ export default {
       this.tableLoading = true
       const result = await getAppointmentApi(params)
         this.meetingRooms = result.data.meeting_rooms
+        this.meetingRooms.map(res=>{
+        res.equipment = ['电子屏','投影仪','投影仪']
+      })
       // 如果是预约成功后的刷新
       if (type === 'reserveSuccess') {
         // 清除选择的时间印记
@@ -532,7 +558,7 @@ export default {
     dateChange (value) {
       let that = this
       setTimeout(() => {
-        that.searchData.chooseDate = value || dayjs().format('YYYY-MM-DD')
+        that.searchData.date = value || dayjs().format('YYYY-MM-DD')
         that.searchMeetingRoom()
       }, 100);
     },
@@ -540,6 +566,10 @@ export default {
     handleNum(num) {
       let str = Number(num) / 60 > 1 ? `${Number(num) / 60}h`:`${num}分钟`
       return str
+    },
+    // + 点击图片放大
+    enlarge() {
+      this.$refs.floorImg.click()
     }
   },
   // 销毁定时器
@@ -549,7 +579,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-
+@import '../../../styles/variables.less';
 .filter {
     display: flex;
     align-items: flex-start;
@@ -575,17 +605,13 @@ export default {
       display: flex;
       margin: 0 20px 20px 0;
       align-items: center;
+      font-size: 14px;
       /deep/.el-input__inner{
          width: 180px;
-        height: 32px;
       }
       /deep/.el-button{
-        width: 80px;
-        height: 32px;
+        width: auto;
         font-size: 14px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
       }
       .item-right-btn{
         width: auto;
@@ -604,15 +630,25 @@ export default {
       /deep/.el-table{
         min-width: 800px;
       }
+      /deep/.el-table--medium th{
+        padding: 0;
+      }
+    }
+    /deep/.el-table--medium td{
+      padding: 0;
+    }
+    /deep/.el-table .cell{
+      padding: 0;
+      font-weight: normal;
     }
   }
-  .floor-name {
-    margin: 18px 0 4px;
-  }
+  // .floor-name {
+  //   margin: 18px 0 4px;
+  // }
   .floor-number{
       position: absolute;
       top: 0;
-      left: 0;
+      right: 0;
       width: 38px;
       height: 20px;
       text-align: center;
@@ -622,24 +658,24 @@ export default {
       .floor-number-dec{
         position: absolute;
         top: 2px;
-        left: 3px;
+        right: 3px;
         z-index: 100;
         color: #fff;
-        transform: rotate(-45deg);
+        transform: rotate(45deg);
         font-size: 12px;
       }
       .floor-number-icon {
         content: '';
         position: absolute;
         top: -4px;
-        left: -17px;
+        right: -17px;
         width: 0;
         height: 0;
         border-left: 26px solid transparent;
         border-right: 26px solid transparent;
         border-bottom: 26px solid #5c7bea;
         border-top: transparent;
-        transform: rotate(-45deg);
+        transform: rotate(45deg);
       }
   }
 
@@ -659,19 +695,16 @@ export default {
       background-size: contain;
       margin-right: 4px;
     }
-    .floor-people-dec{
-      
-    }
   }
   
   .floor-content{
-    min-height: 90px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: 72px;
     .floor-name{
-      font-size: 12px;
-      color: #384576;
+      font-size: 16px;
+      color: #43434D;
+      font-weight: bold;
+      text-align: left;
+      padding: 14px 10px 4px;
     }
     img.floor-image-item {
       display: block;
@@ -683,14 +716,15 @@ export default {
   }
   .floor-device{
     width: auto;
-    margin: 0 auto;
+    text-align: left;
+    padding: 10px 10px 14px;
     .floor-device-list{
       width: auto;
       height: 20px;
-      line-height: 18px;
+      line-height: 20px;
       display: inline-block;
       padding: 0 10px;
-      margin: 0 0 0 4px;
+      margin:0 10px 6px 0;
       border-radius: 16px;
       color: #9AABBE;
       font-size: 12px;
@@ -698,12 +732,72 @@ export default {
       border: 1px #E2E4EA solid;
     }
   }
+  .floor-info{
+    position: relative;
+    width: 100%;
+    padding: 2px 0 2px 50px;
+    .floor-info-img{
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 50px;
+      height: 50px;
+      transform: translateY(-50%);
+      .floor-info-image{
+        width: 50px;
+        height: 50px;
+        background: #eee;
+        cursor: pointer;
+      }
+      .plus{
+        position: absolute;
+        left: 2px;
+        bottom: 2px;
+        font-size: 14px;
+        color: #fff;
+        cursor: pointer;
+      }
+    }
+    
+    .floor-info-box{
+      height: 50px;
+      font-size: 12px;
+      text-align: left;
+      padding: 3px 0 2px 10px;
+      .floor-info-approve{
+        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+        color: @btnActiveBg;
+        padding: 0 16px;
+        background: #EEF1FC;
+        border-radius: 24px;
+        margin-bottom: 4px;
+      }
+      .floor-info-address{
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        .address-icon{
+          color: #5473E8;
+          font-size: 16px;
+        }
+        .address-text {
+            color: #7F93A8;
+            display: inline-block;
+            margin-left: 4px;
+        }
+      }
+      
+    }
+  }
 .res-bottomt{
      text-align: center;
-    margin-top: 26px;
     display: flex;
     justify-content: center;
     align-items: center;
+    float: left;
+    padding: 0 20px;
     .res-bottomt-box {
       display: flex;
       line-height: 35px;

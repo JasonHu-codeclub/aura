@@ -34,7 +34,6 @@ router.beforeEach(async (to, from, next) => {
     } else {
       // 2.1 判断当前用户的权限是否已生成
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
-      console.log(hasRoles,'hasRoles')
       if (hasRoles) {
         next()
       } else {

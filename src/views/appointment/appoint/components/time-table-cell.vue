@@ -6,15 +6,15 @@
   <div>
   <div class="time-cell-time" v-if="startIndex">选中：{{scope.row.day}}&nbsp;{{chooseDate}}&nbsp;{{$data.startTime}}&nbsp;至&nbsp;{{$data.endTime}}</div>
   <div class="time-cell" v-if="scope.row.message">
-    <div class="time-cell-list">
+    <div class="time-cell-list" :class="{fixed_wrap: scope.row.message.length == 48}">
       <div
         class="time-cell-content"
-        v-for="(item, index) in times"
+        v-for="(item, index) in scope.row.message"
         :key="index"
         @click="chooseTime(index)"
-        :class="{ outDate: outDateNum && index <= outDateNum }"
+        :class="{ outDate: outDateNum && index <= outDateNum, fixed_width: scope.row.message.length == 48}"
       >
-        <span class="time-cell-dec time-chil" v-if="item">{{ item }}</span>
+        <span class="time-cell-dec time-chil" v-if="item.is_hourly">{{ item.time }}</span>
         <span class="time-cell-box time-chil"></span>
         <span :class="['time-cell-active time-chil', 
         { active:startIndex === index || (endIndex !== null && index >= startIndex && index <= endIndex),
@@ -37,16 +37,8 @@
             </div>
             <div class="tip-list">
               <span class="tip-list-label">{{$t('message.endTime')}}：</span>
-              {{scope.row.message[index].stop_time}}
+              {{scope.row.message[index].end_time}}
             </div>
-            <!-- <div class="tip-list">
-              <span class="tip-list-label">会议时长：</span>
-              {{scope.row.message[index].long}}
-            </div> 
-            <div class="tip-list">
-              <span class="tip-list-label">会议类型：</span>
-              {{scope.row.message[index].type||$t('message.LocalMeetings')}}
-            </div>-->
           </div>
           <span slot="reference" :class="['time-cell-status time-chil', 
                 {meetings: scope.row.message[index].status === 1,
@@ -78,12 +70,47 @@ export default {
       errorStatus: true
     }
   },
+  props: {
+    recordSelectTime: Function,
+    scope: Object,
+    disabled: Boolean,
+    chooseDate: String
+  },
+  computed: {
+    forbidClick () {
+      return {
+        'pointerEvents': 'none'
+      }
+    },
+    // 不可预约时间状态
+    outDateNum () {
+      const date = dayjs().format('YYYY-MM-DD HH-mm-ss')
+      const time = date.split(' ')[1]
+      const message = this.scope.row.message
+      if (date.split(' ')[0] === this.scope.row.day) {
+        const hour = parseFloat(time.split('-')[0])
+        const minute = parseFloat(time.split('-')[1])
+        if(message.length == 48){
+          let num = hour * 2
+          num += minute > 30 ? 1 : (minute == '00' && hour!= 0 ? -1 : 0)
+          return String(num)
+        }else{
+          let num = (hour - 8) * 2
+          num += minute > 30 ? 1 : (minute == '00' && hour!= 8 ? -1 : 0)
+          return String(num)
+        }
+      } else {
+        return false
+      }
+    }
+  },
   methods: {
     showErrorStatus () {
       this.errorStatus = true
     },
     // 选择预约时间
     chooseTime (index) {
+      console.log(index,'index')
       // 时间格列表
       const messages = this.scope.row.message
       const timeStatus = messages.map((item, index) => {
@@ -139,33 +166,6 @@ export default {
       }
     }
   },
-  props: {
-    recordSelectTime: Function,
-    scope: Object,
-    disabled: Boolean,
-    chooseDate: String
-  },
-  computed: {
-    forbidClick () {
-      return {
-        'pointerEvents': 'none'
-      }
-    },
-    outDateNum () {
-      const date = dayjs().format('YYYY-MM-DD HH-mm-ss')
-      const time = date.split(' ')[1]
-      if (date.split(' ')[0] === this.scope.row.day) {
-        const hour = time.split('-')[0]
-        const minute = time.split('-')[1]
-        let num = (hour - 8) * 2
-        // num += minute > 30 ? 1 : 0
-        num += minute > 30 ? 1 : (minute == '00' && hour!= 8 ? -1 : 0)
-        return String(num)
-      } else {
-        return false
-      }
-    }
-  },
   created() {
   },
   mounted () {
@@ -192,10 +192,13 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  // overflow-x: scroll;
+  padding: 16px;
   .time-cell-list{
     display: flex;
     width: 100%;
+  }
+  .fixed_wrap{
+    flex-wrap: wrap;
   }
   .time-cell-content {
     position: relative;
@@ -304,6 +307,10 @@ export default {
         }
       }
     }
+  }
+  .fixed_width{
+    flex: auto;
+    width: 4.15%;
   }
 }
 .tip-list{
