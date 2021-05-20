@@ -104,11 +104,15 @@
         
         <!-- 添加预约 -->
         <div class="filter-item-box">
-            <el-dropdown size="medium" split-button type="primary" @click="handleClick">
+            <el-dropdown size="medium" 
+            split-button type="primary" 
+            @click="handleClick(1)"
+            disabled='true'
+            >
               {{$t('button.reservationSingle')}}
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>{{$t('button.reservationRepeat')}}</el-dropdown-item>
-                <el-dropdown-item>{{$t('button.reservationNext')}}</el-dropdown-item>
+                <el-dropdown-item @click.native="handleClick(2)">{{$t('button.reservationRepeat')}}</el-dropdown-item>
+                <el-dropdown-item @click.native="handleClick(3)">{{$t('button.reservationNext')}}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           <!-- <el-button
@@ -268,6 +272,77 @@
         <div class="room-content-r" :style="{backgroundImage: 'url('+ roomforms.image +')'}"></div>
       </div>
     </el-dialog>
+
+    <!-- 重复预约，跨日预约 -->
+    <el-dialog
+      :title="appointmentTitle"
+      :visible.sync="repeatNexdayDialog"
+      width="700px"
+      @closed="handleCloseAppointment">
+      <div class="appointment-box">
+        <div v-if="reservationType == 2">
+          <div class="appointment-box-item">
+            <span><i class="appo-labe-Symbol">*</i>重复预约类型</span>
+            <el-input v-model="repeatForm.repeatType" placeholder="请输入选择预约类型"></el-input>
+          </div>
+          <div class="appointment-box-item">
+            <span><i class="appo-labe-Symbol">*</i>重复截止时间</span>
+            <el-input v-model="repeatForm.repeatTime" placeholder="请输入预约截止时间"></el-input>
+          </div>
+        </div>
+        <!-- 跨日时间设置 -->
+        <div v-if="reservationType == 3">
+           <div class="appointment-box-item">
+            <span><i class="appo-labe-Symbol">*</i>开始时间</span>
+            <el-date-picker
+              v-model="nextDateForm.nextDate"
+              type="date"
+              class="edit-nex-input "
+              value-format="yyyy-MM-dd"
+              :picker-options="pickerOptions"
+              disabled
+              >></el-date-picker>
+              <el-time-select
+                class="edit-nex-select"
+                :placeholder="$t('message.startTime')"
+                v-model="nextDateForm.nextStartTime"
+                :picker-options="startTimesOptions"
+                @change="selectNextTimes(startTime, 'nexStartTime')"
+                disabled
+                >
+              </el-time-select>
+            <!-- <el-input v-model="nextDateForm.nextStartTime" placeholder="请输入选择预约类型"></el-input> -->
+          </div>
+          <div class="appointment-box-item">
+            <span><i class="appo-labe-Symbol">*</i>结束时间</span>
+            <el-date-picker
+              v-model="nextDateForm.nextEndDate"
+              type="date"
+              class="edit-nex-input"
+              value-format="yyyy-MM-dd"
+              :picker-options="repetPickerOptions"
+              @change="selectNextEndDate(ruleForm.cross_stop_date, 'nexDateStopTime')"
+              >></el-date-picker>
+              <el-time-select
+                class="edit-nex-select"
+                :placeholder="$t('message.endTime')"
+                v-model="nextDateForm.nextEndTime"
+                :picker-options="endTimesOptions"
+                @change="selectNextEndTime(endTime, 'nexStopTime')"
+                >
+              </el-time-select>
+            <span class="error stop-date" v-show="error.nexDateStopTime.isFocus">{{$t('message.selsectDate')}}</span>
+            <span class="select-tips stop-tips" v-show="error.nexStopTime.isFocus">{{$t('message.selectEndTime')}}</span>
+            
+            <!-- <el-input v-model="nextDateForm.nextEndTime" placeholder="请输入预约截止时间"></el-input> -->
+          </div>
+        </div>
+      </div>
+      <div class="dialog-bottom">
+         <el-button >取消</el-button>
+         <el-button type="primary" @click="addReservation">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -277,16 +352,13 @@ import TimeTableCell from './components/time-table-cell'
 import qs from 'querystring'
 import { mapGetters } from 'vuex'
 import { 
-  getCategoryApi, 
   getStatusApi,
-  reserveApi,
   getAppointmentApi,
   getEquipmentApi,
   getMansionFloorApi,
   getReservableApi,
   appointmentApi
 } from '@api/appoint'
-import { constants } from 'crypto'
 export default {
   components: {
     TimeTableCell, 
@@ -294,6 +366,35 @@ export default {
   data () {
     return {
       dialogVisible: false, // 会议室信息弹窗
+      repeatNexdayDialog: false, // 重复,跨日预约弹窗
+      appointmentTitle: '', // 预约弹窗,
+      reservationType: '', // 预约类型
+      repeatForm: { // 重复预约
+        repeatType: '', // 重复类型
+        repeatDate: ''// 重复截止日
+      },
+      nextDateForm: {  // 跨日预约
+        nextEndDate: '',
+        nextStartTime: '', // 开始时间
+        nextEndTime: ''// 结束时间
+      },
+      // 重复，跨日预约日期控制
+      repetPickerOptions: {
+        disabledDate: this.disabledDateRepet
+      },
+      startTimesOptions: { // 会议时间 开始时间配置
+        start: '08:00',
+        step: '00:30',
+        end: '19:30:00',
+        minTime: '',
+        maxTime: ''
+      },
+      endTimesOptions: { // 会议时间 结束时间配置
+        start: '08:30',
+        step: '00:30',
+        end: '20:00:00',
+        minTime: ''
+      },
       roomforms: '', // 会议室信息
       Host: 'https://alc01.aa-iot.com/meeting', 
       tableLoading: false,
@@ -432,6 +533,18 @@ export default {
     this.resizeHeight(100)
   },
   methods: {
+    // 跨日开始时间
+    selectNextTimes(){
+      
+    },
+    // 跨日结束日期
+    selectNextEndDate(dates, names) {
+      
+    },
+    // 跨日结束时间
+    selectNextEndTime(dates, names) {
+      
+    },
     // 大厦信息，楼层
     async getFloorList () {
       const result = await getMansionFloorApi()
@@ -460,25 +573,67 @@ export default {
       this.selectRowTime.id = scope.row.id
       this.selectRoomData = scope.row
     },
-    // 单次预约
-    handleClick() {
-      console.log('button click');
+    // 预约
+    handleClick(num) {
+      this.reservationType = num
+      if(num === 1){
+        this.addReservation()
+      } else if(num === 2){
+        this.repeatNexdayDialog = true
+        this.appointmentTitle = '重复预约时间设置'
+      } else {
+        this.repeatNexdayDialog = true
+        this.appointmentTitle = '跨日预约时间设置'
+      }
+    },
+    // 预约冲突判断
+    async conflictValidator(){
+      // this.repeatForm= { // 重复预约
+      //   repeatType: '', // 重复类型
+      //   repeatDate: ''// 重复截止日
+      // }
+      // nextDateForm: {  // 跨日预约
+      //   nextStartTime: '', // 开始时间
+      //   nextEndTime: ''// 结束时间
+      // },
+
+      let dataJson = {
+        start: '',	// date	预约最近一场开始时间
+        end: '',	// date	预约最近一场结束时间
+        meeting_room_id: '',	// number	会议室
+        category: '',	// number	预约类型 1单次预约 2重复预约 3跨日预约
+        repetition_type: '',	// number	重复类型 1=》每日，2=》每周，3=》每月
+        repetition_end_date: '',	// date	重复会议截止日期
+      }
+      const result = await conflictValidatorApi(dataJson)
+      
     },
     // 添加预约
     async addReservation () {
+      let repeType = ''
+      let endDate = ''
+      let startTime = `${this.selectRoomData.day} ${this.selectRowTime.time.startTime}:00`
+      let endTime = `${this.selectRoomData.day} ${this.selectRowTime.time.endTime}:00`
+      if(this.reservationType === 2){
+        repeType = this.repeatForm.repeatType
+        endDate = this.repeatForm.repeatDate
+      }
+      if(this.reservationType === 3) {
+        startTime = this.nextDateForm.nextStartTime
+        endTime = this.nextDateForm.nextEndTime
+      }
       const data = {
-        title: this.userInfo.nickname + '预约的会议',
-        start_time: `${this.selectRoomData.day} ${this.selectRowTime.time.startTime}:00`,
-        stop_time: `${this.selectRoomData.day} ${this.selectRowTime.time.endTime}:00`,
-        room_guid: this.selectRoomData.guid,
-
-        // meeting_room_id	是	number	会议室id
-        // category	是	number	1 单次预约 2重复预约 3跨日预约
-        // repetition_type	否	number	当category=2时才需要传 会议重复类型 1=》每日，2=》每周，3=》每月
-        // repetition_end_date	否	date	当category=2时才需要传 会议重复截止时间
-        // start	是	string	会议预约开始时间
-        // end	是	string	会议预约结束时间（category=2时结束时间只传当天截止））
-        // is_conflict	是	number	是否冲突 0否 1是
+        // title: this.userInfo.nickname + '预约的会议',
+        // start_time: `${this.selectRoomData.day} ${this.selectRowTime.time.startTime}:00`,
+        // stop_time: `${this.selectRoomData.day} ${this.selectRowTime.time.endTime}:00`,
+        // room_guid: this.selectRoomData.guid,
+        meeting_room_id: this.selectRoomData.id,	//是	number	会议室id
+        category: this.reservationType,	//是	number	1 单次预约 2重复预约 3跨日预约
+        repetition_type: repeType,	//否	number	当category=2时才需要传 会议重复类型 1=》每日，2=》每周，3=》每月
+        repetition_end_date: endDate,	//否	date	当category=2时才需要传 会议重复截止时间
+        start: startTime,	//是	string	会议预约开始时间
+        end: endTime,	//是	string	会议预约结束时间（category=2时结束时间只传当天截止））
+        is_conflict: '',	//是	number	是否冲突 0否 1是
       }
       this.btnLoading = true
       // 确定预约
@@ -614,6 +769,21 @@ export default {
       this.roomforms.image = this.Host + this.roomforms.image
     },
     handleClose() {
+    },
+    handleCloseAppointment() {
+      this.repeatForm= { // 重复预约
+        repeatType: '', // 重复类型
+        repeatDate: ''// 重复截止日
+      }
+      this.nextDateForm= {  // 跨日预约
+        nextStartTime: '', // 开始时间
+        nextEndTime: ''// 结束时间
+      }
+    },
+    // 最长重复时间段为180天 ，禁用开始日期之前的日期
+    disabledDateRepet(time) {
+      let startDate = dayjs(this.ruleForm.start_time.split(' ')[0]).valueOf() // 180天
+      return time.getTime() > startDate + 24 * 60 * 60 * 1000 * 180 || time.getTime() < startDate 
     }
   },
   // 销毁定时器

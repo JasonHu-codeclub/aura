@@ -198,6 +198,15 @@ export function getReservableApi (data) {
   })
 }
 
+// 会议冲突判断
+export function conflictValidatorApi (data) {
+  return request({
+    url: "/api/conflict-validator",
+    method: "get",
+    params: data
+  })
+}
+
 // 预约会议
 export function appointmentApi (data) {
   return request({
@@ -206,3 +215,4 @@ export function appointmentApi (data) {
     data
   })
 }
+
