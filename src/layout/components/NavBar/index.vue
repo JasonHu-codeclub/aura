@@ -35,7 +35,7 @@
           <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
+          <router-link to="/user">
             <el-dropdown-item>{{$t('message.personalCenter')}}</el-dropdown-item>
           </router-link> 
           <el-dropdown-item @click.native="dialogVisible=true">{{$t('message.setPassord')}}</el-dropdown-item>

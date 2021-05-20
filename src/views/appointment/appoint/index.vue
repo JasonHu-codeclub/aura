@@ -168,13 +168,13 @@
                       v-for="(item, index) in scope.row.equipment" 
                       :key="index" 
                       class="floor-device-list">
-                      {{item}}
+                      {{item.name}}
                     </span>
                 </div>
                 <!-- 会议室图片 -->
                 <div class="floor-info">
-                  <div class="floor-info-img" v-viewer>
-                    <i class="el-icon-circle-plus-outline plus" @click="enlarge"></i>
+                  <div class="floor-info-img" @click="roomInfo(scope.row)">
+                    <i class="el-icon-circle-plus-outline plus" ></i>
                     <img ref="floorImg" class="floor-info-image" :src="Host + scope.row.image" alt="">
                   </div>
                   <div class="floor-info-box">
@@ -226,11 +226,52 @@
         </el-table-column>
       </el-table>
       </div>
+      <div class="res-select-time" v-if="selectRowTime.time.startTime">选中：{{searchData.date}}&nbsp;{{selectRowTime.time.startTime}}&nbsp;至&nbsp;{{selectRowTime.time.endTime}}</div>
     </div>
     <!-- /表格 -->
+    
+    <!-- 会议详情 -->
+    <el-dialog
+      :title="$t('message.roomInfo')"
+      :visible.sync="dialogVisible"
+      width="700px"
+      @closed="handleClose">
+      <div class="room-content">
+        
+        <div class="room-content-l">
+          <div class="room-list">
+            <span class="room-list-labe">{{$t('labe.roomName')}}：</span>
+            <span class="room-list-value">{{roomforms.name}}</span>
+          </div>
+          <div class="room-list">
+            <span class="room-list-labe">{{$t('labe.numberPeople')}}：</span>
+            <span class="room-list-value">{{roomforms.reservable}}</span>
+            
+          </div>
+          <div class="room-list">
+            <span class="room-list-labe">{{$t('labe.approvalCriteria')}}：</span>
+            <span class="room-list-value">{{approveLevel[roomforms.approve_level]}}</span>
+          </div>
+          <div class="room-list">
+            <span class="room-list-labe">{{$t('labe.equipmentOfroom')}}：</span>
+            <span class="room-list-value">
+              <i 
+                v-for="(item, index) in roomforms.equipment" 
+                :key="index" 
+                class="floor-device-list">
+                {{item}}
+              </i>
+            </span>
+          </div>
+        </div>
+        
+        <div class="room-content-r" :style="{backgroundImage: 'url('+ roomforms.image +')'}"></div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+import testData from './components/test'
 import dayjs from 'dayjs'
 import TimeTableCell from './components/time-table-cell'
 import qs from 'querystring'
@@ -252,10 +293,8 @@ export default {
   },
   data () {
     return {
-      srcList: [
-        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
-        'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
-      ],
+      dialogVisible: false, // 会议室信息弹窗
+      roomforms: '', // 会议室信息
       Host: 'https://alc01.aa-iot.com/meeting', 
       tableLoading: false,
       btnLoading: false,
@@ -322,6 +361,8 @@ export default {
       let meetingArr = [] // 二维数组-记录每个会议室预定的会议
       let continuity = true // 会议的边界
       let count = 0 // 记录一个会议室的场次
+
+      // this.meetingRooms = testData.data.meeting_rooms
       this.meetingRooms.map((res, idx) => {
         res.day = this.searchData.date
         // 筛选出每个预约会议
@@ -410,7 +451,6 @@ export default {
     },
     // 记录选择的时间
     recordSelectTime (obj, scope) {
-      console.log(obj, scope,999)
       if (this.selectRowTime.id !== '' && (this.selectRowTime.id !== scope.row.id)) {
         this.selectRowTime.time.startIndex = null
         this.selectRowTime.time.endIndex = null
@@ -510,9 +550,9 @@ export default {
       this.searchBtnStatus = true
       const result = await getAppointmentApi(params)
       this.meetingRooms = result.data.meeting_rooms
-      this.meetingRooms.map(res=>{
-        res.equipment = ['电子屏','投影仪','投影仪']
-      })
+      // this.meetingRooms.map(res=>{
+      //   res.equipment = ['电子屏','投影仪','投影仪']
+      // })
       // 清除选择的时间印记
       this.selectRowTime.time.startIndex = null
       this.selectRowTime.time.endIndex = null
@@ -533,9 +573,9 @@ export default {
       this.tableLoading = true
       const result = await getAppointmentApi(params)
         this.meetingRooms = result.data.meeting_rooms
-        this.meetingRooms.map(res=>{
-        res.equipment = ['电子屏','投影仪','投影仪']
-      })
+      //   this.meetingRooms.map(res=>{
+      //   res.equipment = ['电子屏','投影仪','投影仪']
+      // })
       // 如果是预约成功后的刷新
       if (type === 'reserveSuccess') {
         // 清除选择的时间印记
@@ -567,9 +607,13 @@ export default {
       let str = Number(num) / 60 > 1 ? `${Number(num) / 60}h`:`${num}分钟`
       return str
     },
-    // + 点击图片放大
-    enlarge() {
-      this.$refs.floorImg.click()
+    // 会议室详情
+    roomInfo(row) {
+      this.dialogVisible = true
+      this.roomforms = JSON.parse(JSON.stringify(row))
+      this.roomforms.image = this.Host + this.roomforms.image
+    },
+    handleClose() {
     }
   },
   // 销毁定时器
@@ -640,6 +684,12 @@ export default {
     /deep/.el-table .cell{
       padding: 0;
       font-weight: normal;
+    }
+    .res-select-time{
+      color: #5473E8;
+      font-size: 14px;
+      text-align: center;
+      margin: 30px 0 0;
     }
   }
   // .floor-name {
@@ -809,22 +859,67 @@ export default {
           display: inline-block;
           width: 12px;
           height: 12px;
-          border: 1px #ddd solid;
           margin-right: 4px;
+          border: 1px #ddd solid;
       }
       .available{
         background-color: #ffffff;
       }
       .expired{
         background-color: #E7E9EE;
+        border-color: #E7E9EE;
       }
       .reserved{
         background-color: #A5B7F4;
+        border-color: #A5B7F4;
       }
       .selected{
         background-color: #5473E8;
+        border-color: #5473E8;
       }
     }
+
+    
 }
+
+.room-content{
+      display: flex;
+      justify-content: center;
+      .room-content-l{
+        position: relative;
+        .room-list {
+            margin-bottom: 14px;
+            color: #58585D;
+            font-size: 14px;
+            display: flex;
+            .room-list-labe {
+                display: inline-block;
+                flex-basis: 100px;
+                width: 100px;
+                text-align: right;
+            }
+            .room-list-value {
+                width: 260px;
+            }
+        }
+        &:after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            border-radius: 12px;
+            height: 160px;
+            background: #F5F8FF;
+        }
+      }
+      .room-content-r{
+        width: 230px;
+        height: 230px;
+        background-size: 100% 100%; 
+        background-repeat: no-repeat;
+      }
+    }
 
 </style>

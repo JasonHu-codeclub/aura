@@ -144,6 +144,21 @@ export const asyncRoutes = [
       }
     }]
   },
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/info',
+    children: [{
+      path: 'info',
+      component: () => import('@views/user'),
+      name: 'User',
+      meta: {
+        title: 'User',
+        affix: true
+      },
+      hidden: true
+    }]
+  },
   // appointment,
   // visit,
   

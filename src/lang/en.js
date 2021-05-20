@@ -12,7 +12,8 @@ export default {
     information: 'information',
     editorialMeeting: 'Edit Meeting',
     details: 'Meeting Details',
-    repeat: 'Recurring booking'
+    repeat: 'Recurring booking',
+    user: 'Personal Center'
     
   },
   navbar: {
@@ -28,6 +29,19 @@ export default {
     status: 'status',
     name: 'name',
     type: 'type',
+    roomName: 'Name',
+    approvalCriteria: 'Approval criteria',
+    equipmentOfroom: 'equipment',
+    Account: 'Account', 
+    Password: 'Password', 
+    RealName: 'Name', 
+    Gender: 'Gender', 
+    Birthday: 'Birthday', 
+    Department: 'Department', 
+    Position: 'Position', 
+    Telephone: 'Telephone', 
+    Email: 'Email', 
+    Role: 'role',
   },
   button: {
     search: 'Search',

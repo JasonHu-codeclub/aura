@@ -4,7 +4,7 @@
 
 <template>
   <div>
-  <div class="time-cell-time" v-if="startIndex">选中：{{scope.row.day}}&nbsp;{{chooseDate}}&nbsp;{{$data.startTime}}&nbsp;至&nbsp;{{$data.endTime}}</div>
+  <!-- <div class="time-cell-time" v-if="startIndex">选中：{{scope.row.day}}&nbsp;{{startTime}}&nbsp;至&nbsp;{{endTime}}</div> -->
   <div class="time-cell" v-if="scope.row.message">
     <div class="time-cell-list" :class="{fixed_wrap: scope.row.message.length == 48}">
       <div
@@ -56,18 +56,15 @@
 </template>
 <script>
 import dayjs from 'dayjs'
+
 export default {
   data () {
     return {
-      times: ['08:00', '', '09:00', '', '10:00', '', '11:00', '', '12:00',
-        '', '13:00', '', '14:00', '', '15:00', '', '16:00', '', '17:00',
-        '', '18:00', '', '19:00', ''],
-      startTime: null,
-      endTime: null,
-      startIndex: null,
-      endIndex: null,
-      // outDateNum: 0 // 过期时间个数
-      errorStatus: true
+      startTime: null, // 开始时间
+      endTime: null, // 结束时间
+      startIndex: null,// 开始时间下标
+      endIndex: null, // 结束时间下标
+      errorStatus: true // 时间冲突
     }
   },
   props: {
@@ -90,15 +87,10 @@ export default {
       if (date.split(' ')[0] === this.scope.row.day) {
         const hour = parseFloat(time.split('-')[0])
         const minute = parseFloat(time.split('-')[1])
-        if(message.length == 48){
-          let num = hour * 2
-          num += minute > 30 ? 1 : (minute == '00' && hour!= 0 ? -1 : 0)
-          return String(num)
-        }else{
-          let num = (hour - 8) * 2
-          num += minute > 30 ? 1 : (minute == '00' && hour!= 8 ? -1 : 0)
-          return String(num)
-        }
+        let minHorr = parseFloat(message[0].time)
+        let num = (hour - minHorr) * 2
+            num += minute > 30 ? 1 : (minute == '00' && hour!= minHorr ? -1 : 0)
+            return String(num)
       } else {
         return false
       }
@@ -110,7 +102,6 @@ export default {
     },
     // 选择预约时间
     chooseTime (index) {
-      console.log(index,'index')
       // 时间格列表
       const messages = this.scope.row.message
       const timeStatus = messages.map((item, index) => {
@@ -125,11 +116,11 @@ export default {
       if (this.startIndex === null || this.startIndex !== this.endIndex) {
         this.startTime = times[index].time
         this.startIndex = index
-        this.endTime = index === 23 ? '20:00' : times[index + 1].time
+        this.endTime = this.hanldTimes(times, index)
         this.endIndex = index
       } else {
         if (index > this.startIndex && index !== this.endIndex) {
-          this.endTime = index === 23 ? '20:00' : times[index + 1].time
+          this.endTime = this.hanldTimes(times, index)
           this.endIndex = index
         } else if (index === this.startIndex && this.startIndex === this.endIndex) {
           this.startTime = null
@@ -137,14 +128,14 @@ export default {
           this.startIndex = null
           this.endIndex = null
         } else if (index === this.startIndex) {
-          this.endTime = index === 23 ? '20:00' : times[index + 1].time
+          this.endTime = this.hanldTimes(times, index)
           this.endIndex = index
         } else if (index === this.endIndex) {
           this.startTime = times[index].time
           this.startIndex = index
         } else if (index < this.startIndex) {
           if (this.endTime === null) {
-            this.endTime = index === 23 ? '20:00' : times[index + 1].time
+            this.endTime = this.hanldTimes(times, index)
             this.startTime = times[index].time
             this.endIndex = this.startIndex
             this.startIndex = index
@@ -159,11 +150,29 @@ export default {
       if (this.startIndex && this.endIndex && period.some((item, index) => item === 1)) {
         this.startTime = times[index].time
         this.startIndex = index
-        this.endTime = index === 23 ? '20:00' : times[index + 1].time
+        this.endTime = this.hanldTimes(times, index)
         this.endIndex = index
       } else {
         this.recordSelectTime(this.$data, this.scope)
       }
+    },
+    // 末端时间处理
+    hanldTimes(times, index) {
+      let timeIndexVal = times[index].time
+      let timeName = ''
+      if(index == times.length-1) {
+        if(timeIndexVal !='23:30'){
+          timeName = Number(timeIndexVal.split(':')[0]) + 1 + ':00'
+          console.log(timeName,'timeName0')
+        }else{
+          timeName = '00:00'
+        console.log(timeName,'timeName1')
+        }
+      }else{
+        timeName = times[index + 1].time
+        console.log(timeName,'timeName2')
+      }
+      return timeName;
     }
   },
   created() {

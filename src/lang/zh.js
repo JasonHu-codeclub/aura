@@ -11,7 +11,8 @@ export default {
     information: '完善信息',
     editorialMeeting: '编辑会议',
     details: '会议详情',
-    repeat: '重复预约'
+    repeat: '重复预约',
+    user: '个人中心'
   },
   navbar: {
     title: '会议预约系统',
@@ -24,8 +25,21 @@ export default {
     equipment: '设备',
     date: '日期',
     status: '状态',
-    name: '名称',
+    Name: '名称',
     type: '发起方式',
+    roomName: '会议室名称',
+    approvalCriteria: '审批条件',
+    equipmentOfroom:'会议室设备',
+    Account: '账号',
+    Password: '密码',
+    RealName: '姓名',
+    Gender: '性别',
+    Birthday: '生日',
+    Department: '部门',
+    Position: '职位',
+    Telephone: '电话',
+    Email: '邮箱',
+    Role: '角色'
   },
   button: {
     search: '查询',
@@ -68,6 +82,7 @@ export default {
     newPassword: '请输入新的密码',
     againPassword: '请再次输入密码',
     roomInfo: '会议室信息',
+    
     times: '时间信息',
     Bookable: '可预约',
     Reserved: '已预约',
