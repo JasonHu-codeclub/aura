@@ -20,7 +20,7 @@ function resolve (dir) {
 const Timestamp = new Date().getTime();
 
 module.exports = {
-  publicPath: '/',
+  publicPath: '/pcmeet',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -39,7 +39,7 @@ module.exports = {
     proxy: {
       '/api': {
         // 本地
-        target: 'https://easy-mock.bookset.io/mock/603db604336b935f320f4957/api',
+        target: 'https://alc01.aa-iot.com/meeting/api',//'http://192.168.5.8',
         // 如果要代理 websockets
         ws: true,
         changeOrigin: true,

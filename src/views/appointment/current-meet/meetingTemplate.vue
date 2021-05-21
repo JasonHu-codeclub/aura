@@ -1,0 +1,514 @@
+ <template>
+  <div class="app-wrap invitation-wrap">
+    <!-- 搜索 -->
+    <div class="filter">
+      <div class="filter-item">
+        <!-- 日期 -->
+        <div class="filter-item-box">
+          {{$t('labe.date')}}：
+          <el-date-picker
+            v-model="chooseDate"
+            type="daterange"
+            class="choose-date"
+            :placeholder="$t('placeholder.date')"
+            size="mini"
+            value-format="yyyy-MM-dd"
+            :editable="false"
+            :picker-options="pickerOptions"
+            :start-placeholder="$t('message.startTime')"
+            :end-placeholder="$t('message.endTime')"
+            range-separator="-"
+            @change="dateChange"
+            >></el-date-picker>
+        </div>
+        <!-- 名称 -->
+        <div class="filter-item-box">
+          {{$t('labe.name')}}：
+          <el-input type="text" 
+          v-model="searchForm.title" 
+          :placeholder="$t('placeholder.nameTypes')"
+          @clear="getMyMeetingInfo"
+          clearable></el-input>
+        </div>
+        <!-- 状态 -->
+        <div class="filter-item-box">
+          {{$t('labe.status')}}：
+          <el-select
+            v-model="searchForm.status"
+            :placeholder="$t('message.status')"
+            @change="getMyMeetingInfo"
+            @clear="getMyMeetingInfo"
+            multiple
+            clearable
+          >
+            <el-option
+              v-for="item in statusList"
+              :key="item.key"
+              :label="item.name"
+              :value="item.key"
+            ></el-option>
+          </el-select>
+        </div>
+        <!-- 发起方式 -->
+        <div class="filter-item-box">
+           {{$t('labe.senderType')}}：
+          <el-select
+            v-model="searchForm.user_type"
+            :placeholder="$t('message.all')"
+            @change="getMyMeetingInfo"
+            @clear="getMyMeetingInfo"
+            clearable
+          >
+            <el-option
+              v-for="item in userList"
+              :key="item.key"
+              :label="item.name"
+              :value="item.key"
+            ></el-option>
+          </el-select>
+        </div>
+
+        <div class="filter-item-box">
+          <!-- 查询 -->
+          <el-button
+            type="primary"
+            class="search"
+            @click="getMyMeetingInfo"
+            :loading="searchBtnStatus"
+            >{{$t('button.search')}}</el-button
+          >
+        </div>
+      </div>
+    </div>
+    <!-- /搜索 -->
+
+    <div class="current-table">
+        <el-table
+          ref="table"
+          :data="myMeetingInfo"
+          :height="tableHeight-150"
+          tooltip-effect="light"
+          style="width: 100%"
+          header-row-class-name="table-header"
+          v-loading="dataLoading"
+        >
+         <!-- 序号 -->
+          <el-table-column
+            :label="$t('message.serial')"
+            type="index"
+            width="60"
+            align="center"
+          >
+          </el-table-column>
+          <!-- 主题 -->
+          <el-table-column
+            prop="title"
+            :label="$t('message.theme')"
+            align="center"
+            show-overflow-tooltip
+          ></el-table-column>
+          <!-- 会议时间 -->
+          <el-table-column
+            prop="start_time"
+            :label="$t('message.meetingTime')"
+            align="center"
+            width="280"
+            show-overflow-tooltip
+            >
+            <template slot-scope="scope">
+              <span >{{scope.row.meetingTime}}</span>
+            </template>
+          </el-table-column>
+          <!-- 会议室 -->
+          <el-table-column
+            prop="meeting_room_name"
+            :label="$t('message.room')"
+            align="center"
+          ></el-table-column>
+          <!-- 预约类型 -->
+          <el-table-column
+            prop="category"
+            :label="$t('message.AppointmentType')"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <span >{{categoryList[scope.row.category]}}</span>
+            </template>
+          </el-table-column>
+          <!-- 状态 -->
+          <el-table-column
+            prop="status"
+            :label="$t('message.meetingStatus')"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <span >{{statusList[scope.row.status]['name']}}</span>
+            </template>
+          </el-table-column>
+          <!-- 参会人数 -->
+          <el-table-column
+            prop="participant"
+            :label="$t('message.participantsNum')"
+            align="center"
+          >
+          </el-table-column>
+          <!-- 发起人 -->
+          <el-table-column
+            prop="user_name"
+            :label="$t('message.sender')"
+            width="120"
+            align="center"
+          ></el-table-column>
+          <!-- 操作 -->
+          <el-table-column
+            :label="$t('message.operation')"
+            :width="dataType == 1 ? 140 : 80"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <el-button 
+                type="text" 
+                v-if="dataType==1"
+                @click="deleteMeeting(scope.row)">
+                <span v-if="scope.row.status!==0">{{$t('button.meetingClosed')}}</span>
+                <span v-else>{{ $t("button.cancel") }}</span>
+              </el-button>
+              <el-button
+                type="text"
+                @click="detailsMeet(scope.row)">
+                {{ $t("button.details") }}
+              </el-button>
+              <el-button
+                type="text"
+                v-if="dataType==1"
+                @click="editMeetingInfo('edit', scope.row)">
+                {{ $t("button.edit") }}
+              </el-button>
+              
+            </template>
+          </el-table-column>
+        </el-table>
+        <pagination
+          :total="total"
+          :background='false'
+          :page.sync="paginationQuery.page"
+          :limit.sync="paginationQuery.limit"
+          @change="getMyMeetingInfo"
+        />
+    </div>
+    <!-- 取消会议 -->
+    <dialog-cancel ref="cancel" :content="cancelContent" :title="cancelTitle" :btnLoading="deleteBtnLoading" @handleClose="handleClose" @hanldConfirm="hanldDeleteMeeting"></dialog-cancel>
+  </div>
+</template>
+ <script>
+ import {myMeetingListApi, cancelMeetingApi, cancelRepeMeetingApi} from '@/api/appoint'
+ import Pagination from '@/components/Pagination'
+ import dialogCancel from './components/dialogCancel'
+ import qs from 'querystring' 
+export default {
+  components: { Pagination , dialogCancel},// 分页
+  data () {
+    return {
+      isCurrent: 1,
+      searchForm:{
+        // start_date: '',	// 开始时间
+        // end_date: '', // 结束时间
+        user_type: '',	// 用户类型
+        status: [],	// 状态
+        title: '' // 会议名称
+      },
+      chooseDate: null, // 日期
+      statusList: [ // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
+        {key: 0, name: '审批中'},
+        {key: 1, name: '会议中'},
+        {key: 2, name: '未开始'},
+        {key: 3, name: '已结束'},
+        {key: 4, name: '已拒绝'},
+        {key: 5, name: '已取消'},
+        {key: 6, name: '过期未审批'},
+      ],
+      userList: [
+        {key: 1, name: '发起人'},
+        {key: 2, name: '参会人'}
+      ],
+      paginationQuery: { 
+        page: 1, // 当前页
+        limit: 10, // 每页显示条目个数
+      },
+      pickerOptions: {// 控制日期选择
+        disabledDate (time) {
+          // return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
+        }
+      },
+      categoryList: {
+        1: '单次预约',
+        2: '重复预约',
+        3: '跨日预约',
+      },
+      total: 0,// 总页数
+      searchBtnStatus: false,// 查询loading
+      myMeetingInfo: [],// 列表数据
+      selectCurrentRowData: {},// 会议状态
+      deleting: false, // 取消按钮状态
+      dataLoading: false,// 列表loading
+      cancelTitle: '',// 弹窗title
+      cancelContent: '',// 弹窗内容
+      deleteBtnLoading: false,// 弹窗确认loading
+    }
+  },
+  props: {
+    dataType: {
+      require: true,
+      type: Number
+    }
+  },
+  mounted () { 
+    // 获取数据
+    this.getMyMeetingInfo()
+    this.resizeHeight(100)
+  },
+  methods: {
+     // 选择日期
+    dateChange (value) {
+      this.getMyMeetingInfo()
+    },
+    // 获取列表数据
+    async getMyMeetingInfo () {
+      let params = { 
+        page: this.paginationQuery.page,	// 当前页
+        size: this.paginationQuery.limit,
+        type: this.dataType,
+        start_date: this.chooseDate ? this.chooseDate[0] : '',
+        end_date: this.chooseDate ? this.chooseDate[1] : '',
+        ...this.searchForm
+      }
+      this.dataLoading = true
+      const result = await myMeetingListApi(params)
+      let meetings = result.data.meetings
+      meetings.map( v => {
+        v.meetingTime = `${v.date} ${v.start} ${v.end}`
+      })
+      this.myMeetingInfo = meetings
+      this.total = result.data.total// 总条数 
+      this.dataLoading = false
+    },
+    // 详情
+    detailsMeet(row) {
+      // 判断单次还是重复预约
+      let meetType = !!row.repe_type && row.repe_type!=4 ? '/reapetMeet':'/detailsMeet' // repe_type: 单次：0 ，重复预约：1每日 2每周 3每月
+      this.$router.push({
+        path: meetType,
+        query: {
+          menu: 'current',
+          guid: row.guid,
+          outEventId : row.out_event_id
+        }
+      })
+    },
+    // 编辑会议
+    editMeetingInfo (type, data) {
+      if (data.status !== 0 && type === 'edit') {
+        this.$alert(this.$t('message.meetingProgress'), this.$t('message.tips'), {
+          confirmButtonText: this.$t('button.confirm')
+        }).catch(()=>{})
+        return false
+      }
+      // 跳转编辑页
+      this.$router.push({
+        path: '/editMeeting',
+        query: {
+          guid: data.guid,//result.guid, // 预约会议id
+          outEventId: data.out_event_id
+        }
+      })
+    },
+    // 取消/结束会议
+    deleteMeeting (data) {
+      this.$refs.cancel.dialogVisible= true
+      this.selectCurrentRowData = data
+      // status: 0未开始 1会议中
+      if(data.status === 0){
+        this.cancelTitle = this.$t('message.cancelTips')
+        this.cancelContent = `${this.$t('message.canceltipsContentDec')}<br/>${this.$t('message.cancelContent')}`
+      }else{
+        this.cancelTitle = this.$t('message.endTips')
+        this.cancelContent = `${this.$t('message.endTipsDec')}<br/>${this.$t('message.endContent')}`//this.$t('message.closeMeet')
+      }
+    },
+    // 取消会议请求
+    async hanldDeleteMeeting() {
+      let data = this.selectCurrentRowData
+      // return
+      //重复预约、单次预约 repe_type: 0单次 0<重复
+        let ajaxName = ''
+        let params = ''
+        if(data.repe_type === 0 || data.repe_type === 4 ){
+          ajaxName = cancelMeetingApi // 单次预约取消
+          params = { guid: data.guid }
+        }else{
+          ajaxName = cancelRepeMeetingApi// 重复预约整体取消
+          params = { repe_guid: data.out_event_id }
+        }
+        // 取消/结束会议成功提示
+        let msgSuccess = data.status === 0 ? this.$t('message.deleteSuccess') : this.$t('message.endSuccess')
+        this.deleteBtnLoading = true // 确认按钮loading
+        const result = await ajaxName(qs.stringify(params))
+        this.deleteBtnLoading = false // 确认按钮loading
+        if (result.ret === '0') {
+          this.$message({
+            message: msgSuccess,
+            type: 'success'
+          })
+          this.getMyMeetingInfo()
+          this.$refs.cancel.dialogVisible = false // 弹框
+        }else{
+          this.$message({
+            message: result.msg,
+            type: 'warning'
+          })
+        }
+    },
+    handleClose() {
+      this.cancelTitle = ''
+      this.cancelContent = ''
+    }
+  },
+  created () { },
+  beforeCreate () { },
+  beforeMount () { },
+  beforeUpdate () { },
+  updated () { },
+  beforeDestroy () { }
+}
+ </script>
+<style lang='less' scoped>
+
+.invitation-wrap {
+  .filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    padding: 20px 0 0;
+    .filter-item{
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-item-box{
+      display: flex;
+      margin: 0 20px 20px 0;
+      align-items: center;
+      /deep/.el-input__inner{
+        width: 180px;
+        height: 32px;
+        line-height: 32px;
+      }
+      /deep/.el-button{
+        width: 80px;
+        height: 32px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .current-table{
+    overflow-y: hidden;
+    overflow-x: hidden;
+    .meeting-time{
+       display: block;
+    }
+  }
+
+  /deep/.table-header{
+  th{
+    background: #F6F7FC !important;
+  }
+}
+/deep/.el-table--medium td, .el-table--medium th{
+  padding: 6px 0;
+  font-size: 14px;
+  color: #56697D;
+}
+/deep/.el-table {
+  .el-table__header-wrapper {
+    .el-table__header {
+      tr {
+        th {
+          background-color: white;
+          font-weight: normal;
+          font-size: 14px;
+          padding: 7px 0;
+          color: #384677;
+          // color: white;
+          &.is-leaf {
+            // border-bottom: 1px solid white;
+          }
+        }
+      }
+    }
+  }
+   
+  .el-table__body-wrapper {
+    .el-table__body {}
+  }
+}
+  /deep/.el-dialog__header{
+    padding: 0;
+  }
+  /dedp/.el-dialog__headerbtn{
+    top: 25px;
+  }
+  /deep/.el-dialog__header{
+    border: none !important;
+  }
+  /deep/.el-dialog__body{
+    padding: 25px 10px 12px 33px;
+    .cancel-tips{
+      font-size: 16px;
+      color: #43434D;
+      .ancel-title-icon{
+        display: inline-block;
+        width: 26px;
+        height: 24px;
+        background: url('../../../assets/icon/warning.png') no-repeat;
+        background-size: 100% 100%;
+      }
+      .cancel-title{
+        color: #43434D;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        .ancel-title-text {
+            margin-left: 11px;
+        }
+      }
+      .cancel-content {
+        padding-left: 36px;
+        margin-top: 12px;
+        line-height: 30px;
+      }
+    }
+  }
+  /deep/.el-dialog__footer{
+     .el-button--medium {
+      padding: 12px 23px !important;
+    }
+
+    .el-button+.el-button {
+      margin-left: 20px;
+    }
+    .el-button--primary {
+      background-color: #FF5B5B;
+      border-color: #FF5B5B;
+    }
+
+    .el-button--primary:focus, .el-button--primary:hover {
+      background: #cc2121;
+      border-color: #cc2121;
+      color: #FFF;
+    }
+  }
+}
+</style>

@@ -159,6 +159,7 @@ export const asyncRoutes = [
       hidden: true
     }]
   },
+  
   // appointment,
   // visit,
   

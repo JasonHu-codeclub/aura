@@ -42,6 +42,9 @@ export default {
     Telephone: 'Telephone', 
     Email: 'Email', 
     Role: 'role',
+    repeatType: 'Repeat Type',
+    repeatTime: 'deadline',
+    senderType: 'sender type'
   },
   button: {
     search: 'Search',
@@ -83,6 +86,7 @@ export default {
     newPassword: 'Please enter a new password',
     againPassword: 'Please enter the password again',
     roomInfo: 'Conference room information',
+    room: 'Conference Room',
     times: 'Time information',
     Bookable: 'Available',
     Expired: 'Expired',
@@ -131,6 +135,7 @@ export default {
     meetArea: 'Meeting Area',
     promptMeetArea: 'Please select Area',
     participants: 'Participants',
+    participantsNum: 'Participants num',
     promptNumber: 'Please enter Number',
     otherInformation: 'Other information',
     propertyServices: 'Sroperty Service',
@@ -173,7 +178,8 @@ export default {
     Sessions: 'Reserve Meeting',
     qrcode: 'Wechat applet',
     qecodeDec: 'Use wechat scan code to open wechat applet for meeting reservation',
-    NumberOfMeetings: 'Number of meetings'
+    NumberOfMeetings: 'Number of meetings',
+    conflictTips: 'Conflict appointment',
   },
   placeholder: {
     MeetingFloor: 'Floor',
@@ -196,7 +202,9 @@ export default {
     sender: 'sponsor',
     validateTheme: 'Conference Theme',
     conferenceInfor: 'Conference Infor',
-    companiesNum: 'Please enter the number of participating companies'
+    companiesNum: 'Please enter the number of participating companies',
+    selectType: 'Please select appointment type',
+    nameTypes: 'theme/sender/attendee'
   },
   tip: {
     userNameNotEmpty: 'Username can not be empty',

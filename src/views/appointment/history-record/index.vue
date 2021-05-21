@@ -10,34 +10,13 @@
   历史记录
  */
 
- <template>
-  <div class="app-container">历史记录</div>
+<template>
+  <meeting-template :data-type="2" />
 </template>
- <script>
+<script>
+import meetingTemplate from '../current-meet/meetingTemplate'
 export default {
-  components: {},
-  data () {
-    return {
-
-    }
-  },
-  computed: {},
-  watch: {},
-  methods: {
-
-  },
-  created () {
-
-  },
-  mounted () {
-
-  },
-  beforeCreate () { },
-  beforeMount () { },
-  beforeUpdate () { },
-  updated () { },
-  beforeDestroy () { }
+  name: 'historyRecord',
+  components: { meetingTemplate }
 }
- </script>
- <style lang='less' scoped>
-</style>
+</script>

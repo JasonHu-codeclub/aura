@@ -10,7 +10,7 @@ import axios from 'axios'
 import { getHost } from './tool'
 import { getToken } from './auth'
 import store from '../store'
-import { Notification } from 'element-ui'
+import { Notification, message } from 'element-ui'
 
 // import qs from "qs" 
 
@@ -44,40 +44,41 @@ service.interceptors.response.use(
     /* 常规请求 */
     const { data, meta: { code, message } } = response.data
     if (code !== 'RESP_OKAY') {
-      Notification({
-        title: '提示',
+      // Notification({
+      //   title: '提示',
+      //   message: message,
+      //   type: 'error',
+      //   duration: 3 * 1000
+      // })
+      message({
         message: message,
         type: 'error',
         duration: 3 * 1000
-      })
+      });
       return Promise.reject('error')
     } else {
       if (response.config.method !== 'get') {
-        Notification({
-          title: '提示',
-          message: message,
-          type: 'success',
-          duration: 3 * 1000
-        })
+        // Notification({
+        //   title: '提示',
+        //   message: message,
+        //   type: 'success',
+        //   duration: 3 * 1000
+        // })
       }
       return response.data
     }
   },
   error => {
-    // // 任何超出2xx范围的状态码都会触发此功能
-    // console.log('err' + error)// for debug
-    // // Message({
-    // //   message: error.message,
-    // //   type: 'error',
-    // //   duration: 5 * 1000
-    // // })
-    // return Promise.reject(error)
-    // console.log('err' + error.response.data)// for debug
-    Notification({
+    // Notification({
+    //   message: error.response.data.meta.message,
+    //   type: 'error',
+    //   duration: 3 * 1000
+    // })
+    message({
       message: error.response.data.meta.message,
       type: 'error',
       duration: 3 * 1000
-    })
+    });
     // 未经授权,回到登录页
     if (error.response.data.meta.code === 'SECU_0001') {
       store.dispatch('user/resetToken').then(() => {

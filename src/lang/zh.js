@@ -25,7 +25,7 @@ export default {
     equipment: '设备',
     date: '日期',
     status: '状态',
-    Name: '名称',
+    name: '名称',
     type: '发起方式',
     roomName: '会议室名称',
     approvalCriteria: '审批条件',
@@ -39,7 +39,10 @@ export default {
     Position: '职位',
     Telephone: '电话',
     Email: '邮箱',
-    Role: '角色'
+    Role: '角色',
+    repeatType: '重复预约类型',
+    repeatTime: '重复截止时间',
+    senderType: '发起方式',
   },
   button: {
     search: '查询',
@@ -82,7 +85,7 @@ export default {
     newPassword: '请输入新的密码',
     againPassword: '请再次输入密码',
     roomInfo: '会议室信息',
-    
+    room: '会议室',
     times: '时间信息',
     Bookable: '可预约',
     Reserved: '已预约',
@@ -131,6 +134,7 @@ export default {
     meetArea: '会议地区',
     promptMeetArea: '请选择会议地区',
     participants: '参会方',
+    participantsNum: '参会人数',
     companiesNum: '请填写参会公司数量',
     promptNumber: '请输入数量',
     otherInformation: '其他信息',
@@ -173,7 +177,8 @@ export default {
     Sessions: '场',
     qrcode: '微信小程序',
     qecodeDec: '使用微信扫码打 开会议预约微信 小程序',
-    NumberOfMeetings: '会议数量'
+    NumberOfMeetings: '会议数量',
+    conflictTips: '冲突预约'
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',
@@ -198,7 +203,10 @@ export default {
     conferenceInfor: '会议信息',
     department: '请选择部门',
     companiesNum: '数量',
-
+    selectType: '请选择预约类型',
+    nameTypes: '会议主题/发起人/参会人',
+    startDate: '开始日期',
+    endDate: '结束时间'
   },
   tip: {
     userNameNotEmpty: '用户名不能为空',
