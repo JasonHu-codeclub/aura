@@ -1,11 +1,3 @@
-/*
- * Created: 2021-03-24 09:42:58
- * Author : Jan
- * Last Modified: 2021-03-24 10:39:31
- * Modified By: Jan
- * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
- */
-
 /**
   会议服务
  */

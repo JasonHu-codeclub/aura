@@ -89,15 +89,48 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/current/current_list',
     children: [{
-      path: 'current_list',
-      component: () => import('@views/appointment/current-meet'),
-      name: 'CurrentMeet',
-      meta: {
-        title: 'current',
-        icon: 'current',
-        affix: false
-      }
-    }]
+        path: 'current_list',
+        component: () => import('@views/appointment/current-meet'),
+        name: 'CurrentMeet',
+        meta: {
+          title: 'current',
+          icon: 'current',
+          affix: false
+        }
+      },
+      {
+        path: 'details/:menu/:id',
+        component: () => import('@views/appointment/current-meet/details'),
+        name: 'Details',
+        hidden: true,
+        meta: {
+          title: 'detailsMeet',
+          affix: false,
+          activeMenu: '/current/current_list'
+        }
+      },
+      {
+          path: 'repeat/:menu/:id',
+          component: () => import('@views/appointment/current-meet/repeat'),
+          name: 'Repeat',
+          hidden: true,
+          meta: {
+            title: 'repeatMeet',
+            affix: false,
+            activeMenu: '/current/current_list'
+          }
+      },
+      {
+          path: 'edit/:id',
+          component: () => import('@views/appointment/current-meet/edit'),
+          name: 'Edit',
+          hidden: true,
+          meta: {
+            title: 'editMeet',
+            affix: false
+          }
+      },
+    ]
   },
   {
     path: '/history',
@@ -153,8 +186,8 @@ export const asyncRoutes = [
       component: () => import('@views/user'),
       name: 'User',
       meta: {
-        title: 'User',
-        affix: true
+        title: 'user',
+        affix: false
       },
       hidden: true
     }]

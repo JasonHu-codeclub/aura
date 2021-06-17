@@ -81,6 +81,7 @@ service.interceptors.response.use(
     });
     // 未经授权,回到登录页
     if (error.response.data.meta.code === 'SECU_0001') {
+      return
       store.dispatch('user/resetToken').then(() => {
         location.reload()
       })

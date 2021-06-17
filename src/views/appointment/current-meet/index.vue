@@ -8,9 +8,9 @@
   <meeting-template :data-type="1" />
 </template>
 <script>
-import meetingTemplate from './meetingTemplate'
+import meetingTemplate from './components/meet-list'
 export default {
-  name: 'EntityAdd',
+  name: 'current',
   components: { meetingTemplate }
 }
 </script>

@@ -46,6 +46,12 @@
         </div>
         
     </div>
+    
+    <div class="user-image">
+      <div class="user-image-item" :style="{backgroundImage: 'url('+imgUrl+')'}"></div>
+      <div class="user-image-name">{{userForm.name}}</div>
+    </div>
+    
   </div>
 </template>
 
@@ -54,8 +60,10 @@ import { getInfoApi } from '@/api/user'
 export default {
   data(){
     return {
+      baseURL: process.env.NODE_ENV === 'development' ? 'https://alc01.aa-iot.com/' : getHost(),
       userForm: {},
-      sexList: ['女', '男']
+      sexList: ['女', '男'],
+      imgUrl: ''
     }
   },
   mounted() {
@@ -66,6 +74,7 @@ export default {
     async getUserInfo() {
        const result = await getInfoApi()
        this.userForm = result.data.user
+       this.imgUrl = this.baseURL + this.userForm.thumb_avatar
     },
     /*修改密码*/ 
     setPassword() {
@@ -99,5 +108,23 @@ export default {
         margin-left: 20px;
         cursor: pointer;
     }
+}
+.user-image{
+   position: absolute;
+   top: 30px;
+   right: 130px;
+   width: 180px;
+   .user-image-item{
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background-size: cover;
+   }
+   .user-image-name {
+      text-align: center;
+      padding: 18px 0;
+      color: #43434D;
+      font-size: 18px;
+   }
 }
 </style>

@@ -10,10 +10,11 @@ export default {
     service: 'service',
     overview: 'Data overview',
     information: 'information',
-    editorialMeeting: 'Edit Meeting',
-    details: 'Meeting Details',
+    editMeet: 'Edit Meeting',
+    detailsMeet: 'Meeting Details',
     repeat: 'Recurring booking',
-    user: 'Personal Center'
+    user: 'Personal Center',
+    repeatMeet: 'Repeat meeting'
     
   },
   navbar: {
@@ -31,7 +32,10 @@ export default {
     type: 'type',
     roomName: 'Name',
     approvalCriteria: 'Approval criteria',
+    meetAddress: 'Address',
     equipmentOfroom: 'equipment',
+    AppointmentType: 'Reservation type',
+    meetInfo: 'Meeting info',
     Account: 'Account', 
     Password: 'Password', 
     RealName: 'Name', 
@@ -180,6 +184,10 @@ export default {
     qecodeDec: 'Use wechat scan code to open wechat applet for meeting reservation',
     NumberOfMeetings: 'Number of meetings',
     conflictTips: 'Conflict appointment',
+    open: 'open',
+    private: 'private',
+    Refreshment: 'Refreshment services',
+    equipmentServices: 'Equipment services'
   },
   placeholder: {
     MeetingFloor: 'Floor',

@@ -5,7 +5,7 @@
       <div class="filter-item">
         <!-- 日期 -->
         <div class="filter-item-box">
-          {{$t('labe.date')}}：
+          <span>{{$t('labe.date')}}：</span>
           <el-date-picker
             v-model="chooseDate"
             type="daterange"
@@ -23,7 +23,7 @@
         </div>
         <!-- 名称 -->
         <div class="filter-item-box">
-          {{$t('labe.name')}}：
+          <span>{{$t('labe.name')}}：</span>
           <el-input type="text" 
           v-model="searchForm.title" 
           :placeholder="$t('placeholder.nameTypes')"
@@ -32,7 +32,7 @@
         </div>
         <!-- 状态 -->
         <div class="filter-item-box">
-          {{$t('labe.status')}}：
+          <span>{{$t('labe.status')}}：</span>
           <el-select
             v-model="searchForm.status"
             :placeholder="$t('message.status')"
@@ -51,7 +51,7 @@
         </div>
         <!-- 发起方式 -->
         <div class="filter-item-box">
-           {{$t('labe.senderType')}}：
+           <span>{{$t('labe.senderType')}}：</span>
           <el-select
             v-model="searchForm.user_type"
             :placeholder="$t('message.all')"
@@ -151,6 +151,9 @@
             :label="$t('message.participantsNum')"
             align="center"
           >
+          <template slot-scope="scope">
+            <span class="part_num">{{scope.row.participant}}</span>
+          </template>
           </el-table-column>
           <!-- 发起人 -->
           <el-table-column
@@ -166,6 +169,7 @@
             align="center"
           >
             <template slot-scope="scope">
+              <!-- 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批 -->
               <el-button 
                 type="text" 
                 v-if="dataType==1"
@@ -203,7 +207,7 @@
  <script>
  import {myMeetingListApi, cancelMeetingApi, cancelRepeMeetingApi} from '@/api/appoint'
  import Pagination from '@/components/Pagination'
- import dialogCancel from './components/dialogCancel'
+ import dialogCancel from './dialogCancel'
  import qs from 'querystring' 
 export default {
   components: { Pagination , dialogCancel},// 分页
@@ -294,14 +298,13 @@ export default {
     },
     // 详情
     detailsMeet(row) {
-      // 判断单次还是重复预约
-      let meetType = !!row.repe_type && row.repe_type!=4 ? '/reapetMeet':'/detailsMeet' // repe_type: 单次：0 ，重复预约：1每日 2每周 3每月
+      // 判断单次还是重复预约 category会议类型 1=》单次预约，2=》重复预约 ，3=》跨日预约
+      let meetType = !!row.category && row.category == 2 ? 'Repeat':'Details' 
       this.$router.push({
-        path: meetType,
-        query: {
+        name: meetType,
+        params: {
           menu: 'current',
-          guid: row.guid,
-          outEventId : row.out_event_id
+          id: row.id
         }
       })
     },
@@ -395,6 +398,9 @@ export default {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
+      /deep/.el-input{
+        width: auto;
+      }
     }
     .filter-item-box{
       display: flex;
@@ -402,8 +408,7 @@ export default {
       align-items: center;
       /deep/.el-input__inner{
         width: 180px;
-        height: 32px;
-        line-height: 32px;
+        height: 36px;
       }
       /deep/.el-button{
         width: 80px;
@@ -418,6 +423,15 @@ export default {
     overflow-x: hidden;
     .meeting-time{
        display: block;
+    }
+    .part_num{
+      display: flex;
+      width: 50px;
+      height: 24px;
+      border-radius: 20px;
+      justify-content: center;
+      align-items: center;
+      background-color: #F5F8FF;
     }
   }
 
@@ -472,7 +486,7 @@ export default {
         display: inline-block;
         width: 26px;
         height: 24px;
-        background: url('../../../assets/icon/warning.png') no-repeat;
+        background: url('../../../../assets/icon/warning.png') no-repeat;
         background-size: 100% 100%;
       }
       .cancel-title{

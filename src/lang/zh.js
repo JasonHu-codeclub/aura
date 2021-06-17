@@ -9,10 +9,11 @@ export default {
     service: '会议服务',
     overview: '数据概览',
     information: '完善信息',
-    editorialMeeting: '编辑会议',
-    details: '会议详情',
+    editMeet: '编辑会议',
+    detailsMeet: '会议详情',
     repeat: '重复预约',
-    user: '个人中心'
+    user: '个人中心',
+    repeatMeet: '重复会议'
   },
   navbar: {
     title: '会议预约系统',
@@ -29,7 +30,10 @@ export default {
     type: '发起方式',
     roomName: '会议室名称',
     approvalCriteria: '审批条件',
-    equipmentOfroom:'会议室设备',
+    meetAddress: '会议地点',
+    equipmentOfroom:'会议设备',
+    AppointmentType: '预约类型',
+    meetInfo: '会议信息',
     Account: '账号',
     Password: '密码',
     RealName: '姓名',
@@ -43,6 +47,7 @@ export default {
     repeatType: '重复预约类型',
     repeatTime: '重复截止时间',
     senderType: '发起方式',
+    
   },
   button: {
     search: '查询',
@@ -178,7 +183,11 @@ export default {
     qrcode: '微信小程序',
     qecodeDec: '使用微信扫码打 开会议预约微信 小程序',
     NumberOfMeetings: '会议数量',
-    conflictTips: '冲突预约'
+    conflictTips: '冲突预约',
+    open: '公开',
+    private: '保密',
+    Refreshment: '茶点服务',
+    equipmentServices: '设备服务'
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',

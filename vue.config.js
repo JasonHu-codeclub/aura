@@ -39,7 +39,7 @@ module.exports = {
     proxy: {
       '/api': {
         // 本地
-        target: 'https://alc01.aa-iot.com/meeting/api',//'http://192.168.5.8',
+        target: 'https://alc01.aa-iot.com/api',//'http://192.168.5.8',
         // 如果要代理 websockets
         ws: true,
         changeOrigin: true,

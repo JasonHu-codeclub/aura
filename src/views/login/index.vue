@@ -17,8 +17,8 @@
             <span class="divider-text">使用第三方账号登录</span>
           </div>
           <div class="login-content-type">
-            <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20"></span>
-            <span class="login-content-type-icon login-content-type-weixin-2"></span>
+            <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('qiye')"></span>
+            <span class="login-content-type-icon login-content-type-weixin-2" @click="handleLoginType('wechat')"></span>
           </div>
           <div class="login-content-divider">
             <span class="divider-text">使用账号密码登录</span>
@@ -113,6 +113,8 @@ export default {
         ]
       },
       redirect: undefined,
+      appid: 'ww63beae6c0cd72cf1',
+      agentid: '1000014',
       otherQuery: {},
     }
   },
@@ -132,15 +134,26 @@ export default {
   methods: {
     // 登录
     handleLogin () {
+      
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.loginLoading = true
+          console.log(123)
           this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((result) => {
             this.loginLoading = false
             this.$router.replace({ path: '/' })
           })
         } 
       })
+    },
+    // 第三方登录
+    handleLoginType (type) {
+      if (type === 'qiye') { // 企业微信
+        const redirect_uri = 'https://alc01.aa-iot.com/pcmeet/#/login'
+        window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${this.appid}&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=STATE`
+        console.log(type,55)
+      } else if (type === 'wechat') { // 微信登录
+      }
     },
     getOtherQuery (query) {
       return Object.keys(query).reduce((acc, cur) => {
@@ -151,7 +164,17 @@ export default {
       }, {})
     },
   },
-  mounted () {}
+  mounted () {},
+  created() {
+    /* 存在code,第三方登录 */
+    if (this.otherQuery.code) {
+      this.pageLoading = false
+      this.$store.dispatch('user/otherLogin', { appid: this.appid, code: this.otherQuery.code, state: this.otherQuery.state }).then(() => {
+        this.pageLoading = true
+        this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+      })
+    }
+  }
 }
 </script>
 <style lang='less' scoped>
@@ -159,8 +182,8 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
-  background-image: url("../../assets/login-bg.png");
-  background-size: 100% 100%;
+  background-image: url("../../assets/login_bg.png");
+  background-size: cover;
   background-repeat: no-repeat;
   .login-content {
     position: absolute;

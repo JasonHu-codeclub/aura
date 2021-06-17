@@ -110,6 +110,9 @@
             <el-dropdown size="medium" 
             split-button type="primary" 
             @click="handleClick(1)"
+            v-loading="addLoading"
+            element-loading-spinner="el-icon-loading"
+            class="add-dropdown"
             disabled='true'
             >
               {{$t('button.reservationSingle')}}
@@ -249,7 +252,7 @@
                 v-for="(item, index) in roomforms.equipment" 
                 :key="index" 
                 class="floor-device-list">
-                {{item}}
+                {{item.name}}
               </i>
             </span>
           </div>
@@ -423,7 +426,7 @@ export default {
         {name: '每月', value: 3},
       ],
       roomforms: '', // 会议室信息
-      Host: 'https://alc01.aa-iot.com/meeting', 
+      Host: process.env.NODE_ENV === 'development' ? 'https://alc01.aa-iot.com' : getHost(),
       tableLoading: false,
       btnLoading: false,
       searchData: {
@@ -486,7 +489,8 @@ export default {
         nextEndDate: { isFocus: false },// 跨日结束日期
         nextEndTime: { isFocus: false },// 跨日结束时间
       },
-      isPass: false
+      isPass: false,
+      addLoading: false
     }
   },
   computed: {
@@ -702,7 +706,9 @@ export default {
       }
 
       if(this.selectRoomData.approve_level != 0) {// 会议需要审批时调用判断冲突接口
+        this.addLoading = true
         const result = await conflictValidatorApi(dataJson)
+        this.addLoading = false
         this.approveCount = result.data.count// 冲突场次
         this.approveMessage = '您的会议已预约完成，正在等待审批'
         if(result.data.count){
@@ -746,8 +752,10 @@ export default {
         data.repetition_type = repeType // 当category=2时才需要传 会议重复类型 1=》每日，2=》每周，3=》每月
         data.repetition_end_date = endDate // 当category=2时才需要传 会议重复截止时间
       }
+      this.addLoading = true
       // 确定预约
       appointmentApi(qs.stringify(data)).then(res=>{
+        this.addLoading = false
         this.approveBtnLoading = false
         this.$message({
           message: this.approveMessage,
@@ -1185,6 +1193,8 @@ export default {
       justify-content: center;
       .room-content-l{
         position: relative;
+        margin-right: 20px;
+        padding-right: 20px;
         .room-list {
             margin-bottom: 14px;
             color: #58585D;
@@ -1290,6 +1300,14 @@ export default {
 .dialog-bottom {
     padding-top: 28px;
     text-align: right;
+}
+
+/deep/.add-dropdown{
+  .el-loading-spinner{
+    margin-top: 0;
+    transform: translateY(-50%);
+    font-size: 18px;
+  }
 }
 
 </style>
