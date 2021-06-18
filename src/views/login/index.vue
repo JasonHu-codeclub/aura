@@ -138,9 +138,9 @@ export default {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.loginLoading = true
-          console.log(123)
           this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((result) => {
             this.loginLoading = false
+            console.log(result,132456)
             this.$router.replace({ path: '/' })
           })
         } 
@@ -260,13 +260,12 @@ export default {
   }
 }
 /deep/.el-form-item{
-  margin-bottom: 8px;
+  margin-bottom: 20px;
 }
 /deep/.el-input__inner{
   height: 40px;
 }
 /deep/.el-button--medium{
-  margin-top: 5px;
   padding: 12px 20px;
 }
 /deep/input:-internal-autofill-selected{

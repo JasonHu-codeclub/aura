@@ -187,7 +187,9 @@ export default {
     open: 'open',
     private: 'private',
     Refreshment: 'Refreshment services',
-    equipmentServices: 'Equipment services'
+    equipmentServices: 'Equipment services',
+    serveTips:'Highlight and fill in the number of refreshment services / select the equipment. If the meeting appointment is successful, the service will receive the email notification',
+    people: 'people'
   },
   placeholder: {
     MeetingFloor: 'Floor',

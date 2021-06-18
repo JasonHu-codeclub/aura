@@ -21,7 +21,7 @@
         startActive: (startIndex === index && endIndex !== index), 
         endActive: (endIndex === index && startIndex !== index)}]"></span>
         <!-- 提示框 -->
-        <el-popover :disabled="scope.row.message[index].status === 0"  placement="bottom" effect="light" trigger="hover">
+        <el-popover v-if="scope.row.message[index].status === 1" :disabled="scope.row.message[index].status === 0"  placement="bottom" effect="light" trigger="hover" :open-delay="100">
           <div >
             <div class="tip-list">
               <span class="tip-list-label">{{$t('message.theme')}}：</span>

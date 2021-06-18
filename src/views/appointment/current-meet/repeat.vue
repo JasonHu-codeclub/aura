@@ -59,29 +59,35 @@
           ></el-table-column>
           <!-- 会议时间 -->
           <el-table-column
-            prop="start_time"
+            prop="start"
             :label="$t('message.meetingTime')"
             align="center"
             width="280"
             show-overflow-tooltip
             >
             <template slot-scope="scope">
-              <span >{{scope.row.start_time}}</span>&nbsp;-&nbsp;<span>{{scope.row.stop_time}}</span>
+              <span >{{scope.row.start}}</span><br><span>{{scope.row.end}}</span>
             </template>
           </el-table-column>
           <!-- 状态 -->
           <el-table-column
-            prop="status_name"
+            prop="status"
             :label="$t('message.status')"
             align="center"
-          ></el-table-column>
-          <!-- 预约类型 -->
+          >
+           <template slot-scope="scope">{{statusList[scope.row.status]}}</template>
+          </el-table-column>
+          <!-- 参会人员 -->
           <el-table-column
             prop="personnel"
             :label="$t('placeholder.participants')"
             align="center"
             show-overflow-tooltip
-          ></el-table-column>
+          >
+           <template slot-scope="scope">
+             <span class="people-num">{{scope.row.participant}}{{$t('message.people')}}</span>
+             </template>
+          </el-table-column>
           <!-- 操作 -->
           <el-table-column
             width="140"
@@ -139,7 +145,11 @@
 </template>
 
  <script>
- import {getMeetingDetailApi, cancelRepeManyMeetingApi} from '@/api/currentMeet'
+import {
+  getMeetingDetailApi, 
+  cancelRepeManyMeetingApi,
+  getRepeatDetailApi
+} from '@/api/currentMeet'
  import Pagination from '@/components/Pagination'
  import dialogCancel from './components/dialogCancel'
  import qs from 'querystring' 
@@ -168,7 +178,8 @@ export default {
       dialogVisible: false,// 取消提示弹窗
       cancelContent: '', // 提示内容
       deleteBtnLoading: false, // 提示确认按钮loading
-      repeInfo: ''
+      repeInfo: '',
+      statusList: ['审批中', '会议中', '未开始', '已结束', '已拒绝', '已取消', '过期未审批'] // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
     }
   },
   mounted () { 
@@ -194,29 +205,40 @@ export default {
       // this.selectCurrentRowData = currentRow || {}
     },
     // 获取数据
-    async getMeetingRepet () {
-      let meetInfo = this.$route.query
+    getMeetingRepet () {
+      let id = this.$route.params.id
       let params = {
-        guid: meetInfo.guid,
-        repe_guid: meetInfo.outEventId,
+        type: 3, // 重复会议
+        id: id,
         page: this.paginationQuery.page,
-        count: this.paginationQuery.limit,
-        ...this.searchForm
+        size: this.paginationQuery.limit
       }
       this.dataLoading = true
-      const result = await getMeetingDetailApi(params)
-      this.dataLoading = false
-      if (result.ret === '0') {
-        let data = result.data
-        data&&data.map( res => {
-          res.participants.map( v => {
-            res.personnel = res.personnel ?  res.personnel + ',' + v.name : v.name
-          })
-        })
-        this.myMeetingInfo = data// 列表数据
-        this.repeInfo = result.repe_info // 列表底部数据总览
-        this.total = result.total
-      } 
+      getRepeatDetailApi(params).then(res=>{
+        this.dataLoading = false
+        let data = res.data.meeting
+        this.myMeetingInfo = data.meetings     // 列表数据
+        
+        // this.repeInfo = data.meetings // 列表底部数据总览
+        this.total = data.total        // 总条数
+
+        
+      })
+
+
+      // const result = await getRepeatDetailApi(params)
+      // this.dataLoading = false
+      // if (result.ret === '0') {
+      //   let data = result.data
+      //   data&&data.map( res => {
+      //     res.participants.map( v => {
+      //       res.personnel = res.personnel ?  res.personnel + ',' + v.name : v.name
+      //     })
+      //   })
+      //   this.myMeetingInfo = data// 列表数据
+      //   this.repeInfo = result.repe_info // 列表底部数据总览
+      //   this.total = result.total
+      // } 
     },
     // 取消/结束会议
     deleteMeeting (data) {
@@ -312,6 +334,17 @@ export default {
     margin-top: 20px;
     .meeting-time{
        display: block;
+    }
+    .people-num{
+      display: inline-block;
+      width: 40px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      background: #F5F8FF;
+      color: #56697D;
+      border-radius: 20px;
+      font-size: 12px;
     }
   }
 

@@ -13,7 +13,7 @@ export function loginApi (data) {
   return request({
     url: "/auth/sign-in",
     method: "post",
-    headers: { 'X-USER-TOKEN': 'PfWwwOUtZgJv5YSZDoxseCZJzjB1LnvhlPJQcZjnOpvfs7Ej7njhYDA4ntgR7djrx9nXiAFtrneVZb9SyAMTAslFnGO1n9X4xhlYAF5TO55qhpGN8gvkYoRmio8ReBPq' },
+    headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
     data
   })
 }

@@ -187,7 +187,9 @@ export default {
     open: '公开',
     private: '保密',
     Refreshment: '茶点服务',
-    equipmentServices: '设备服务'
+    equipmentServices: '设备服务',
+    serveTips:'高亮填写茶点服务数量/选中设备，会议预约成功，会服即可收到邮件通知',
+    people: '人'
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',

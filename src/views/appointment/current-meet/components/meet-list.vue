@@ -299,11 +299,11 @@ export default {
     // 详情
     detailsMeet(row) {
       // 判断单次还是重复预约 category会议类型 1=》单次预约，2=》重复预约 ，3=》跨日预约
-      let meetType = !!row.category && row.category == 2 ? 'Repeat':'Details' 
+      let meetType = !!row.category && row.category == 2 && this.dataType != 2 ? 'Repeat':'Details' 
       this.$router.push({
         name: meetType,
         params: {
-          menu: 'current',
+          menu: this.dataType=== 1 ? 'current' : 'history',
           id: row.id
         }
       })
