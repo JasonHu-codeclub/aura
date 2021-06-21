@@ -18,7 +18,7 @@ import { Notification, message } from 'element-ui'
 const service = axios.create({
   baseURL: process.env.NODE_ENV === 'development' ? process.env.VUE_APP_BASE_API : getHost(), // api的基本URL
   // timeout: 5000, // 请求超时时间
-  headers: { 'content-type': 'application/x-www-form-urlencoded' }, // 设置头部格式
+  // headers: { 'content-type': 'application/x-www-form-urlencoded' }, // 设置头部格式
   // withCredentials: true // send cookies when cross-domain requests
 })
 

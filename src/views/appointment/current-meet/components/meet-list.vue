@@ -185,7 +185,7 @@
               <el-button
                 type="text"
                 v-if="dataType==1"
-                @click="editMeetingInfo('edit', scope.row)">
+                @click="editMeetingInfo(scope.row)">
                 {{ $t("button.edit") }}
               </el-button>
               
@@ -309,19 +309,20 @@ export default {
       })
     },
     // 编辑会议
-    editMeetingInfo (type, data) {
-      if (data.status !== 0 && type === 'edit') {
-        this.$alert(this.$t('message.meetingProgress'), this.$t('message.tips'), {
+    editMeetingInfo (row) {
+      if (row.status === 1) {
+        // 会议中提示
+        this.$alert(this.$t('message.meetingProgress'), this.$t('message.tips'), { 
           confirmButtonText: this.$t('button.confirm')
         }).catch(()=>{})
         return false
       }
       // 跳转编辑页
       this.$router.push({
-        path: '/editMeeting',
-        query: {
-          guid: data.guid,//result.guid, // 预约会议id
-          outEventId: data.out_event_id
+        name: 'Edit',
+        params: {
+          menu: 'current',
+          id: row.id
         }
       })
     },

@@ -754,7 +754,7 @@ export default {
       }
       this.addLoading = true
       // 确定预约
-      appointmentApi(qs.stringify(data)).then(res=>{
+      appointmentApi(data).then(res=>{
         this.addLoading = false
         this.approveBtnLoading = false
         this.$message({

@@ -10,7 +10,7 @@
    element-loading-background="rgba(0, 0, 0, 0.38)" 
  >
     <div class="save-submit">
-      <el-button type="button" class="reservation-submit el-button--primary" >{{$t('button.save')}}</el-button>
+      <el-button type="button" class="reservation-submit el-button--primary" @click="save" round>{{$t('button.save')}}</el-button>
     </div>
     <div class="meeting-edit-wrap">
 
@@ -24,7 +24,7 @@
                <div class="edit-box-value">{{ruleForm.meeting_room_name||'--'}}</div>
             </div>
             <!-- 会议设备 -->
-            <div class="edit-box-item">
+            <div class="edit-box-item" >
                <div class="edit-box-label">{{$t('labe.equipmentOfroom')}}：</div>
                <div class="edit-box-value">{{equipmentStr||'--'}}</div>
             </div>
@@ -61,6 +61,7 @@
                      :placeholder="$t('placeholder.theme')"
                      :class="error.title.isFocus ? 'inputError' : ''"
                      :disabled="dataType===1"
+                     maxlength="15"
                      clearable
                   ></el-input>
                </div>
@@ -68,28 +69,30 @@
                   {{$t('placeholder.validateTheme')}}
                </div>
             </div>
-            <!-- 重复开始时间 -->
-            <div class="edit-box-item">
-               <div class="edit-box-label">{{$t('message.repeatStartTime')}}：</div>
-               <div class="edit-box-value">
-                  <el-input
-                     class="input edit-box-input"
-                     v-model="ruleForm.date"
-                     disabled
-                  ></el-input>
+            <template v-if="ruleForm.category==2">
+               <!-- 重复开始时间 -->
+               <div class="edit-box-item">
+                  <div class="edit-box-label">{{$t('message.repeatStartTime')}}：</div>
+                  <div class="edit-box-value">
+                     <el-input
+                        class="input edit-box-input"
+                        v-model="ruleForm.date"
+                        disabled
+                     ></el-input>
+                  </div>
                </div>
-            </div>
-            <!-- 重复截止时间 -->
-            <div class="edit-box-item">
-               <div class="edit-box-label">{{$t('message.repeatTime')}}：</div>
-               <div class="edit-box-value">
-                  <el-input
-                     class="input edit-box-input"
-                     v-model="ruleForm.repetition_end_date"
-                     disabled
-                  ></el-input>
+               <!-- 重复截止时间 -->
+               <div class="edit-box-item">
+                  <div class="edit-box-label">{{$t('message.repeatTime')}}：</div>
+                  <div class="edit-box-value">
+                     <el-input
+                        class="input edit-box-input"
+                        v-model="ruleForm.repetition_end_date"
+                        disabled
+                     ></el-input>
+                  </div>
                </div>
-            </div>
+            </template>
             <!-- 会议时间 -->
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('message.meetingTime')}}：</div>
@@ -102,7 +105,7 @@
                </div>
             </div>
             <!-- 会议类型 -->
-            <div class="edit-box-item">
+            <div class="edit-box-item" v-if="ruleForm.meeting_type_show == 1">
                <div class="edit-box-label">{{$t('message.meetType')}}：</div>
                <div class="edit-box-value">
                   <el-select 
@@ -125,15 +128,16 @@
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('message.internalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <el-input
+                  <span class="edit-box-value border" @click="showInnerDialog">{{participantVal||$t('message.promptInternalParticipants')}}</span>
+                  <!-- <el-input
                      class="input edit-box-input"
                      v-model="participantVal"
                      :disabled="dataType===1"
-                  ></el-input>
+                  ></el-input> -->
                </div>
             </div>
             <!-- 外部参会人 -->
-            <div class="edit-box-item">
+            <div class="edit-box-item" v-if="ruleForm.external_participants_show==1">
                <div class="edit-box-label">{{$t('message.externalParticipants')}}：</div>
                <div class="edit-box-value">
                   <el-input
@@ -151,7 +155,7 @@
          <div class="edit-box-title">{{$t('route.service')}}</div>
          <div class="edit-box-list">
             <!-- 茶点服务 -->
-            <div class="edit-box-item f-start">
+            <div class="edit-box-item f-start" v-if="ruleForm.service_show == 1">
                <div class="edit-box-label margin-top-10">{{$t('message.Refreshment')}}：</div>
                <div class="edit-box-value max_heigth scrollColor">
                   <div class="edit-box-refreshment" v-for="(item, index) in serviceList" :key="index">
@@ -167,7 +171,7 @@
                <div class="edit-service-tips">（ {{$t('message.serveTips')}} ）</div>
             </div>
             <!-- 设备服务 -->
-            <div class="edit-box-item">
+            <div class="edit-box-item" v-if="ruleForm.equipment_show == 1">
                <div class="edit-box-label">{{$t('message.equipmentServices')}}：</div>
                <div class="edit-box-value">
                   <el-checkbox-group v-model="checkList">
@@ -206,6 +210,100 @@
       </div>
 
     </div>
+
+    <!-- 内部参会人弹窗 -->
+    <el-dialog
+      width="890px"
+      :title="$t('message.promptInternalParticipants')"
+      :visible.sync="innerVisible"
+      append-to-body
+      custom-class="res-dialog"
+      @open="callbackForInnerDialogOpen"
+    >
+      <div class="df join-content">
+        <div class="left">
+          <!-- <el-input
+            class="inline-input"
+            v-model="searchStr"
+            @change="querySearch"
+            :placeholder="$t('message.searchContent')"
+          ></el-input> -->
+          <el-tree
+            class="f1"
+            :data="queryPeople"
+            :props="defaultProps"
+            show-checkbox
+            :default-expand-all="isExpand"
+            :filter-node-method="filterNode"
+            :default-expanded-keys="defaultChecked"
+            ref="tree"
+            node-key="id"
+            @check="handleNodeClick"
+            highlight-current
+          >
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <i class="el-icon-folder-opened" v-if="!node.isLeaf"></i>
+              <span>{{ node.label }}</span>
+            </span>
+          </el-tree>
+        </div>
+        <div class="right">
+          <el-table
+            :data="participantGuids"
+            border
+            style="width: 100%">
+            <!-- 序号 -->
+            <el-table-column
+               :label="$t('message.serial')"
+               type="index"
+               width="60"
+               align="center"
+            ></el-table-column>
+            <!-- 姓名 -->
+            <el-table-column
+               prop="name"
+               label="姓名"
+               align="center"
+               width="80">
+            </el-table-column>
+            <!-- 部门 -->
+            <el-table-column
+               prop="department_name"
+               label="部门"
+               align="center"
+               show-overflow-tooltip
+               >
+            </el-table-column>
+            <!-- 操作 -->
+            <el-table-column
+            :label="$t('message.operation')"
+            align="center"
+            width="80">
+               <template slot-scope="scope">
+                  <el-button
+                     type="text"
+                     @click="deleteDep(scope.$index)">
+                     {{ $t("button.delete") }}
+                  </el-button>
+               </template>
+            </el-table-column>
+          </el-table>
+          <!-- <div v-for="(item, index) in joinData" :key="index">
+            - {{ item.name }}
+          </div> -->
+
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button style="margin-right: 20px"  @click="innerVisible = false">{{
+          $t("button.cancel")
+        }}</el-button>
+        <el-button type="primary"  @click="addMeetingPeople">{{
+          $t("button.confirm")
+        }}</el-button>
+      </div>
+    </el-dialog>
+    <!-- /选择参会人员 -->
  </div>
 </template>
 
@@ -215,8 +313,10 @@ import {
    getDepartmentApi,
    getMeetingTypeApi,
    getServiceApi,
-   getEquipmentApi
+   getEquipmentApi,
+   saveMeetEditApi
 } from '@/api/currentMeet'
+import qs from 'querystring' 
 export default {
   data() {
      return {
@@ -235,7 +335,23 @@ export default {
         category: ['', '单次预约', '重复预约', '跨日预约'],
         meetTime: '', // 会议时间
         equipmentStr: '',// 设备
-        checkList: [6,8],
+        checkList: [],
+        
+        isExpand: false, // 是否展开
+        innerVisible: false, // 选择参会人员 
+        joinData: [],// 弹窗内参会人员
+        searchStr: '', // 模糊搜索员工
+        allPeopleInfo: [], // 所有部门人员
+        queryPeople: [], // 搜寻人员
+        defaultProps: { // tree配置
+         children: 'children',
+         label: 'name'
+        },
+        defaultChecked: [], // 默认展开被选中的参会人员
+
+
+
+
         error: { // 验证提示
         room: {isFocus: false},
         title: { isFocus: false },
@@ -259,7 +375,26 @@ export default {
       type: Number
    }
   },
-  created() {
+//   watch: {
+//     searchStr (val) {
+//       var departs = this.allPeopleInfo
+//       var results = val ? this.createFilter(departs, val) : departs
+//       // 调用 callback 返回建议列表的数据
+//       this.queryPeople = results
+//       this.$nextTick(() => {
+//         this.$refs.tree.filter(val)
+//       })
+//     },
+//     queryPeople: {
+//       handler (newValue) {
+//         this.$nextTick(() => {
+//           this.$refs.tree && this.$refs.tree.setCheckedNodes(this.joinData)
+//         })
+//       },
+//       deep: true
+//     }
+//   },
+  mounted() {
    let params = this.$route.params
    // 获取详情信息
    this.getDateilsInfo(params.id)
@@ -271,12 +406,210 @@ export default {
    this.getServiceInfo()
    // 设备
    this.getEquipmentInfo()
-
+   // 注销onresizes事件
+    window.onresize = null;
    // 活动菜单
    let menu = this.$route.params.menu
    this.$route.meta.activeMenu = menu === 'current' ? '/current/current_list' : '/history/history_list'
   },
   methods: {
+     // 显示内部参会人员弹框
+    showInnerDialog () {
+      this.innerVisible = true
+      this.participantGuids = this.ruleForm.inside_participant.map(item => {
+        return {
+         department_name: item.department_name,
+         name: item.name,
+         id: item.id
+        }
+      })
+      console.log(this.joinData,'this.joinData')
+    },
+    // 选择参会人会的面板开启回调设置选中节点
+    callbackForInnerDialogOpen () {
+      this.defaultChecked = this.participantGuids.map(item => {
+        return item.id
+      })
+      this.$nextTick(() => {
+        this.$refs.tree.setCheckedKeys(this.defaultChecked)
+      })
+    },
+    // 勾选参会人
+    handleNodeClick (data, node) {
+      let nodes = this.$refs.tree.getCheckedNodes()
+      let arr = []
+      nodes.forEach((item, index) => {
+        if (!item.children) {
+          arr.push(item)
+        }
+      })
+      // 判断当前Tree中有没有该条数据,没有则不对其做处理
+      let queryArr = []
+      let extraPeople = []
+      queryArr.push(...this.transformDeepArr(this.queryPeople))
+      this.participantGuids.forEach(ele => {
+        const filterArr = queryArr.filter(e => e.id === ele.id)
+        if (filterArr.length === 0) {
+          extraPeople.push(ele)
+        }
+      })
+    
+      this.participantGuids = extraPeople.concat(arr)
+    },
+   //  删除参会人
+    deleteDep(index) {
+      this.participantGuids.splice(index, 1)
+      this.callbackForInnerDialogOpen()
+    },
+    // 将多层数组转为一维数组
+    transformDeepArr (arr) {
+      let newArr = []
+      arr.forEach(item => {
+        if (!item.children) {
+          newArr.push(item)
+        } else {
+          newArr.push(...this.transformDeepArr(item.children))
+        }
+      })
+      return newArr
+    },
+    // 确认选择内部参会人员
+    addMeetingPeople () {
+      let str = ''
+      let arr = this.participantGuids.map((item) => {
+        str = str ? str + '，' + item.name : item.name
+        return {
+          id: item.id,
+          name: item.name,
+          department_name: item.department_name
+        }
+      })
+      if(arr && arr.length == 0){
+        this.$message({
+           message: '请勾选内部参会人员',
+           type: 'error'
+        })
+        return
+      }
+      this.ruleForm.inside_participant = arr
+      this.participantVal = str
+      this.innerVisible = false
+    },
+    // tree节点过滤
+    filterNode (value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
+    // 转换tree数据
+    transformDatabase (arr, depName) {
+      arr.forEach(item => {
+         if(item.children) {
+            if ( item.children.length !== 0) {
+               let names1 = depName ? `${depName} / ${item['name']}` : item['name']
+               this.transformDatabase(item.children, names1)
+            }else{
+               let names = depName?`${depName}`:''
+               item['department_name'] = names
+            }
+         }else{
+            item['department_name'] = depName
+         }
+      })
+      return arr
+    },
+   // 获取部门
+   getDepartmentInfo() {
+     getDepartmentApi({}).then(res => {
+        const allData = this.transformDatabase(res.data.departments)
+        console.log(allData,'allData')
+        this.allPeopleInfo = allData
+        this.queryPeople = this.allPeopleInfo
+     })
+   },
+     // 获取公司所有部门的工作人员
+   //  async getMeetingPeopleInfo () {
+   //    const result = await getDepartmentApi()
+   //    if (result.ret === '0') {
+   //      const allData = this.transformDatabase(result.data.items)
+   //      this.allPeopleInfo = allData
+   //      this.queryPeople = this.allPeopleInfo
+   //    }
+   //  },
+   //  // 选择参会人会的面板关闭回调
+   //  callbackForInnerDialogClose () {
+   //    this.joinData = []
+   //    this.searchStr = ''
+   //    this.getMeetingPeopleInfo()
+   //  },
+   
+   //  querySearch (queryString, cb) {
+   //    // var departs = this.allPeopleInfo
+   //    // var results = queryString ? this.createFilter(departs, queryString) : departs
+   //    // console.log('query-people', results)
+   //    // // 调用 callback 返回建议列表的数据
+   //    // this.queryPeople = results
+   //  },
+   //  // 同步tree进行筛选后的数据
+   //  createFilter (all, queryString) {
+   //    // all.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+   //    let queryArr = []
+   //    // const queryPeople = this.transformDeepArr(all)
+   //    all.forEach(item => {
+   //      if (item.children) {
+   //        if (this.createFilter(item.children, queryString).length !== 0) {
+   //          queryArr.push({
+   //            id: item.id,
+   //            name: item.name,
+   //            children: this.createFilter(item.children, queryString)
+   //          })
+   //        }
+   //      } else {
+   //        if (item.name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1) {
+   //          queryArr.push(item)
+   //        }
+   //      }
+   //    })
+   //    return queryArr
+   //  },
+   
+   
+
+
+
+
+
+
+
+
+
+
+   // 保存
+   save() {
+      
+      if(!this.ruleForm.title) {
+        this.$message({
+           message: '标题不能为空',
+           type: 'error'
+        })
+        return
+      }
+      let dataJson = {
+         id: this.ruleForm.id,
+         title: this.ruleForm.title,	//是	string	主题
+         is_secrecy: this.ruleForm.is_secret_group,	//是	number: '',	//是否保密会议 0公开 1保密
+         inside_participant: [], //	否	array	内部参会人数组
+         out_participant: [],//	否	array	外部参会人数组
+         meeting_type_id: '',	//是	number	会议类型
+         meeting_type_name: '',	//是	string	会议类型 名称
+         service: [], //	否	array	茶点服务数组
+         equipment: [],//	否	array	设备数组
+         remark: ''
+      }
+      console.log(dataJson,'saveMeetEditApi dataJson')
+      saveMeetEditApi(dataJson).then(res=> {
+         console.log(res)
+      })
+   },
    // 获取详情
    getDateilsInfo(id) {
       this.formLoading = true
@@ -295,7 +628,7 @@ export default {
          let arr = []
          // 内部参会人员
          this.ruleForm.inside_participant && this.ruleForm.inside_participant.forEach((item) => {
-            arr.push({ guid: item.id })
+            arr.push({ id: item.id, name: item.name,  department_name: item.department_name})
             str = str ? str + '，' + item.name : item.name
          })
          this.participantGuids = arr
@@ -319,11 +652,7 @@ export default {
         this.meetTypeList = res.data.meeting_type
      })
    },
-   // 获取部门
-   getDepartmentInfo() {
-     getDepartmentApi({}).then(res => {
-     })
-   },
+   
    // 获取茶点服务
    getServiceInfo() {
      getServiceApi({}).then(res => {
@@ -332,7 +661,6 @@ export default {
            res.num = 0
         })
         this.serviceList = services 
-        console.log(this.serviceList,'this.serviceList')
      })
    },
    // 设备信息
@@ -738,10 +1066,10 @@ export default {
 
   // 参会人员 
   .join-content {
-    // font-size:12px;
+     border: 1px #ddd solid;
     .left {
       box-sizing: border-box;
-      padding: 0 8px 0 8px;
+      padding: 10px 15px;
       height: 400px;
       // overflow-y: auto;
       .el-tree {
@@ -753,12 +1081,11 @@ export default {
       }
     }
     .right {
-      width: 300px;
+      flex: 1;
       height: 400px;
       overflow-y: auto;
       padding: 10px 15px;
-      line-height: 24px;
-      border: 1px solid #ddd;
+      border-left: 1px solid #ddd;
     }
   }
 

@@ -11,7 +11,7 @@ export function getMeetingDetailApi (data) {
 // 部门信息
 export function getDepartmentApi (data) {
   return request({
-    url: "/department/get-user",
+    url: "/department/get-user-department",
     method: "get",
     params:  data 
   })
@@ -51,5 +51,14 @@ export function getRepeatDetailApi (data) {
     url: "/meeting-show/" + data.id,
     method: "get",
     params:  data 
+  })
+}
+
+// 会议编辑
+export function saveMeetEditApi (data) {
+  return request({
+    url: "/meeting-edit/"+ data.id,
+    method: "put",
+    data
   })
 }

@@ -121,13 +121,14 @@ export const asyncRoutes = [
           }
       },
       {
-          path: 'edit/:id',
+          path: 'edit/:menu/:id',
           component: () => import('@views/appointment/current-meet/edit'),
           name: 'Edit',
           hidden: true,
           meta: {
             title: 'editMeet',
-            affix: false
+            affix: false,
+            activeMenu: '/current/current_list'
           }
       },
     ]

@@ -92,7 +92,7 @@ const actions = {
   logout ({ commit, dispatch }) {
     return new Promise((resolve, reject) => {
       logoutApi().then((response) => {
-        commit('SET_USERNAME', '')
+        commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         removeToken()
         resetRouter()
@@ -105,7 +105,7 @@ const actions = {
   // 重置所有token标识
   resetToken ({ commit }) {
     return new Promise(resolve => {
-      commit('SET_USERNAME', '')
+      commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
       removeToken()
       resolve()
