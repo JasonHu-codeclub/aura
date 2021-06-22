@@ -83,6 +83,31 @@
   overflow: auto !important;
 }
 
+.el-button--primary {
+  background-color: @themeColor;
+  border-color: @themeColor;
+
+  &.is-disabled {
+    color: #778CA2;
+    background-color: #EEF1FC;
+    border-color: #EEF1FC;
+
+    &:focus,
+    &:hover {
+      background-color: #EEF1FC;
+      border-color: #EEF1FC;
+      color: #778CA2;
+    }
+  }
+
+  &:focus,
+  &:hover {
+    background: @highLightColor;
+    border-color: @highLightColor;
+    color: #FFF;
+  }
+}
+
 /*-------滚动条整体样式----*/
 .res-wrap::-webkit-scrollbar {
   display: none;
@@ -228,3 +253,4 @@
   -webkit-flex-direction: row;
   -o-flex-direction: row;
 }
+

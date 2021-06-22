@@ -9,7 +9,7 @@
    element-loading-spinner="el-icon-loading"
    element-loading-background="rgba(0, 0, 0, 0.38)" 
  >
-    <div class="save-submit">
+    <div class="save-submit" v-show="dataType === 2">
       <el-button type="button" class="reservation-submit el-button--primary" @click="save" round>{{$t('button.save')}}</el-button>
     </div>
     <div class="meeting-edit-wrap">
@@ -128,23 +128,23 @@
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('message.internalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <span class="edit-box-value border" @click="showInnerDialog">{{participantVal||$t('message.promptInternalParticipants')}}</span>
-                  <!-- <el-input
-                     class="input edit-box-input"
-                     v-model="participantVal"
-                     :disabled="dataType===1"
-                  ></el-input> -->
+                  <span class="edit-box-value border" @click="showInnerDialog">
+                     {{participantVal||$t('message.promptInternalParticipants')}}
+                  </span>
                </div>
             </div>
             <!-- 外部参会人 -->
             <div class="edit-box-item" v-if="ruleForm.external_participants_show==1">
                <div class="edit-box-label">{{$t('message.externalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <el-input
+                  <span class="edit-box-value border" @click="showExtDialog">
+                     {{outParticipantVal||$t('message.addExtParticipants')}}
+                  </span>
+                  <!-- <el-input
                      class="input edit-box-input"
                      v-model="ruleForm.title"
                      :disabled="dataType===1"
-                  ></el-input>
+                  ></el-input> -->
                </div>
             </div>
          </div>
@@ -210,24 +210,114 @@
       </div>
 
     </div>
+    
+    <!-- 外部参会人 -->
+    <el-dialog
+      width="700px"
+      :title="$t('message.addExtParticipants')"
+      :visible.sync="extVisible"
+      append-to-body
+      custom-class="res-dialog"
+      @open="callbackForExtDialogOpen"
+    > 
+      <div class="ext-content">
+         <div
+         class="item margin-bottom-10"
+         v-for="(item, index) in outParticipantGuids"
+         :key="index"
+         >
+            <div class="df ac">
+               <!-- 序号 -->
+               <span class="ext-content-num">{{index+1}}.</span>
+               <!-- 名称 -->
+               <el-input
+                  :placeholder="$t('message.fullName')"
+                  class="input1"
+                  v-model="item.name"
+                  clearable
+               ></el-input>
+               <!-- 邮箱 -->
+               <el-input
+                  :placeholder="$t('message.mailbox')"
+                  class="input2"
+                  v-model="item.email"
+                  clearable
+               ></el-input>
+               <!-- 电话 -->
+               <el-input
+                  :placeholder="$t('placeholder.phone')"
+                  class="input2"
+                  v-model="item.phone"
+                  oninput="value=value.replace(/^\.+|[^\d.]/g,'')"
+                  maxlength="11"
+                  clearable
+               ></el-input>
+               <!-- 新增 -->
+               <el-button
+                  type="text"
+                  class="plus-btn"
+                  icon="el-icon-circle-plus-outline"
+                  v-if="index === 0"
+                  @click="editOtherParticipant()"
+                  ></el-button
+               >
+               <!-- 删除 -->
+               <el-button
+                  type="text"
+                  class="remove-btn"
+                  icon="el-icon-remove-outline"
+                  v-else
+                  @click="editOtherParticipant(index)"
+                  ></el-button
+               >
+            </div>
+            <div class="error-box">
+               <div class="error-box-item nameError" v-if="item.nameError">{{ $t("message.nameError")}}</div>
+               <div class="error-box-item emailError" v-if="item.mailError">{{ $t("message.mailError") }}</div>
+               <div class="error-box-item phoneError" v-if="item.phoneError">{{ $t("message.phoneError")}}</div>
+               <div class="error-box-item mailPhoneError" v-if="item.error">{{ $t("message.mailPhoneError")}}</div>
+            </div>
+         </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+         <div class="footer-tips">提示：<span class="footer-tips-item">电话/邮箱信息，请务必输入其中一项<br>用于接收邮件/短信通知</span></div>
+         <el-button style="margin-right: 20px"  @click="extVisible = false">{{$t("button.cancel")}}</el-button>
+         <el-button v-show="dataType === 2" type="primary"  @click="addExtMeetPeople">{{
+          $t("button.confirm")
+         }}</el-button>
+      </div>
+    </el-dialog>
 
     <!-- 内部参会人弹窗 -->
     <el-dialog
       width="890px"
-      :title="$t('message.promptInternalParticipants')"
+      :title="$t('message.addInteParticipants')"
       :visible.sync="innerVisible"
       append-to-body
       custom-class="res-dialog"
       @open="callbackForInnerDialogOpen"
-    >
+    > 
+      <div class="search-group" v-show="dataType === 2">
+         <div class="search-group-item">
+            {{$t('message.fullName')}}：
+            <el-input
+               class="inline-input"
+               v-model="searchName"
+               clearable
+            ></el-input>
+         </div>
+         <div class="search-group-item">
+            {{$t('labe.Department')}}：
+            <el-input
+               class="inline-input"
+               v-model="searchDep"
+               clearable
+            ></el-input>
+         </div>
+         <el-button class="search-btn" type="primary" @click="searchHandle">{{$t('button.search')}}</el-button>
+      </div>
       <div class="df join-content">
-        <div class="left">
-          <!-- <el-input
-            class="inline-input"
-            v-model="searchStr"
-            @change="querySearch"
-            :placeholder="$t('message.searchContent')"
-          ></el-input> -->
+        <div class="left" v-show="dataType === 2">
           <el-tree
             class="f1"
             :data="queryPeople"
@@ -262,43 +352,41 @@
             <!-- 姓名 -->
             <el-table-column
                prop="name"
-               label="姓名"
+               :label="$t('message.fullName')"
                align="center"
                width="80">
             </el-table-column>
             <!-- 部门 -->
             <el-table-column
                prop="department_name"
-               label="部门"
+               :label="$t('labe.Department')"
                align="center"
                show-overflow-tooltip
                >
             </el-table-column>
             <!-- 操作 -->
             <el-table-column
+            v-show="dataType === 2"
             :label="$t('message.operation')"
             align="center"
             width="80">
                <template slot-scope="scope">
                   <el-button
                      type="text"
-                     @click="deleteDep(scope.$index)">
+                     class="right-delete"
+                     @click="deleteDep(scope.$index)"
+                     :disabled="dataType===1"
+                     >
                      {{ $t("button.delete") }}
                   </el-button>
                </template>
             </el-table-column>
           </el-table>
-          <!-- <div v-for="(item, index) in joinData" :key="index">
-            - {{ item.name }}
-          </div> -->
-
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button style="margin-right: 20px"  @click="innerVisible = false">{{
-          $t("button.cancel")
-        }}</el-button>
-        <el-button type="primary"  @click="addMeetingPeople">{{
+        <el-button style="margin-right: 20px"  @click="innerVisible = false">{{$t("button.cancel")}}</el-button>
+        <el-button v-show="dataType === 2" type="primary"  @click="addMeetingPeople">{{
           $t("button.confirm")
         }}</el-button>
       </div>
@@ -336,11 +424,12 @@ export default {
         meetTime: '', // 会议时间
         equipmentStr: '',// 设备
         checkList: [],
-        
         isExpand: false, // 是否展开
-        innerVisible: false, // 选择参会人员 
+        innerVisible: false, // 内部参会人员 
+        extVisible: false, // 外部参与人员
         joinData: [],// 弹窗内参会人员
-        searchStr: '', // 模糊搜索员工
+        searchName: '', // 搜索员工名称
+        searchDep: '', // 搜索员工部门
         allPeopleInfo: [], // 所有部门人员
         queryPeople: [], // 搜寻人员
         defaultProps: { // tree配置
@@ -348,10 +437,7 @@ export default {
          label: 'name'
         },
         defaultChecked: [], // 默认展开被选中的参会人员
-
-
-
-
+ 
         error: { // 验证提示
         room: {isFocus: false},
         title: { isFocus: false },
@@ -365,8 +451,48 @@ export default {
         nexDateStartTime: {isFocus: false},
         nexDateStopTime: {isFocus: false},
         nexStartTime: {isFocus: false},
-        nexStopTime: {isFocus: false}
+        nexStopTime: {isFocus: false},
       },
+      testForm: {
+            "title": "test",
+            "is_secrecy": 0,
+            "inside_participant": [
+               {
+                  "id": 2,
+                  "name": "更个个"
+               }
+            ],
+            "out_participant": [
+               {
+                  "email": "1@1.com",
+                  "phone": "18888888888",
+                  "name": "admin1"
+               },
+               {
+                  "email": "2@1.com",
+                  "phone": "18588888888",
+                  "name": "admin2"
+               }
+            ],
+            "meeting_type_id": 1,
+            "meeting_type_name": "常规会议",
+            "service": [
+               {
+                  "id": 1,
+                  "value": "1",
+                  "name": "test"
+               }
+            ],
+            "equipment": [
+               {
+                  "id": 1,
+                  "name": "test"
+               }
+            ],
+            "remark": "123"
+         },
+         outParticipantGuids: [],
+         outParticipantVal: ''
      }
   },
   props: {
@@ -375,25 +501,6 @@ export default {
       type: Number
    }
   },
-//   watch: {
-//     searchStr (val) {
-//       var departs = this.allPeopleInfo
-//       var results = val ? this.createFilter(departs, val) : departs
-//       // 调用 callback 返回建议列表的数据
-//       this.queryPeople = results
-//       this.$nextTick(() => {
-//         this.$refs.tree.filter(val)
-//       })
-//     },
-//     queryPeople: {
-//       handler (newValue) {
-//         this.$nextTick(() => {
-//           this.$refs.tree && this.$refs.tree.setCheckedNodes(this.joinData)
-//         })
-//       },
-//       deep: true
-//     }
-//   },
   mounted() {
    let params = this.$route.params
    // 获取详情信息
@@ -413,7 +520,139 @@ export default {
    this.$route.meta.activeMenu = menu === 'current' ? '/current/current_list' : '/history/history_list'
   },
   methods: {
-     // 显示内部参会人员弹框
+     // 获取详情
+   getDateilsInfo(id) {
+      this.formLoading = true
+      getMeetingDetailApi({id: id}).then( res=> {
+         this.ruleForm = res.data.meeting
+         // 会议时间
+         this.meetTime = this.setMeetTime(this.ruleForm.start, this.ruleForm.end, this.ruleForm.category)
+         // 支持会议类型
+          let device = '无'
+          this.ruleForm.equipment && this.ruleForm.equipment.forEach((item) => {
+            device = device ? device + ' / ' + item.name : item.name
+          })
+          this.equipmentStr = device
+         
+         // 内部参会人员
+         let str = ''
+         let arr = []
+         this.ruleForm.inside_participant && this.ruleForm.inside_participant.forEach((item) => {
+            arr.push({ id: item.id, name: item.name,  department_name: item.department_name})
+            str = str ? str + '，' + item.name : item.name
+         })
+         this.participantGuids = arr
+         this.participantVal = str
+         
+         // 外部参会人
+         this.outParticipantHandle()
+         this.formLoading = false
+
+      })
+   },
+   //  添加外部参会人弹窗
+   showExtDialog() {
+      this.extVisible = true
+      this.outParticipantHandle()
+   },
+   // 外部参会人数据处理
+   outParticipantHandle(){
+      let strExt = ''
+      let arrExt = []
+      let valExt = [{ name: '',  email: '', phone: '', nameError: false, mailError: false, phoneError: false,  error: false}]
+      let outData = this.ruleForm.out_participant 
+      if (outData && outData.length > 0) {
+         outData.forEach((item) => {
+            if(item.name!=''){
+              arrExt.push({ name: item.name,  email: item.email, phone: item.phone, nameError: false, mailError: false, phoneError: false,  error: false })
+              strExt = strExt ? strExt + '，' + item.name : item.name
+            }
+            if(arrExt.length==0){
+              arrExt = valExt      
+            }
+         })
+      } else {
+         arrExt = valExt
+      }
+      this.outParticipantGuids = arrExt
+      this.outParticipantVal = strExt
+   },
+   // 选择外部参会人回调
+    callbackForExtDialogOpen () {
+      
+    },
+    // 外部参会人员新增、删除
+    editOtherParticipant (index) {
+      if (!isNaN(index)) {
+        this.outParticipantGuids.splice(index, 1)
+      } else {
+        this.outParticipantGuids.unshift({ name: '', email: '', phone: '', nameError: false, mailError: false, phoneError: false,  error: false })
+      }
+    },
+    // 确认外部参会人员
+    addExtMeetPeople () {
+       // 参会人名字 邮箱检验
+      let flag = false
+       let other = this.outParticipantGuids.map(item => { //filter
+        if (item.email || item.name || item.phone) { 
+          if(item.name === ''){// 名字
+            flag = true
+            item.nameError =true
+            console.log(item.error,'item.name')
+          }else{
+            item.nameError =false
+          }
+          if(item.phone == '' && item.email == ''){
+            flag = true
+            item.error = true
+            item.mailError = false
+            item.phoneError = false
+          }else{
+            if(item.email != ''){
+               var reg = /^(\w)+(\.\w+)*@(.)+((\.\w+)+)$/
+               if (reg.test(item.email)) {// 邮箱
+                  item.mailError = false
+               } else {
+                  flag = true
+                  item.mailError = true
+               }
+            } else {
+              item.mailError = false
+            }
+            if(item.phone != ''){
+              let phonereg = /^[1][3,4,5,7,8][0-9]{9}$/;
+              if (phonereg.test(item.phone)) {
+                 item.phoneError = false
+              }else{
+                 flag = true
+                 item.phoneError = true
+              }
+            }else{
+               item.phoneError = false
+            }
+            item.error =false
+          }
+        }else{
+          item.nameError =false
+          item.mailError = false
+          item.phoneError = false
+          item.error =false
+        }
+      })
+      if(flag){
+         return false
+      }
+      // other.map(res=>{
+      //    delete res.error
+      //    delete res.nameError
+      //    // delete res.phoneError
+      // })
+      this.ruleForm.out_participant = JSON.parse(JSON.stringify(this.outParticipantGuids))
+      this.outParticipantHandle()
+      this.extVisible = false
+      
+    },
+   // 显示内部参会人员弹框
     showInnerDialog () {
       this.innerVisible = true
       this.participantGuids = this.ruleForm.inside_participant.map(item => {
@@ -423,7 +662,6 @@ export default {
          id: item.id
         }
       })
-      console.log(this.joinData,'this.joinData')
     },
     // 选择参会人会的面板开启回调设置选中节点
     callbackForInnerDialogOpen () {
@@ -495,11 +733,6 @@ export default {
       this.participantVal = str
       this.innerVisible = false
     },
-    // tree节点过滤
-    filterNode (value, data) {
-      if (!value) return true
-      return data.name.indexOf(value) !== -1
-    },
     // 转换tree数据
     transformDatabase (arr, depName) {
       arr.forEach(item => {
@@ -521,71 +754,25 @@ export default {
    getDepartmentInfo() {
      getDepartmentApi({}).then(res => {
         const allData = this.transformDatabase(res.data.departments)
-        console.log(allData,'allData')
         this.allPeopleInfo = allData
         this.queryPeople = this.allPeopleInfo
      })
    },
-     // 获取公司所有部门的工作人员
-   //  async getMeetingPeopleInfo () {
-   //    const result = await getDepartmentApi()
-   //    if (result.ret === '0') {
-   //      const allData = this.transformDatabase(result.data.items)
-   //      this.allPeopleInfo = allData
-   //      this.queryPeople = this.allPeopleInfo
-   //    }
-   //  },
-   //  // 选择参会人会的面板关闭回调
-   //  callbackForInnerDialogClose () {
-   //    this.joinData = []
-   //    this.searchStr = ''
-   //    this.getMeetingPeopleInfo()
-   //  },
-   
-   //  querySearch (queryString, cb) {
-   //    // var departs = this.allPeopleInfo
-   //    // var results = queryString ? this.createFilter(departs, queryString) : departs
-   //    // console.log('query-people', results)
-   //    // // 调用 callback 返回建议列表的数据
-   //    // this.queryPeople = results
-   //  },
-   //  // 同步tree进行筛选后的数据
-   //  createFilter (all, queryString) {
-   //    // all.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-   //    let queryArr = []
-   //    // const queryPeople = this.transformDeepArr(all)
-   //    all.forEach(item => {
-   //      if (item.children) {
-   //        if (this.createFilter(item.children, queryString).length !== 0) {
-   //          queryArr.push({
-   //            id: item.id,
-   //            name: item.name,
-   //            children: this.createFilter(item.children, queryString)
-   //          })
-   //        }
-   //      } else {
-   //        if (item.name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1) {
-   //          queryArr.push(item)
-   //        }
-   //      }
-   //    })
-   //    return queryArr
-   //  },
-   
-   
+   // 搜索内部参与人员
+   searchHandle(){
+      let name = this.searchName
+      let dep = this.searchDep
+      this.$refs.tree.filter(name+dep);
+   },
+   // tree节点过滤
+    filterNode (value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
 
 
-
-
-
-
-
-
-
-
-   // 保存
+   // 保存编辑
    save() {
-      
       if(!this.ruleForm.title) {
         this.$message({
            message: '标题不能为空',
@@ -593,57 +780,39 @@ export default {
         })
         return
       }
-      let dataJson = {
-         id: this.ruleForm.id,
-         title: this.ruleForm.title,	//是	string	主题
-         is_secrecy: this.ruleForm.is_secret_group,	//是	number: '',	//是否保密会议 0公开 1保密
-         inside_participant: [], //	否	array	内部参会人数组
-         out_participant: [],//	否	array	外部参会人数组
-         meeting_type_id: '',	//是	number	会议类型
-         meeting_type_name: '',	//是	string	会议类型 名称
-         service: [], //	否	array	茶点服务数组
-         equipment: [],//	否	array	设备数组
-         remark: ''
-      }
-      console.log(dataJson,'saveMeetEditApi dataJson')
-      saveMeetEditApi(dataJson).then(res=> {
+      // let dataJson = {
+      //    id: this.ruleForm.id,
+      //    title: this.ruleForm.title,	//是	string	主题
+      //    is_secrecy: this.ruleForm.is_secret_group,	//是	number: '',	//是否保密会议 0公开 1保密
+      //    inside_participant: [], //	否	array	内部参会人数组
+      //    out_participant: [],//	否	array	外部参会人数组
+      //    meeting_type_id: '',	//是	number	会议类型
+      //    meeting_type_name: '',	//是	string	会议类型 名称
+      //    service: [], //	否	array	茶点服务数组
+      //    equipment: [],//	否	array	设备数组
+      //    remark: ''
+      // }
+      this.ruleForm.out_participant.map(res=>{
+         delete res.error
+         delete res.nameError
+         delete res.mailError
+         delete res.phoneError
+      })
+      console.log(this.ruleForm,'this.ruleForm')
+      return
+      this.testForm.id = this.ruleForm.id
+      saveMeetEditApi(this.testForm).then(res=> {
          console.log(res)
       })
    },
-   // 获取详情
-   getDateilsInfo(id) {
-      this.formLoading = true
-      getMeetingDetailApi({id: id}).then( res=> {
-         this.ruleForm = res.data.meeting
-         // 会议时间
-         this.meetTime = this.setMeetTime(this.ruleForm.start, this.ruleForm.end, this.category)
-         // 支持会议类型
-          let device = '无'
-          this.ruleForm.equipment && this.ruleForm.equipment.forEach((item) => {
-            device = device ? device + ' / ' + item.name : item.name
-          })
-          this.equipmentStr = device
-         
-         let str = ''
-         let arr = []
-         // 内部参会人员
-         this.ruleForm.inside_participant && this.ruleForm.inside_participant.forEach((item) => {
-            arr.push({ id: item.id, name: item.name,  department_name: item.department_name})
-            str = str ? str + '，' + item.name : item.name
-         })
-         this.participantGuids = arr
-         this.participantVal = str
-         this.formLoading = false
-
-      })
-   },
+   
    setMeetTime(start, end, type){
-      let time = ''
-      if(type === 2){
-        time = `${start.split(' ')[1]} - ${end.split(' ')[1]}`
-      }else{
-         time = `${start} - ${end}`
-      }
+      let time = type === 2 ? `${start.split(' ')[1]} - ${end.split(' ')[1]}` : `${start} - ${end}`
+      // if(type === 2){
+      //   time = `${start.split(' ')[1]} - ${end.split(' ')[1]}`
+      // }else{
+      //    time = `${start} - ${end}`
+      // }
       return time
    },
    // 获取会议类型
@@ -845,7 +1014,7 @@ export default {
               }
 
               .max_heigth{
-               max-height: 180px;
+               max-height: 184px;
                overflow-y: auto;
                padding-right: 30px;
               }
@@ -854,10 +1023,10 @@ export default {
                 display: inline-block;
                 width: 375px;
                 color: #384677;
-                min-height: 32px;
+                min-height: 34px;
+                line-height: 24px;
                 border-radius: 4px;
-                line-height: 32px;
-                padding:0 15px;
+                padding:5px 15px;
                 cursor: pointer;
                 border: 1px #DFE4EB solid;
               }
@@ -1062,18 +1231,132 @@ export default {
     }
   }
 
- 
+  .search-group{
+     display: flex;
+     margin-bottom: 20px;
+     .search-group-item{
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding-left: 10px;
+        /deep/.el-input--medium{
+            flex: 1;
+            width: 120px;
+        }
+     }
+     .search-btn{
+        margin-left: 20px;
+     }
+  }
+
+   .ext-content{
+      max-height: 400px;
+      overflow-y: auto;
+     .item {
+         margin-bottom: 10px;
+         .input1 {
+            width: 120px;
+         }
+         .input2 {
+            width: 200px;
+            margin: 0 8px;
+         }
+         .input3 {
+            width: 120px;
+            margin: 0 8px;
+         }
+         .error-box{
+            position: relative;
+            clear: both;
+            color: #DD0000;
+            .error-box-item{
+               position: absolute;
+               top: -2px;
+               font-size: 12px;
+            }
+            .nameError {
+               left: 32px;
+            }
+            .emailError {
+               left: 160px;
+            }
+            .phoneError {
+               left: 376px;
+            }
+            .mailPhoneError{
+               left: 32px;
+            }
+         }
+         .nameError{
+            flex: 1;
+         }
+         .emailError{
+            flex: 1;
+            text-align: right;
+            padding-right: 25px;
+         }
+
+         .plus-btn{
+            font-size: 24px;
+            color: #ABBAC9;
+         }
+
+         .remove-btn{
+            font-size: 24px;
+            color: #FF5B5B;
+         }
+         
+         .ext-content-num{
+            display: inline-block;
+            margin-right: 10px;
+            min-width: 22px;
+            text-align: right;
+         }
+      }
+      .tips {
+      font-size: 12px;
+      color: #ABBAC9;
+      }
+      .margin-bottom-10{
+      margin-bottom: 10px;
+      }
+      .company-puls{
+      width: 75px;
+      }
+      .company-close{
+      margin-left: 8px;
+      }
+      .company-tips{
+      color: #ABBAC9;
+      margin-left: 32px;
+      }
+   }
+   .dialog-footer{
+      position: relative;
+   }
+   .footer-tips{
+      display: flex;
+      float: left;
+      margin-top: 2px;
+      font-size: 14px;
+      color: #ABBAC9;
+      .footer-tips-item{
+         text-align: left;
+         display: inline-block;
+      }
+   }
 
   // 参会人员 
   .join-content {
      border: 1px #ddd solid;
     .left {
       box-sizing: border-box;
-      padding: 10px 15px;
       height: 400px;
+      min-width: 330px;
       // overflow-y: auto;
       .el-tree {
-        height: 360px;
+        height: 100%;
+        padding: 10px 15px;
         overflow-y: auto;
         .el-checkbox__inner {
           margin-right: 5px;
@@ -1086,6 +1369,16 @@ export default {
       overflow-y: auto;
       padding: 10px 15px;
       border-left: 1px solid #ddd;
+      .right-delete{
+        color: #FF5B5B;
+      }
+      /deep/.el-table tr{
+         color: #58585D;
+         font-weight: normal !important;
+      }
+      /deep/th{
+         font-weight: normal !important;
+      }
     }
   }
 
@@ -1108,10 +1401,9 @@ export default {
     .el-dialog__footer{
       text-align: center;
       .dialog-footer {
-        text-align: center !important;
         .el-button {
-          width: 90px;
-          height: 32px;
+          width: 80px;
+          height:36px;
         }
       }
     }

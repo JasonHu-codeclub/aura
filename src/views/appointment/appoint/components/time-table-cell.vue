@@ -163,14 +163,11 @@ export default {
       if(index == times.length-1) {
         if(timeIndexVal !='23:30'){
           timeName = Number(timeIndexVal.split(':')[0]) + 1 + ':00'
-          console.log(timeName,'timeName0')
         }else{
-          timeName = '00:00'
-        console.log(timeName,'timeName1')
+          timeName = '23:59'
         }
       }else{
         timeName = times[index + 1].time
-        console.log(timeName,'timeName2')
       }
       return timeName;
     }

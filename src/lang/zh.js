@@ -125,11 +125,15 @@ export default {
     meetingTime: '会议时间',
     internalParticipants: '内部参会人员',
     promptInternalParticipants: '请选择内部参会人员',
+    addInteParticipants: '添加内部参会人员',
+    addExtParticipants: '添加外部参会人员',
     searchContent: '请输入搜索内容',
     externalParticipants: '外部参会人员',
     mailTips: '填写的与会人员将会收到邮件邀请,请注意填写',
     nameError: '请输入参会人名字',
     mailError: '邮箱格式错误',
+    phoneError: '电话格式错误',
+    mailPhoneError: '邮箱/电话其中一个不能为空',
     fullName: '姓名',
     mailbox: '邮箱',
     subsidiaries: '下属公司',
@@ -248,7 +252,8 @@ export default {
     permissionForRes: '您当前无权限进行研讨预约',
     resetPwdSuccess: '密码修改成功,请重新登录',
     mailTips: '填写的与会人员将会收到邮件邀请,请注意填写',
-    mailError: '邮箱/电话格式错误'
+    mailError: '邮箱/电话格式错误',
+    
   },
   
   

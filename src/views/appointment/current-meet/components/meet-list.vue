@@ -188,7 +188,6 @@
                 @click="editMeetingInfo(scope.row)">
                 {{ $t("button.edit") }}
               </el-button>
-              
             </template>
           </el-table-column>
         </el-table>
