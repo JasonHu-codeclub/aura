@@ -112,7 +112,7 @@
             prop="start_time"
             :label="$t('message.meetingTime')"
             align="center"
-            width="280"
+            width="240"
             show-overflow-tooltip
             >
             <template slot-scope="scope">
@@ -124,6 +124,7 @@
             prop="meeting_room_name"
             :label="$t('message.room')"
             align="center"
+            width="100"
           ></el-table-column>
           <!-- 预约类型 -->
           <el-table-column
@@ -173,9 +174,9 @@
               <el-button 
                 type="text" 
                 v-if="dataType==1"
+                :disabled="scope.row.status == 1"
                 @click="deleteMeeting(scope.row)">
-                <span v-if="scope.row.status!==0">{{$t('button.meetingClosed')}}</span>
-                <span v-else>{{ $t("button.cancel") }}</span>
+                {{ $t("button.cancel") }}
               </el-button>
               <el-button
                 type="text"
@@ -185,6 +186,7 @@
               <el-button
                 type="text"
                 v-if="dataType==1"
+                :disabled="scope.row.status == 1"
                 @click="editMeetingInfo(scope.row)">
                 {{ $t("button.edit") }}
               </el-button>
@@ -204,7 +206,7 @@
   </div>
 </template>
  <script>
- import {myMeetingListApi, cancelMeetingApi, cancelRepeMeetingApi} from '@/api/appoint'
+ import {myMeetingListApi, meetCancelApi} from '@/api/currentMeet'
  import Pagination from '@/components/Pagination'
  import dialogCancel from './dialogCancel'
  import qs from 'querystring' 
@@ -325,51 +327,34 @@ export default {
         }
       })
     },
-    // 取消/结束会议
+    // 取消会议
     deleteMeeting (data) {
+      // status: 0审批中 1会议中 2未开始 
       this.$refs.cancel.dialogVisible= true
       this.selectCurrentRowData = data
-      // status: 0未开始 1会议中
-      if(data.status === 0){
-        this.cancelTitle = this.$t('message.cancelTips')
-        this.cancelContent = `${this.$t('message.canceltipsContentDec')}<br/>${this.$t('message.cancelContent')}`
-      }else{
-        this.cancelTitle = this.$t('message.endTips')
-        this.cancelContent = `${this.$t('message.endTipsDec')}<br/>${this.$t('message.endContent')}`//this.$t('message.closeMeet')
-      }
+      this.cancelTitle = this.$t('message.cancelTips')
+      this.cancelContent = `${this.$t('tip.cancelMeeting')}<br/>${this.$t('tip.confirmTips')}`
     },
     // 取消会议请求
-    async hanldDeleteMeeting() {
-      let data = this.selectCurrentRowData
-      // return
-      //重复预约、单次预约 repe_type: 0单次 0<重复
-        let ajaxName = ''
-        let params = ''
-        if(data.repe_type === 0 || data.repe_type === 4 ){
-          ajaxName = cancelMeetingApi // 单次预约取消
-          params = { guid: data.guid }
-        }else{
-          ajaxName = cancelRepeMeetingApi// 重复预约整体取消
-          params = { repe_guid: data.out_event_id }
+    hanldDeleteMeeting() {
+        let data = this.selectCurrentRowData
+        // data.category：2 重复预约、1 单次预约 
+        let params = {id: data.id}
+        if(data.category === 2){
+          params.type = 2
         }
         // 取消/结束会议成功提示
-        let msgSuccess = data.status === 0 ? this.$t('message.deleteSuccess') : this.$t('message.endSuccess')
         this.deleteBtnLoading = true // 确认按钮loading
-        const result = await ajaxName(qs.stringify(params))
-        this.deleteBtnLoading = false // 确认按钮loading
-        if (result.ret === '0') {
+        meetCancelApi(params).then(res=>{
+          this.deleteBtnLoading = false // 确认按钮loading
           this.$message({
-            message: msgSuccess,
+            message: this.$t('tip.meetCancelled'),
             type: 'success'
           })
           this.getMyMeetingInfo()
           this.$refs.cancel.dialogVisible = false // 弹框
-        }else{
-          this.$message({
-            message: result.msg,
-            type: 'warning'
-          })
-        }
+        })
+        
     },
     handleClose() {
       this.cancelTitle = ''

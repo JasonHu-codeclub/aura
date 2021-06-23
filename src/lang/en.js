@@ -187,6 +187,10 @@ export default {
     qrcode: 'Wechat applet',
     qecodeDec: 'Use wechat scan code to open wechat applet for meeting reservation',
     NumberOfMeetings: 'Number of meetings',
+    total: '',
+    Company: 'meetings in total',
+    meetOver: 'meetings have ended',
+    DateRange: 'Date range',
     conflictTips: 'Conflict appointment',
     open: 'open',
     private: 'private',
@@ -218,7 +222,8 @@ export default {
     conferenceInfor: 'Conference Infor',
     companiesNum: 'Please enter the number of participating companies',
     selectType: 'Please select appointment type',
-    nameTypes: 'theme/sender/attendee'
+    nameTypes: 'theme/sender/attendee',
+    selectServe: 'Please choose tea service in meeting room'
   },
   tip: {
     userNameNotEmpty: 'Username can not be empty',
@@ -249,7 +254,14 @@ export default {
     permissionForRes: 'You do not have permission to reserve a course',
     resetPwdSuccess: 'Password changed successfully, please log in again',
     mailTips: 'Please fill in the invitation by email',
-    mailError: 'Email/Phone format error'
+    mailError: 'Email/Phone format error',
+    infoEditSuccess: 'Conference information modified successfully',
+    cancelMeeting: "After canceling the meeting, this period will be released. ",
+    confirmTips: 'Please confirm whether to cancel or not',
+    meetCancelled: 'The meeting has been cancelled',
+    signIn: 'sign in',
+    notSignIn: 'No sign in'
+
   },
 
 

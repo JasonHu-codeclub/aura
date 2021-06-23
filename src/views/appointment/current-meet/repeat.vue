@@ -98,35 +98,31 @@
               <el-button 
                 v-if="!isInvitation"
                 type="text" 
+                :disabled="scope.row.status == 1"
                 @click="deleteMeeting(scope.row)"
                 >
-                <span class="repeat-allow">{{scope.row.status !== 0 ? $t('button.meetingClosed') : $t('button.cancel')}}</span>
+                {{$t('button.cancel')}}
               </el-button>
               <!-- <el-button type="text"  @click="detailsMeeting(scope.row)">{{$t('button.details')}}</el-button> -->
             </template>
           </el-table-column>
         </el-table>
         <!-- 数据统计 -->
-        <div class="repeat-statistics" v-loading="dataLoading">
+        <div class="repeat-statistics" >
            <div class="repeat-box">
-             <span class="repeat-box-label">{{$t('message.NumberOfMeetings')}}：</span>
-             <span class="repeat-box-value">{{repeInfo.count}}</span>
+             <span class="repeat-box-value">{{$t('message.total')}}<i class="blue">{{repeInfo.total}}</i>{{repeInfo.meetTotal}}</span>
            </div>
            <div class="repeat-box">
-             <span class="repeat-box-label">{{$t('message.dateMetting')}}：</span>
-             <span class="repeat-box-value">{{repeInfo.date}}</span>
+             <span class="repeat-box-label">{{$t('message.DateRange')}}：</span>
+             <span class="repeat-box-value blue">{{repeInfo.DateRange||'--'}}</span>
            </div>
            <div class="repeat-box">
-             <span class="repeat-box-label">{{$t('message.meetRoom')}}：</span>
-             <span class="repeat-box-value">{{repeInfo.room}}</span>
-           </div>
-           <div class="repeat-box">
-             <span class="repeat-box-label">{{$t('message.createTime')}}：</span>
-             <span class="repeat-box-value">{{repeInfo.create_time}}</span>
+             <span class="repeat-box-label">{{$t('message.AppointmentType')}}：</span>
+             <span class="repeat-box-value blue">{{repeInfo.categoryStr||'--'}}</span>
            </div>
            <div class="repeat-box">
              <span class="repeat-box-label">{{$t('message.sender')}}：</span>
-             <span class="repeat-box-value">{{repeInfo.sender}}</span>
+             <span class="repeat-box-value blue">{{repeInfo.user_name||'--'}}</span>
            </div>
         </div>
 
@@ -140,15 +136,14 @@
     </div>
 
     <!-- 取消弹框 -->
-    <dialog-cancel ref="cancel" :content="cancelContent" :title="cancelTitle" :btnLoading="deleteBtnLoading" @handleClose="handleClose" @hanldConfirm="hanldDeleteMeeting"></dialog-cancel>
+    <dialog-cancel ref="cancel" :content="cancelContent" :title="cancelTitle" :btnLoading="deleteBtnLoading"  @hanldConfirm="hanldDeleteMeeting"></dialog-cancel>
   </div>
 </template>
 
  <script>
 import {
-  getMeetingDetailApi, 
-  cancelRepeManyMeetingApi,
-  getRepeatDetailApi
+  getRepeatDetailApi,
+  meetCancelApi
 } from '@/api/currentMeet'
  import Pagination from '@/components/Pagination'
  import dialogCancel from './components/dialogCancel'
@@ -179,7 +174,10 @@ export default {
       cancelContent: '', // 提示内容
       deleteBtnLoading: false, // 提示确认按钮loading
       repeInfo: '',
-      statusList: ['审批中', '会议中', '未开始', '已结束', '已拒绝', '已取消', '过期未审批'] // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
+      statusList: ['审批中', '会议中', '未开始', '已结束', '已拒绝', '已取消', '过期未审批'], // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
+      category: ['', '单次预约', '重复预约', '跨日预约'],
+      repetitionType: ['', '每日', '每周', '每月'],
+      categoryStr: '', // 会议重复类型
     }
   },
   mounted () { 
@@ -218,69 +216,40 @@ export default {
         this.dataLoading = false
         let data = res.data.meeting
         this.myMeetingInfo = data.meetings     // 列表数据
-        
-        // this.repeInfo = data.meetings // 列表底部数据总览
+        this.repeInfo = data // 列表底部数据总览
         this.total = data.total        // 总条数
-
+        this.repeInfo.meetTotal = `${this.$t('message.Company')}，${data.is_finished}${this.$t('message.meetOver')}`
+        this.repeInfo.DateRange = `${data.start} 至 ${data.end}`
+        this.repeInfo.categoryStr = `${this.category[data.category]}（${this.repetitionType[data.repetition_type]}）`
         
       })
-
-
-      // const result = await getRepeatDetailApi(params)
-      // this.dataLoading = false
-      // if (result.ret === '0') {
-      //   let data = result.data
-      //   data&&data.map( res => {
-      //     res.participants.map( v => {
-      //       res.personnel = res.personnel ?  res.personnel + ',' + v.name : v.name
-      //     })
-      //   })
-      //   this.myMeetingInfo = data// 列表数据
-      //   this.repeInfo = result.repe_info // 列表底部数据总览
-      //   this.total = result.total
-      // } 
     },
-    // 取消/结束会议
+    // 取消会议
     deleteMeeting (data) {
+      // status: 0审批中 1会议中 2未开始 
       this.$refs.cancel.dialogVisible= true
       this.selectCurrentRowData = data
-      // status: 0未开始 1会议中
-      if(data.status === 0){
-        this.cancelTitle = this.$t('message.cancelTips')
-        this.cancelContent = `${this.$t('message.canceltipsContentDec')}<br/>${this.$t('message.cancelContent')}`
-      }else{
-        this.cancelTitle = this.$t('message.endTips')
-        this.cancelContent = this.$t('message.closeMeet')
-      }
+      this.cancelTitle = this.$t('message.cancelTips')
+      this.cancelContent = `${this.$t('tip.cancelMeeting')}<br/>${this.$t('tip.confirmTips')}`
     },
     // 取消会议请求
     async hanldDeleteMeeting() {
       let data = this.selectCurrentRowData
       const param = {
-        guid: data.guid
+        id: data.id,
+        type: 1,
+        date: data.date
       }
-      // 取消/结束会议成功提示
-        let msgSuccess = data.status === 0 ? this.$t('message.deleteSuccess') : this.$t('message.endSuccess')
       this.deleteBtnLoading = true // 确认按钮loading
-      const result = await cancelRepeManyMeetingApi(qs.stringify(param))
-      this.deleteBtnLoading = false 
-      if (result.ret === '0') {
+      meetCancelApi(param).then(res=>{
+        this.deleteBtnLoading = false 
         this.$message({
-          message: msgSuccess,
+          message: this.$t('message.meetCancelled'),
           type: 'success'
         })
         this.getMeetingRepet()
         this.$refs.cancel.dialogVisible = false // 弹框
-      }else{
-        this.$message({
-          message: result.msg,
-          type: 'warning'
-        })
-      }
-    },
-    handleClose() {
-      this.cancelTitle = ''
-      this.cancelContent = ''
+      })
     },
 
     // 会议详情
@@ -389,6 +358,9 @@ export default {
       margin: 0 48px 14px 0;
       font-size: 14px;
       color: #56697D;
+      .blue{
+        color: #5C7BEA;
+      }
     }
   }
 

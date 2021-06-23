@@ -1,5 +1,14 @@
 import request from "@utils/request.js"
 
+// 我的会议/历史会议
+export function myMeetingListApi (data) {
+  return request({
+    url: "/my-meeting/list",
+    method: "get",
+    params: data
+  })
+}
+
 // 会议详情
 export function getMeetingDetailApi (data) {
     return request({
@@ -58,6 +67,15 @@ export function getRepeatDetailApi (data) {
 export function saveMeetEditApi (data) {
   return request({
     url: "/meeting-edit/"+ data.id,
+    method: "put",
+    data
+  })
+}
+
+// 取消会议
+export function meetCancelApi (data) {
+  return request({
+    url: "/meeting/cancel/"+ data.id,
     method: "put",
     data
   })

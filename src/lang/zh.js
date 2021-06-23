@@ -48,6 +48,7 @@ export default {
     repeatTime: '重复截止时间',
     senderType: '发起方式',
     
+    
   },
   button: {
     search: '查询',
@@ -187,13 +188,17 @@ export default {
     qrcode: '微信小程序',
     qecodeDec: '使用微信扫码打 开会议预约微信 小程序',
     NumberOfMeetings: '会议数量',
+    total: '共',
+    Company: '场会议',
+    meetOver: '场已结束',
+    DateRange: '日期范围',
     conflictTips: '冲突预约',
     open: '公开',
     private: '保密',
     Refreshment: '茶点服务',
     equipmentServices: '设备服务',
-    serveTips:'高亮填写茶点服务数量/选中设备，会议预约成功，会服即可收到邮件通知',
-    people: '人'
+    serveTips:'填写茶点服务数量/选中设备，会议预约成功，会服即可收到邮件通知',
+    people: '人',
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',
@@ -221,7 +226,8 @@ export default {
     selectType: '请选择预约类型',
     nameTypes: '会议主题/发起人/参会人',
     startDate: '开始日期',
-    endDate: '结束时间'
+    endDate: '结束时间',
+    selectServe: '请选择会议室茶点服务'
   },
   tip: {
     userNameNotEmpty: '用户名不能为空',
@@ -253,7 +259,12 @@ export default {
     resetPwdSuccess: '密码修改成功,请重新登录',
     mailTips: '填写的与会人员将会收到邮件邀请,请注意填写',
     mailError: '邮箱/电话格式错误',
-    
+    infoEditSuccess: '会议信息修改成功',
+    cancelMeeting: '取消会议后，此时间段将被释放，',
+    confirmTips: '请确认是否取消',
+    meetCancelled: '会议已被取消',
+    signIn: '已签到',
+    notSignIn: '未签到'
   },
   
   

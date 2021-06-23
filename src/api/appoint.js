@@ -216,11 +216,3 @@ export function appointmentApi (data) {
   })
 }
 
-// 我的会议/历史会议
-export function myMeetingListApi (data) {
-  return request({
-    url: "/my-meeting/list",
-    method: "get",
-    params: data
-  })
-}

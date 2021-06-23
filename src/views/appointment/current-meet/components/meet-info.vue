@@ -31,9 +31,10 @@
             <!-- 预约类型 -->
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('labe.AppointmentType')}}：</div>
-               <div class="edit-box-value">{{category[ruleForm.category]||'--'}}</div>
+               <div class="edit-box-value">{{categoryStr||'--'}}</div>
             </div>
          </div>
+         <div class="edit-sign_in">{{$t('tip.signIn')}}</div>
       </div>
 
       <!-- 基本信息 -->
@@ -44,10 +45,10 @@
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('placeholder.conferenceInfor')}}：</div>
                <div class="edit-box-value">
-                  <span v-if="dataType===1">{{ruleForm.is_secret_group?'保密':'公开'}}</span>
-                  <el-radio-group v-if="dataType===2" v-model="ruleForm.is_secret_group">
-                     <el-radio  :label="false">{{$t('message.open')}}</el-radio>
-                     <el-radio  :label="true">{{$t('message.private')}}</el-radio>
+                  <span v-if="dataType===1">{{ruleForm.is_secrecy?'保密':'公开'}}</span>
+                  <el-radio-group v-if="dataType===2" v-model="ruleForm.is_secrecy">
+                     <el-radio  :label="0">{{$t('message.open')}}</el-radio>
+                     <el-radio  :label="1">{{$t('message.private')}}</el-radio>
                   </el-radio-group>
                </div>
             </div>
@@ -90,7 +91,9 @@
                         v-model="ruleForm.repetition_end_date"
                         disabled
                      ></el-input>
+                     <span class="edit-box-total">{{reapSessions}}</span>
                   </div>
+                  <div class="edit-box-repeat_time">{{$t('message.term')}}</div>
                </div>
             </template>
             <!-- 会议时间 -->
@@ -128,7 +131,7 @@
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('message.internalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <span class="edit-box-value border" @click="showInnerDialog">
+                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 }" @click="showInnerDialog">
                      {{participantVal||$t('message.promptInternalParticipants')}}
                   </span>
                </div>
@@ -137,7 +140,7 @@
             <div class="edit-box-item" v-if="ruleForm.external_participants_show==1">
                <div class="edit-box-label">{{$t('message.externalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <span class="edit-box-value border" @click="showExtDialog">
+                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 }" @click="showExtDialog">
                      {{outParticipantVal||$t('message.addExtParticipants')}}
                   </span>
                   <!-- <el-input
@@ -157,18 +160,39 @@
             <!-- 茶点服务 -->
             <div class="edit-box-item f-start" v-if="ruleForm.service_show == 1">
                <div class="edit-box-label margin-top-10">{{$t('message.Refreshment')}}：</div>
-               <div class="edit-box-value max_heigth scrollColor">
-                  <div class="edit-box-refreshment" v-for="(item, index) in serviceList" :key="index">
-                     <span class="edit-refreshment-label" :class="{highlight: item.num > 0, 'set-bg': dataType===1 }" >{{item.name}}</span>
-                     <el-input-number 
-                        :class="{highlight: item.num > 0 }" 
-                        v-model="item.num" 
-                        controls-position="right" :min="0" 
-                        :disabled="dataType===1">
-                     </el-input-number>
+               <div class="edit-box-value">
+                  <el-select
+                     v-model="ruleForm.serviceId"
+                     multiple
+                     filterable
+                     allow-create
+                     default-first-option
+                     class="input edit-box-input"
+                     @change="selectServeChange"
+                     :placeholder="$t('placeholder.selectServe')">
+                     <el-option
+                        v-for="item in serviceList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                     </el-option>
+                  </el-select>
+                  <div class="edit-box-service">
+                    <div class="edit-box-refreshment" v-for="(item, index) in ruleForm.service" :key="index">
+                        <span class="edit-refreshment-label" :class="{highlight: item.value > 0, 'set-bg': dataType===1 }" >{{item.name}}：</span>
+                        <el-input
+                           :class="{highlight: item.value > 0 }" 
+                           v-model="item.value" 
+                           controls-position="right" :min="0" 
+                           :disabled="dataType===1"
+                           clearable
+                           @input="changeValueHandle(item.value, index)"
+                           >
+                        </el-input>
+                     </div>
                   </div>
                </div>
-               <div class="edit-service-tips">（ {{$t('message.serveTips')}} ）</div>
+               
             </div>
             <!-- 设备服务 -->
             <div class="edit-box-item" v-if="ruleForm.equipment_show == 1">
@@ -185,7 +209,9 @@
                      </el-checkbox>
                   </el-checkbox-group>
                </div>
+               
             </div>
+            <div class="edit-service-tips">（ {{$t('message.serveTips')}} ）</div>
 
          </div>
       </div>
@@ -204,6 +230,8 @@
                   :autosize="{ minRows: 4, maxRows: 4}"
                   :placeholder="$t('message.EnterComments')"
                   :disabled="dataType===1"
+                  maxlength="50"
+                  show-word-limit
                ></el-input>
             </div>
          </div>
@@ -218,6 +246,8 @@
       :visible.sync="extVisible"
       append-to-body
       custom-class="res-dialog"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
       @open="callbackForExtDialogOpen"
     > 
       <div class="ext-content">
@@ -294,6 +324,8 @@
       :title="$t('message.addInteParticipants')"
       :visible.sync="innerVisible"
       append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
       custom-class="res-dialog"
       @open="callbackForInnerDialogOpen"
     > 
@@ -304,16 +336,17 @@
                class="inline-input"
                v-model="searchName"
                clearable
+               @clear="clearHandle"
             ></el-input>
          </div>
-         <div class="search-group-item">
+         <!-- <div class="search-group-item">
             {{$t('labe.Department')}}：
             <el-input
                class="inline-input"
                v-model="searchDep"
                clearable
             ></el-input>
-         </div>
+         </div> -->
          <el-button class="search-btn" type="primary" @click="searchHandle">{{$t('button.search')}}</el-button>
       </div>
       <div class="df join-content">
@@ -404,7 +437,7 @@ import {
    getEquipmentApi,
    saveMeetEditApi
 } from '@/api/currentMeet'
-import qs from 'querystring' 
+import dayjs from "dayjs";
 export default {
   data() {
      return {
@@ -421,6 +454,10 @@ export default {
         serviceList: [], // 茶点服务
         equipmentList: [], // 设备信息
         category: ['', '单次预约', '重复预约', '跨日预约'],
+        repetitionType: ['', '每日', '每周', '每月'],
+        categoryStr: '', // 会议重复类型
+        reapSessions: '',// 重复总场次
+        weekDecstr: '', // 每天/每周/每月
         meetTime: '', // 会议时间
         equipmentStr: '',// 设备
         checkList: [],
@@ -437,60 +474,9 @@ export default {
          label: 'name'
         },
         defaultChecked: [], // 默认展开被选中的参会人员
- 
         error: { // 验证提示
-        room: {isFocus: false},
         title: { isFocus: false },
-        type: { isFocus: false },
-        number: { isFocus: false },
-        company: { isFocus: false },
-        area: { isFocus: false },
-        repeType: {isFocus: false},
-        repeTime: {isFocus: false},
-        repeStartTime: {isFocus: false},
-        nexDateStartTime: {isFocus: false},
-        nexDateStopTime: {isFocus: false},
-        nexStartTime: {isFocus: false},
-        nexStopTime: {isFocus: false},
       },
-      testForm: {
-            "title": "test",
-            "is_secrecy": 0,
-            "inside_participant": [
-               {
-                  "id": 2,
-                  "name": "更个个"
-               }
-            ],
-            "out_participant": [
-               {
-                  "email": "1@1.com",
-                  "phone": "18888888888",
-                  "name": "admin1"
-               },
-               {
-                  "email": "2@1.com",
-                  "phone": "18588888888",
-                  "name": "admin2"
-               }
-            ],
-            "meeting_type_id": 1,
-            "meeting_type_name": "常规会议",
-            "service": [
-               {
-                  "id": 1,
-                  "value": "1",
-                  "name": "test"
-               }
-            ],
-            "equipment": [
-               {
-                  "id": 1,
-                  "name": "test"
-               }
-            ],
-            "remark": "123"
-         },
          outParticipantGuids: [],
          outParticipantVal: ''
      }
@@ -505,12 +491,12 @@ export default {
    let params = this.$route.params
    // 获取详情信息
    this.getDateilsInfo(params.id)
+   
    // 获取会议类型
    this.getMeetingTypeInfo()
    // 获取部门信息
    this.getDepartmentInfo()
-   // 获取服务
-   this.getServiceInfo()
+   
    // 设备
    this.getEquipmentInfo()
    // 注销onresizes事件
@@ -520,6 +506,7 @@ export default {
    this.$route.meta.activeMenu = menu === 'current' ? '/current/current_list' : '/history/history_list'
   },
   methods: {
+   
      // 获取详情
    getDateilsInfo(id) {
       this.formLoading = true
@@ -527,13 +514,39 @@ export default {
          this.ruleForm = res.data.meeting
          // 会议时间
          this.meetTime = this.setMeetTime(this.ruleForm.start, this.ruleForm.end, this.ruleForm.category)
-         // 支持会议类型
-          let device = '无'
+         // 预约类型
+         this.categoryStr = this.category[this.ruleForm.category]
+         // 重复预约计算场次, 重复类型
+         if(this.ruleForm.category==2){
+           this.repeatEndTimeHandle()
+           // 预约类型
+           this.categoryStr = `${this.category[this.ruleForm.category]}（${this.repetitionType[this.ruleForm.repetition_type]}）`
+         }
+
+         // 茶点服务
+         this.ruleForm.serviceId = []
+         this.ruleForm.service && this.ruleForm.service.map(item=> {
+            this.ruleForm.serviceId.push(item.id)
+         })
+         // 获取服务
+         this.getServiceInfo()
+         // if(this.ruleForm.service.length>0){
+         //    let services = this.ruleForm.service
+         //    services.map(res=>{
+         //       res.value = 0
+         //    })
+         //    this.serviceList = services 
+         // }
+         
+         
+         
+         // 设备
+          let device = ''
           this.ruleForm.equipment && this.ruleForm.equipment.forEach((item) => {
             device = device ? device + ' / ' + item.name : item.name
           })
-          this.equipmentStr = device
-         
+          this.equipmentStr = device || '--'
+
          // 内部参会人员
          let str = ''
          let arr = []
@@ -546,12 +559,101 @@ export default {
          
          // 外部参会人
          this.outParticipantHandle()
+         
+         // let equipment = this.ruleForm.equipment
+
          this.formLoading = false
 
       })
    },
+   // 获取茶点服务
+   getServiceInfo() {
+      getServiceApi({}).then(res => {
+        let services = res.data.services 
+        if(this.ruleForm.service.length>0){
+           this.ruleForm.service.map(res=>{
+            services.map(item=>{
+               if(res.id == item.id){
+                 item.value = res.value
+               }
+            })
+           })
+        }else{
+         services.map(res=>{
+           res.value = 0
+         })
+        }
+        this.serviceList = services 
+      })
+   },
+   // 选择茶点服务
+   selectServeChange(arr){
+      let arrs = []
+      console.log(this.serviceList,'this.serviceList222')
+      this.serviceList.map(res=>{
+         arr.map(item=>{
+            if(res.id == item){
+               let obj={
+                  name: res.name,
+                  id: res.id,
+                  value: res.value
+               }
+               arrs.push(obj)
+            }
+         })
+      })
+      this.ruleForm.service = arrs
+      console.log(this.ruleForm.service,'this.ruleForm.service')
+      
+   },
+   // 修改茶点
+   changeValueHandle(value, index){
+      this.serviceList[index]['value'] = value
+      console.log(this.serviceList,'this.serviceList')
+   },
+   // 重复预约： 计算场次、会议重复类型
+   repeatEndTimeHandle() {
+       let types = this.ruleForm.repetition_type
+       let day = 24 * 60 * 60 * 1000
+       let week = 7 * day
+       let month = 30 * day
+       let start_time = this.ruleForm.start.split(" ")
+       let startTimes = dayjs(this.ruleForm.start.split(' ')[0]).valueOf() // 开始日期时间戳
+       let stopTimes = dayjs(this.ruleForm.repetition_end_date).valueOf() // 结束日期时间戳
+       let step = stopTimes - startTimes
+       let dec = 1
+       let weekDec = ''
+       switch(types) {
+         case 1:
+           dec += parseInt(step / day) // 重复每天
+           weekDec = '（每日）'
+          break;
+         case 2:
+           dec += parseInt(step / week) // 重复每周
+           let weeks = this.getWeek(start_time[0])
+           weekDec = `（${weeks}）`
+          break;
+         case 3:
+           dec += parseInt(step / month) // 重复每月
+           let dates = parseFloat(start_time[0].split('-')[2])
+           weekDec = `（每月${dates}号）` 
+          break;
+       }
+       this.reapSessions = dec ? ` 共${dec}场会议` : ''
+       this.meetTime = `${this.meetTime} ${weekDec}` 
+    },
+    // 获取周
+    getWeek(dateString) {
+        let dateArray = dateString.split("-");
+        let dates = new Date(dateArray[0], parseInt(dateArray[1] - 1), dateArray[2]);
+        let week = "周" + "日一二三四五六".charAt(dates.getDay())
+        return week
+    },
    //  添加外部参会人弹窗
    showExtDialog() {
+      if(this.dataType==1){// 详情
+         return
+      }
       this.extVisible = true
       this.outParticipantHandle()
    },
@@ -654,6 +756,9 @@ export default {
     },
    // 显示内部参会人员弹框
     showInnerDialog () {
+      if(this.dataType==1){// 详情
+         return
+      }
       this.innerVisible = true
       this.participantGuids = this.ruleForm.inside_participant.map(item => {
         return {
@@ -762,7 +867,11 @@ export default {
    searchHandle(){
       let name = this.searchName
       let dep = this.searchDep
-      this.$refs.tree.filter(name+dep);
+      this.$refs.tree.filter(name);
+   },
+   // 清除搜索
+   clearHandle(){
+      this.$refs.tree.filter();
    },
    // tree节点过滤
     filterNode (value, data) {
@@ -780,29 +889,43 @@ export default {
         })
         return
       }
-      // let dataJson = {
-      //    id: this.ruleForm.id,
-      //    title: this.ruleForm.title,	//是	string	主题
-      //    is_secrecy: this.ruleForm.is_secret_group,	//是	number: '',	//是否保密会议 0公开 1保密
-      //    inside_participant: [], //	否	array	内部参会人数组
-      //    out_participant: [],//	否	array	外部参会人数组
-      //    meeting_type_id: '',	//是	number	会议类型
-      //    meeting_type_name: '',	//是	string	会议类型 名称
-      //    service: [], //	否	array	茶点服务数组
-      //    equipment: [],//	否	array	设备数组
-      //    remark: ''
-      // }
-      this.ruleForm.out_participant.map(res=>{
+      let insidePar= JSON.parse(JSON.stringify(this.ruleForm.inside_participant))
+      // 内部参会人
+      insidePar.map(res=>{
+         delete res.department_name
+      })
+      let outPar = JSON.parse(JSON.stringify(this.ruleForm.out_participant))
+      // 外部参会人
+      outPar.map(res=>{
          delete res.error
          delete res.nameError
          delete res.mailError
          delete res.phoneError
       })
+      
       console.log(this.ruleForm,'this.ruleForm')
-      return
-      this.testForm.id = this.ruleForm.id
-      saveMeetEditApi(this.testForm).then(res=> {
+      let dataJson = {
+         id: this.ruleForm.id,
+         title: this.ruleForm.title,	//是	string	主题
+         is_secrecy: this.ruleForm.is_secrecy,	//是	number: '',	//是否保密会议 0公开 1保密
+         inside_participant: insidePar, //	否	array	内部参会人数组
+         out_participant: outPar,//	否	array	外部参会人数组
+         meeting_type_id: this.ruleForm.meeting_type_id || '',	//是	number	会议类型
+         meeting_type_name: this.ruleForm.meeting_type_name || '',	//是	string	会议类型 名称
+         service: this.ruleForm.service, //	否	array	茶点服务数组
+         equipment: this.equipmentList, // 否	array	设备数组
+         remark: this.ruleForm.remark
+      }
+      // console.log(dataJson,'dataJson')
+      // return
+      // this.testForm.id = this.ruleForm.id
+      saveMeetEditApi(dataJson).then(res=> {
          console.log(res)
+         this.$message({
+            message: this.$t('tip.infoEditSuccess'),
+            type: 'success'
+         })
+         this.$router.push('/current')
       })
    },
    
@@ -822,16 +945,7 @@ export default {
      })
    },
    
-   // 获取茶点服务
-   getServiceInfo() {
-     getServiceApi({}).then(res => {
-        let services = res.data.services 
-         services.map(res=>{
-           res.num = 0
-        })
-        this.serviceList = services 
-     })
-   },
+   
    // 设备信息
    getEquipmentInfo() {
      getEquipmentApi().then(res => {
@@ -978,21 +1092,25 @@ export default {
               }
               .edit-box-value{
                 color: #898FA8;
+                .edit-box-service{
+                  margin-top: 20px;
+                  min-width: 600px;
+                }
                 .edit-box-refreshment{
-                  display: flex;
+                  display: inline-block;
                   justify-content: space-between;
-                  width: 420px;
                   margin-bottom: 10px;
+                  margin-right: 10px;
                   .edit-refreshment-label{
                      display: inline-block;
-                     flex-basis: 200px;
                      height: 36px;
                      text-align: left;
                      color: #B1BFCD;
                      line-height: 36px;
-                     padding-left: 10px;
-                     border: 1px #DCDFE6 solid;
-                     border-radius: 4px;
+                  }
+                  /deep/.el-input--medium{
+                     display: inline-block;
+                     width: 94px;
                   }
                   .set-bg{
                      background-color: #F5F7FA;
@@ -1013,6 +1131,14 @@ export default {
                 }
               }
 
+              .edit-box-repeat_time{
+                 position: absolute;
+                  left: 386px;
+                  top: -14px;
+                  font-size: 12px;
+                  color: #ABBAC9;
+              }
+
               .max_heigth{
                max-height: 184px;
                overflow-y: auto;
@@ -1030,8 +1156,17 @@ export default {
                 cursor: pointer;
                 border: 1px #DFE4EB solid;
               }
+              .disabled_edit{
+                background-color: #F5F7FA;
+                border-color: #E4E7ED;
+                color: #C0C4CC;
+                cursor: not-allowed;
+              }
               .edit-box-input{
                   width: 375px;
+              }
+              .edit-box-total{
+                 color: #34343F;
               }
               .edit-nex-input{
                 width: 182px;
@@ -1104,9 +1239,7 @@ export default {
           }
 
          .edit-service-tips {
-            position: absolute;
-            bottom: 2px;
-            left: 617px;
+            margin-left: 58px;
             color: #ABBAC9;
          }
 
@@ -1153,6 +1286,11 @@ export default {
           .margin-top{
             margin-top: 24px;
           }
+        }
+        .edit-sign_in{
+           position: absolute;
+           top: 30px;
+           right: 20px;
         }
         .f-start{
             align-items: flex-start !important;
