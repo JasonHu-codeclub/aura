@@ -116,7 +116,7 @@
             show-overflow-tooltip
             >
             <template slot-scope="scope">
-              <span >{{scope.row.meetingTime}}</span>
+              <span >{{scope.row.satrtTime}}<br>{{scope.row.endTime}}</span>
             </template>
           </el-table-column>
           <!-- 会议室 -->
@@ -133,7 +133,7 @@
             align="center"
           >
             <template slot-scope="scope">
-              <span >{{categoryList[scope.row.category]}}</span>
+              <span>{{scope.row.categoryStr}}</span>
             </template>
           </el-table-column>
           <!-- 状态 -->
@@ -250,6 +250,11 @@ export default {
         2: '重复预约',
         3: '跨日预约',
       },
+      repetitionType: {
+        1: '每日',
+        2: '每周',
+        3: '每月',
+      },
       total: 0,// 总页数
       searchBtnStatus: false,// 查询loading
       myMeetingInfo: [],// 列表数据
@@ -291,7 +296,9 @@ export default {
       const result = await myMeetingListApi(params)
       let meetings = result.data.meetings
       meetings.map( v => {
-        v.meetingTime = `${v.date} ${v.start} ${v.end}`
+        v.satrtTime = `${v.date} ${v.start}`
+        v.endTime = `${v.end_date} ${v.end}`
+        v.categoryStr= `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）`
       })
       this.myMeetingInfo = meetings
       this.total = result.data.total// 总条数 

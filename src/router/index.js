@@ -161,6 +161,17 @@ export const asyncRoutes = [
         icon: 'history',
         affix: false
       }
+    },
+    {
+      path: 'conflict/:menu/:id',
+      component: () => import('@views/appointment/approve/conflictList'),
+      name: 'Conflict',
+      hidden: true,
+      meta: {
+        title: 'Conflict',
+        affix: false,
+        activeMenu: '/approve/approve_list'
+      }
     }]
   },
   {

@@ -757,13 +757,15 @@ export default {
       appointmentApi(data).then(res=>{
         this.addLoading = false
         this.approveBtnLoading = false
-        this.$message({
-          message: this.approveMessage,
-          type: 'success'
-        });
-        // 更新会议列表
-        this.searchMeetingRoom()
-        this.resetData()
+        if(res.meta.code=='RESP_OKAY'){
+          this.$message({
+            message: this.approveMessage,
+            type: 'success'
+          });
+          // 更新会议列表
+          this.searchMeetingRoom()
+          this.resetData()
+        }
       }).catch(() => {
       })
     },

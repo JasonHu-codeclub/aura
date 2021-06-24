@@ -140,7 +140,6 @@ export default {
           this.loginLoading = true
           this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((result) => {
             this.loginLoading = false
-            console.log(result,132456)
             this.$router.replace({ path: '/' })
           })
         } 
@@ -151,7 +150,6 @@ export default {
       if (type === 'qiye') { // 企业微信
         const redirect_uri = 'https://alc01.aa-iot.com/pcmeet/#/login'
         window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${this.appid}&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=STATE`
-        console.log(type,55)
       } else if (type === 'wechat') { // 微信登录
       }
     },

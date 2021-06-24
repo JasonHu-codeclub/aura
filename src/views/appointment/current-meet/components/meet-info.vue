@@ -34,7 +34,11 @@
                <div class="edit-box-value">{{categoryStr||'--'}}</div>
             </div>
          </div>
-         <div class="edit-sign_in">{{$t('tip.signIn')}}</div>
+         <div class="edit-sign_in" v-if="ruleForm.status == 1">
+            <!-- {{ruleForm.is_is_sign == 1 ? $t('tip.signIn') : $t('tip.notSignIn')}} -->
+            <span v-if="ruleForm.is_is_sign == 1"><i class="el-icon-circle-check"></i>{{$t('tip.signIn')}}</span>
+            <span v-else><i class="el-icon-warning"></i>{{$t('tip.notSignIn')}}</span>
+         </div>
       </div>
 
       <!-- 基本信息 -->
@@ -169,7 +173,8 @@
                      default-first-option
                      class="input edit-box-input"
                      @change="selectServeChange"
-                     :placeholder="$t('placeholder.selectServe')">
+                     :placeholder="$t('placeholder.selectServe')"
+                     :disabled="dataType===1">
                      <el-option
                         v-for="item in serviceList"
                         :key="item.id"
@@ -179,14 +184,14 @@
                   </el-select>
                   <div class="edit-box-service">
                     <div class="edit-box-refreshment" v-for="(item, index) in ruleForm.service" :key="index">
-                        <span class="edit-refreshment-label" :class="{highlight: item.value > 0, 'set-bg': dataType===1 }" >{{item.name}}：</span>
+                        <span class="edit-refreshment-label" >{{item.name}}：</span>
                         <el-input
                            :class="{highlight: item.value > 0 }" 
                            v-model="item.value" 
                            controls-position="right" :min="0" 
                            :disabled="dataType===1"
                            clearable
-                           @input="changeValueHandle(item.value, index)"
+                           @input="changeValueHandle(item)"
                            >
                         </el-input>
                      </div>
@@ -198,16 +203,23 @@
             <div class="edit-box-item" v-if="ruleForm.equipment_show == 1">
                <div class="edit-box-label">{{$t('message.equipmentServices')}}：</div>
                <div class="edit-box-value">
-                  <el-checkbox-group v-model="checkList">
-                     <el-checkbox 
-                     v-for="(item,index) in equipmentList" 
-                     :label="item.id" 
-                     :key="index"
-                     :disabled="dataType===1"
-                     >
-                     {{item.name}}
-                     </el-checkbox>
-                  </el-checkbox-group>
+                  <el-select
+                     v-model="checkListEquipment"
+                     multiple
+                     filterable
+                     allow-create
+                     default-first-option
+                     class="input edit-box-input"
+                     @change="selectEquimentChange"
+                     :placeholder="$t('placeholder.selectEquipment')"
+                     :disabled="dataType===1">
+                     <el-option
+                        v-for="item in equipmentList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                     </el-option>
+                  </el-select>
                </div>
                
             </div>
@@ -460,7 +472,7 @@ export default {
         weekDecstr: '', // 每天/每周/每月
         meetTime: '', // 会议时间
         equipmentStr: '',// 设备
-        checkList: [],
+        checkListEquipment: [], // 选中的设备
         isExpand: false, // 是否展开
         innerVisible: false, // 内部参会人员 
         extVisible: false, // 外部参与人员
@@ -544,6 +556,7 @@ export default {
           let device = ''
           this.ruleForm.equipment && this.ruleForm.equipment.forEach((item) => {
             device = device ? device + ' / ' + item.name : item.name
+            this.checkListEquipment.push(item.id)
           })
           this.equipmentStr = device || '--'
 
@@ -588,8 +601,18 @@ export default {
    },
    // 选择茶点服务
    selectServeChange(arr){
+      var arr3 = this.serviceList.filter(v => {
+         return arr.every(e => e != v.id);
+      });
+      this.serviceList.map(res=>{
+         arr3.map(item=>{
+            if(res.id == item.id){
+               res.value = 0
+            }
+         })
+      })
+
       let arrs = []
-      console.log(this.serviceList,'this.serviceList222')
       this.serviceList.map(res=>{
          arr.map(item=>{
             if(res.id == item){
@@ -603,13 +626,18 @@ export default {
          })
       })
       this.ruleForm.service = arrs
-      console.log(this.ruleForm.service,'this.ruleForm.service')
-      
    },
    // 修改茶点
-   changeValueHandle(value, index){
-      this.serviceList[index]['value'] = value
-      console.log(this.serviceList,'this.serviceList')
+   changeValueHandle(item){
+      this.serviceList.map(res=>{
+         if(res.id == item.id){
+            res.value = item.value 
+         }
+      })
+   },
+   // 选择设备
+   selectEquimentChange() {
+      
    },
    // 重复预约： 计算场次、会议重复类型
    repeatEndTimeHandle() {
@@ -902,8 +930,17 @@ export default {
          delete res.mailError
          delete res.phoneError
       })
+
+      // 设备
+      let equ = []
+      this.equipmentList.map(res=>{
+         this.checkListEquipment.map(e=> {
+            if(res.id == e){
+              equ.push(res)
+            }
+         })
+      })
       
-      console.log(this.ruleForm,'this.ruleForm')
       let dataJson = {
          id: this.ruleForm.id,
          title: this.ruleForm.title,	//是	string	主题
@@ -913,14 +950,10 @@ export default {
          meeting_type_id: this.ruleForm.meeting_type_id || '',	//是	number	会议类型
          meeting_type_name: this.ruleForm.meeting_type_name || '',	//是	string	会议类型 名称
          service: this.ruleForm.service, //	否	array	茶点服务数组
-         equipment: this.equipmentList, // 否	array	设备数组
+         equipment: equ, // 否	array	设备数组
          remark: this.ruleForm.remark
       }
-      // console.log(dataJson,'dataJson')
-      // return
-      // this.testForm.id = this.ruleForm.id
       saveMeetEditApi(dataJson).then(res=> {
-         console.log(res)
          this.$message({
             message: this.$t('tip.infoEditSuccess'),
             type: 'success'
@@ -1129,7 +1162,21 @@ export default {
                      }
                   }
                 }
+                /deep/.el-tag.el-tag--info{
+                  background-color: #5C7BEA;
+                  border-color: #5C7BEA;
+                  color: #ffffff;
+                  .el-tag__close.el-icon-close{
+                     color: #717171;
+                     background-color: #ffffff;
+                  }
+                  
+                }
               }
+               /deep/.el-tag.el-tag--info .el-tag__close:hover {
+                  color: #FFF !important;
+                  background-color: #c3c3c3 !important;
+               }  
 
               .edit-box-repeat_time{
                  position: absolute;

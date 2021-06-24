@@ -227,7 +227,9 @@ export default {
     nameTypes: '会议主题/发起人/参会人',
     startDate: '开始日期',
     endDate: '结束时间',
-    selectServe: '请选择会议室茶点服务'
+    selectServe: '请选择会议室茶点服务',
+    selectEquipment: '请选择会议室设备服务',
+    enterReason: '请输入拒绝原因'
   },
   tip: {
     userNameNotEmpty: '用户名不能为空',
@@ -264,7 +266,14 @@ export default {
     confirmTips: '请确认是否取消',
     meetCancelled: '会议已被取消',
     signIn: '已签到',
-    notSignIn: '未签到'
+    notSignIn: '未签到',
+    approvalMeeting: '审批会议',
+    confirmMeet: '请确认是否将',
+    agreeMeet: '会议审批通过！',
+    refuseMeet: '会议审批拒绝！',
+    ReasonsForRefusal: '拒绝理由',
+    modificationTips: '会议信息已被修改，请重新操作！'
+    
   },
   
   

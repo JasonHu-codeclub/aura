@@ -2,13 +2,25 @@
   <el-dialog
       :visible.sync="dialogVisible"
       width="500px"
-      :close="handleClose">
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      @closed="handleClose">
       <div class="cancel-tips">
         <div class="cancel-title">
           <span class="ancel-title-icon"></span>
           <span class="ancel-title-text">{{title}}</span>
         </div>
         <div class="cancel-content" v-html="content"></div>
+        <div v-if="showInput" class="cancel-reasons">
+          <span class="cancel-reasons-label">{{$t('tip.ReasonsForRefusal')}}</span>
+          <el-input 
+          type="text" 
+          v-model="reasons" 
+          :placeholder="$t('placeholder.enterReason')"
+          maxlength="15" 
+          show-word-limit
+          clearable></el-input>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{$t('button.cancel')}}</el-button>
@@ -22,6 +34,7 @@ export default {
    data() {
        return {
         dialogVisible: false,
+        reasons: ''
        }
    },
    props: {
@@ -34,6 +47,10 @@ export default {
         default: ''
     },
     btnLoading: {
+        type: Boolean,
+        default: false
+    },
+    showInput: {
         type: Boolean,
         default: false
     }
@@ -51,12 +68,14 @@ export default {
    methods: {
     // 确认
      hanldDeleteMeeting() {
-         this.dialogBtnLoading = true
-         this.$emit('hanldConfirm')
+        this.dialogBtnLoading = true
+        this.$emit('hanldConfirm', this.reasons)
      },
     // 取消
      handleClose() {
-         this.$emit('handleClose')
+        this.isShowInput = false
+        this.reasons = ''
+        this.$emit('handleClose')
      }
    }
 }
@@ -97,6 +116,17 @@ export default {
         padding-left: 36px;
         margin-top: 12px;
         line-height: 30px;
+      }
+      .cancel-reasons{
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        padding: 0 22px 0 36px;
+        margin-top: 12px;
+        .cancel-reasons-label {
+          width: 82px;
+          font-size: 14px;
+        }
       }
     }
   }

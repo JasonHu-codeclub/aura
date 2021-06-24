@@ -50,11 +50,11 @@ service.interceptors.response.use(
       //   type: 'error',
       //   duration: 3 * 1000
       // })
-      message({
-        message: message,
-        type: 'error',
-        duration: 3 * 1000
-      });
+      // message({
+      //   message: message,
+      //   type: 'error',
+      //   duration: 3 * 1000
+      // });
       return Promise.reject('error')
     } else {
       if (response.config.method !== 'get') {
@@ -79,6 +79,8 @@ service.interceptors.response.use(
       type: 'error',
       duration: 3 * 1000
     });
+    // console.log(error.response.data, 'error')
+    // return
     // 未经授权,回到登录页
     if (error.response.data.meta.code === 'SECU_0001') {
       return
@@ -86,7 +88,7 @@ service.interceptors.response.use(
         location.reload()
       })
     }
-    return Promise.reject(error)
+    return error.response.data//Promise.reject(error)
   })
 
 export default service

@@ -223,7 +223,9 @@ export default {
     companiesNum: 'Please enter the number of participating companies',
     selectType: 'Please select appointment type',
     nameTypes: 'theme/sender/attendee',
-    selectServe: 'Please choose tea service in meeting room'
+    selectServe: 'Please choose tea service in meeting room',
+    selectEquipment: 'Please select conference room equipment service',
+    enterReason: 'Please enter the reason for rejection'
   },
   tip: {
     userNameNotEmpty: 'Username can not be empty',
@@ -260,8 +262,13 @@ export default {
     confirmTips: 'Please confirm whether to cancel or not',
     meetCancelled: 'The meeting has been cancelled',
     signIn: 'sign in',
-    notSignIn: 'No sign in'
-
+    notSignIn: 'No sign in',
+    approvalMeeting: 'approval meeting',
+    confirmMeet: 'Please confirm whether the',
+    agreeMeet: 'meeting is approved！',
+    refuseMeet: 'meeting is refuse！',
+    ReasonsForRefusal: 'reasons for refusal',
+    modificationTips: 'Conference information has been modified, please operate again!'
   },
 
 

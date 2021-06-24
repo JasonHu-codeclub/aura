@@ -1,4 +1,8 @@
  /**
+  冲突列表
+  */
+
+ /**
   审批会议主页面
   */
 
@@ -103,7 +107,7 @@
             prop="start_time"
             :label="$t('message.meetingTime')"
             align="center"
-            width="160"
+            width="210"
             show-overflow-tooltip
             >
             <template slot-scope="scope">
@@ -203,7 +207,7 @@
   </div>
 </template>
  <script>
- import {approveListApi, serviceAgreeApi, serviceRefuseApi} from '@/api/approve'
+ import {meetingShowApi, serviceAgreeApi, serviceRefuseApi} from '@/api/approve'
  import Pagination from '@/components/Pagination'
  import dialogCancel from '@/views/appointment/current-meet/components/dialogCancel'
  import qs from 'querystring' 
@@ -278,6 +282,7 @@ export default {
     // 获取列表数据
     getApproveInfo () {
       let params = { 
+        id: this.$route,
         page: this.paginationQuery.page,	// 当前页
         size: this.paginationQuery.limit,
         start_date: this.chooseDate ? this.chooseDate[0] : '',
@@ -285,7 +290,7 @@ export default {
         ...this.searchForm
       }
       this.dataLoading = true
-      approveListApi(params).then(res=>{
+      meetingShowApi(params).then(res=>{
         let meetings = res.data.meeting_approves
         meetings.map( v => {
           v.satrtTime = `${v.date} ${v.start}`
@@ -296,7 +301,7 @@ export default {
         this.total = res.data.total// 总条数 
         this.dataLoading = false
       })
-      // const res = await approveListApi(params)
+      // const res = await meetingShowApi(params)
       
     },
     // 重置
@@ -315,7 +320,7 @@ export default {
     },
     // 详情
     detailsMeet(row) {
-      // 判断是否冲突row.conflict_number>1冲突
+      // 判断单次还是重复预约 category会议类型 1=》单次预约，2=》重复预约 ，3=》跨日预约
       let path = row.conflict_number > 1 ? 'Conflict' : 'Details' 
       this.$router.push({
         name: path,
@@ -424,11 +429,12 @@ export default {
        display: block;
     }
     .part_num{
-      display: inline-block;
+      display: flex;
       width: 50px;
       height: 24px;
-      line-height: 24px;
       border-radius: 20px;
+      justify-content: center;
+      align-items: center;
       background-color: #F5F8FF;
     }
   }
