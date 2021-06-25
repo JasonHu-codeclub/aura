@@ -266,11 +266,38 @@ export default {
         page: 1, // 当前页
         limit: 10, // 每页显示条目个数
       },
-      pickerOptions: {// 控制日期选择
-        disabledDate (time) {
-          // return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
-        }
-      },
+      // pickerOptions: {// 控制日期选择
+      //   disabledDate (time) {
+      //     // return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
+      //   }
+      // },
+      pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
       categoryList: {
         1: '单次预约',
         2: '重复预约',

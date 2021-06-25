@@ -149,6 +149,21 @@ export const asyncRoutes = [
     }]
   },
   {
+    path: '/overview',
+    component: Layout,
+    redirect: '/overview/index',
+    children: [{
+      path: 'index',
+      component: () => import('@views/appointment/overview'),
+      name: 'overview',
+      meta: {
+        title: 'overview',
+        icon: 'history',
+        affix: false
+      }
+    }]
+  },
+  {
     path: '/approve',
     component: Layout,
     redirect: '/approve/approve_list',
