@@ -93,9 +93,9 @@
           >
         </div>
         <div class="filter-item-box">
-          <!-- 查询 -->
+          <!-- 重置 -->
           <el-button
-            type="default"
+            type="info"
             class="search"
             @click="resetMeetingRoom"
             :loading="resetBtnStatus"

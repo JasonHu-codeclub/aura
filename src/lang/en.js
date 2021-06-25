@@ -14,8 +14,8 @@ export default {
     detailsMeet: 'Meeting Details',
     repeat: 'Recurring booking',
     user: 'Personal Center',
-    repeatMeet: 'Repeat meeting'
-    
+    repeatMeet: 'Repeat meeting',
+    conflict: 'Conflict list'
   },
   navbar: {
     title: 'Accel booking system',
@@ -75,6 +75,8 @@ export default {
     save: 'Save',
     meetingClosed: 'End',
     details: 'Details',
+    completeService: 'complete',
+    confirmationService: 'confirm'
   },
   message: {
     loginTitle: 'Digital office space',
@@ -268,7 +270,14 @@ export default {
     agreeMeet: 'meeting is approved！',
     refuseMeet: 'meeting is refuse！',
     ReasonsForRefusal: 'reasons for refusal',
-    modificationTips: 'Conference information has been modified, please operate again!'
+    modificationTips: 'Conference information has been modified, please operate again!',
+    ApprovalConflict: 'Approval conflict meeting',
+    agreed: 'Once agreed, the rest of the meetings in the list will be rejected',
+    continue: 'Are you sure you want to continue',
+    conflictDec: 'Conflict',
+    confirmService: 'After confirmation, you will need to service this meeting',
+    completed: 'Please confirm if this conference service has been completed',
+    successful: 'Operation successful'
   },
 
 

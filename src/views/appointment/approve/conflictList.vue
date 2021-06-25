@@ -19,7 +19,6 @@
             type="daterange"
             class="choose-date"
             :placeholder="$t('placeholder.date')"
-            size="mini"
             value-format="yyyy-MM-dd"
             :editable="false"
             :picker-options="pickerOptions"
@@ -38,25 +37,8 @@
           @clear="getApproveInfo"
           clearable></el-input>
         </div>
-        <!-- 状态 -->
-        <div class="filter-item-box">
-          <span>{{$t('labe.status')}}：</span>
-          <el-select
-            v-model="searchForm.approve_status"
-            :placeholder="$t('message.status')"
-            @change="getApproveInfo"
-            @clear="getApproveInfo"
-            clearable
-          >
-            <el-option
-              v-for="item in statusList"
-              :key="item.key"
-              :label="item.name"
-              :value="item.key"
-            ></el-option>
-          </el-select>
-        </div>
-
+      </div>
+      <div class="filter-item">
         <div class="filter-item-box">
           <!-- 查询 -->
           <el-button
@@ -66,6 +48,7 @@
             :loading="searchBtnStatus"
             >{{$t('button.search')}}</el-button
           >
+          <!-- 重置 -->
           <el-button
             type="info"
             class="search"
@@ -148,7 +131,19 @@
             align="center"
           >
           <template slot-scope="scope">
-            <span class="part_num">{{scope.row.attendence_number}}</span>
+            <!-- <span class="part_num">{{scope.row.attendence_number}}</span> -->
+
+            <el-tooltip 
+              :disabled="!scope.row.attendence_number" 
+              placement="top" 
+              effect="light" 
+              :open-delay="350"
+              popper-class="tooltip-per"
+            >
+              <div slot="content">{{scope.row.participant_users}}</div>
+              <span :class="{'part_num':scope.row.attendence_number>0}">{{scope.row.attendence_number||'/'}}</span>
+            </el-tooltip>
+
           </template>
           </el-table-column>
           <!-- 发起人 -->
@@ -210,14 +205,12 @@
  import {meetingShowApi, serviceAgreeApi, serviceRefuseApi} from '@/api/approve'
  import Pagination from '@/components/Pagination'
  import dialogCancel from '@/views/appointment/current-meet/components/dialogCancel'
- import qs from 'querystring' 
 export default {
   components: { Pagination , dialogCancel},// 分页
   data () {
     return {
       isCurrent: 1,
       searchForm:{
-        approve_status: '',	// 状态
         keyword: '' // 会议名称
       },
       chooseDate: null, // 日期
@@ -282,7 +275,8 @@ export default {
     // 获取列表数据
     getApproveInfo () {
       let params = { 
-        id: this.$route,
+        type: 2,
+        id: this.$route.params.id,
         page: this.paginationQuery.page,	// 当前页
         size: this.paginationQuery.limit,
         start_date: this.chooseDate ? this.chooseDate[0] : '',
@@ -291,17 +285,16 @@ export default {
       }
       this.dataLoading = true
       meetingShowApi(params).then(res=>{
-        let meetings = res.data.meeting_approves
+        let meetings = res.data.meeting
         meetings.map( v => {
           v.satrtTime = `${v.date} ${v.start}`
           v.endTime = `${v.end_date} ${v.end}`
-          v.categoryStr= `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）`
+          v.categoryStr= v.category == 2 ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）` : this.categoryList[v.category]
         })
         this.myMeetingInfo = meetings
         this.total = res.data.total// 总条数 
         this.dataLoading = false
       })
-      // const res = await meetingShowApi(params)
       
     },
     // 重置
@@ -316,17 +309,14 @@ export default {
       }
       this.chooseDate= null, // 日期
       this.getApproveInfo()
-
     },
     // 详情
     detailsMeet(row) {
-      // 判断单次还是重复预约 category会议类型 1=》单次预约，2=》重复预约 ，3=》跨日预约
-      let path = row.conflict_number > 1 ? 'Conflict' : 'Details' 
       this.$router.push({
-        name: path,
+        name: 'Details',
         params: {
           menu: 'conflict',
-          id: row.meeting_id
+          id: row.id
         }
       })
     },
@@ -336,22 +326,22 @@ export default {
       this.$refs.cancel.dialogVisible= true
       this.selectCurrentRowData = data
       this.operationType = type
-      this.cancelTitle = this.$t('tip.approvalMeeting')
-      let msg = ''
+      this.cancelTitle = this.$t('tip.ApprovalConflict')
+      let content = ''
       if(type == 1){
-        msg= this.$t('tip.agreeMeet')
+        content= `${this.$t('tip.agreed')}<br/>${this.$t('tip.continue')}`
       }else{
         this.isShowInput = true
-        msg = this.$t('tip.refuseMeet')
+        content = `${this.$t('tip.confirmMeet')}【${data.title}】<br/>${this.$t('tip.refuseMeet')}` 
       }
-      this.cancelContent = `${this.$t('tip.confirmMeet')}【${data.title}】<br/>${msg}`
+      this.cancelContent = content
     },
     // 同意/拒绝会议请求
     hanldDeleteMeeting(value) {
         let data = this.selectCurrentRowData
         let ajaxName = ''
         let params = {
-          id: data.id
+          id: data.approve_flow_id
         }
         if(this.operationType && this.operationType == 1){
           ajaxName = serviceAgreeApi
@@ -412,11 +402,12 @@ export default {
       align-items: center;
       /deep/.el-input__inner{
         width: 180px;
-        height: 36px;
+      }
+      .choose-date{
+        width: 260px;
       }
       /deep/.el-button{
         width: 80px;
-        height: 32px;
         font-size: 14px;
       }
     }
@@ -429,12 +420,11 @@ export default {
        display: block;
     }
     .part_num{
-      display: flex;
+      display: inline-block;
       width: 50px;
       height: 24px;
       border-radius: 20px;
-      justify-content: center;
-      align-items: center;
+      cursor: pointer;
       background-color: #F5F8FF;
     }
   }
@@ -527,6 +517,17 @@ export default {
       border-color: #cc2121;
       color: #FFF;
     }
+  }
+}
+</style>
+<style lang="less">
+.tooltip-per{
+  max-width: 340px;
+  div:first-child{
+    font-size: 12px;
+    max-height: 80px;
+    overflow-y: auto;
+    line-height: 20px;
   }
 }
 </style>

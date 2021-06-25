@@ -13,7 +13,8 @@ export default {
     detailsMeet: '会议详情',
     repeat: '重复预约',
     user: '个人中心',
-    repeatMeet: '重复会议'
+    repeatMeet: '重复会议',
+    conflict: '冲突列表'
   },
   navbar: {
     title: '会议预约系统',
@@ -75,6 +76,8 @@ export default {
     save: '保存',
     meetingClosed: '结束',
     details: '详情',
+    completeService: '完成服务',
+    confirmationService: '确认服务'
   },
   message: {
     loginTitle: 'XXX数字办公空间',
@@ -272,25 +275,16 @@ export default {
     agreeMeet: '会议审批通过！',
     refuseMeet: '会议审批拒绝！',
     ReasonsForRefusal: '拒绝理由',
-    modificationTips: '会议信息已被修改，请重新操作！'
-    
+    modificationTips: '会议信息已被修改，请重新操作！',
+    ApprovalConflict: '审批冲突会议',
+    agreed: '同意后，列表中其余会议都将会被拒绝',
+    continue: '请确认是否继续',
+    conflictDec: '冲突',
+    confirmService: '确认后，您将需要为此会议服务',
+    completed: '请确认此会议服务是否已完成',
+    successful: '操作成功'
   },
   
-  
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
 
   // login: {
   //   title: '系统登录',

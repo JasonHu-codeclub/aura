@@ -3,7 +3,7 @@
   审批详情
  */
 <template>
-  <meet-info :data-type="3" />
+  <meet-info :data-type="1" />
 </template>
 <script>
 import meetInfo from '@/views/appointment/current-meet/components/meet-info'

@@ -15,7 +15,6 @@
             type="daterange"
             class="choose-date"
             :placeholder="$t('placeholder.date')"
-            size="mini"
             value-format="yyyy-MM-dd"
             :editable="false"
             :picker-options="pickerOptions"
@@ -52,7 +51,8 @@
             ></el-option>
           </el-select>
         </div>
-
+      </div>
+      <div class="filter-item">
         <div class="filter-item-box">
           <!-- 查询 -->
           <el-button
@@ -62,6 +62,7 @@
             :loading="searchBtnStatus"
             >{{$t('button.search')}}</el-button
           >
+          <!-- 重置 -->
           <el-button
             type="info"
             class="search"
@@ -97,7 +98,11 @@
             :label="$t('message.theme')"
             align="center"
             show-overflow-tooltip
-          ></el-table-column>
+          >
+           <template slot-scope="scope">
+             {{scope.row.conflict_dec ? scope.row.conflict_dec : scope.row.title}}
+           </template>
+          </el-table-column>
           <!-- 会议时间 -->
           <el-table-column
             prop="start_time"
@@ -124,7 +129,7 @@
             align="center"
           >
             <template slot-scope="scope">
-              <span>{{scope.row.categoryStr}}</span>
+              {{scope.row.conflict_dec ? scope.row.conflict_dec : scope.row.categoryStr}}
             </template>
           </el-table-column>
           <!-- 状态 -->
@@ -144,7 +149,18 @@
             align="center"
           >
           <template slot-scope="scope">
-            <span class="part_num">{{scope.row.attendence_number}}</span>
+            <span v-if="scope.row.conflict_dec">{{scope.row.conflict_dec}}</span>
+            <el-tooltip 
+              v-else
+              :disabled="!scope.row.attendence_number" 
+              placement="top" 
+              effect="light" 
+              :open-delay="350"
+              popper-class="tooltip-per"
+            >
+              <div slot="content">{{scope.row.personnel}}</div>
+              <span :class="{'part_num':scope.row.attendence_number>0}">{{scope.row.attendence_number||'/'}}</span>
+            </el-tooltip>
           </template>
           </el-table-column>
           <!-- 发起人 -->
@@ -153,7 +169,11 @@
             :label="$t('message.sender')"
             width="100"
             align="center"
-          ></el-table-column>
+          >
+            <template slot-scope="scope">
+              {{scope.row.conflict_dec ? scope.row.conflict_dec : scope.row.user_name}}
+            </template>
+          </el-table-column>
           <!-- 操作 -->
           <el-table-column
             :label="$t('message.operation')"
@@ -161,10 +181,10 @@
             align="center"
           >
             <template slot-scope="scope">
-              <!-- 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批 -->
+              <!-- 会议状态 0 待审批 1 同意 2 拒绝 3过期未审批 -->
               <el-button 
                 type="text" 
-                :disabled="scope.row.status == 1"
+                :disabled="!!scope.row.status||scope.row.conflict_dec!=''"
                 @click="agreeRefuseMeeting(scope.row, 1)">
                 {{ $t("button.agree") }}
               </el-button>
@@ -175,7 +195,7 @@
               </el-button>
               <el-button
                 type="text"
-                :disabled="scope.row.status == 1"
+                :disabled="!!scope.row.status||scope.row.conflict_dec!=''"
                 @click="agreeRefuseMeeting(scope.row, 2)">
                 {{ $t("button.refuse") }}
               </el-button>
@@ -217,8 +237,8 @@ export default {
         keyword: '' // 会议名称
       },
       chooseDate: null, // 日期
-      statusList: [ // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
-        {key: 0, name: '审批中'},
+      statusList: [ // 会议状态 0=>待审批 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
+        {key: 0, name: '待审批'},
         {key: 1, name: '同意'},
         {key: 2, name: '已拒绝'},
         {key: 3, name: '过期未审批'},
@@ -287,17 +307,21 @@ export default {
       this.dataLoading = true
       approveListApi(params).then(res=>{
         let meetings = res.data.meeting_approves
-        meetings.map( v => {
-          v.satrtTime = `${v.date} ${v.start}`
-          v.endTime = `${v.end_date} ${v.end}`
-          v.categoryStr= `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）`
-        })
-        this.myMeetingInfo = meetings
-        this.total = res.data.total// 总条数 
+        if(res.meta.code=='RESP_OKAY'){
+           meetings&&meetings.map( v => {
+            v.satrtTime = `${v.date} ${v.start}`
+            v.endTime = `${v.end_date} ${v.end}`
+            v.conflict_dec = v.conflict_number > 1 ? this.$t('tip.conflictDec') : ''
+            v.categoryStr= v.category == 2 ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）` : this.categoryList[v.category]
+            v.participant_users.map( item => {
+              v.personnel = v.personnel ?  v.personnel + ',' + item.nickname : item.nickname
+            })
+          })
+          this.myMeetingInfo = meetings
+          this.total = res.data.total// 总条数 
+        }
         this.dataLoading = false
       })
-      // const res = await approveListApi(params)
-      
     },
     // 重置
     resetMeetingInfo() {
@@ -311,7 +335,6 @@ export default {
       }
       this.chooseDate= null, // 日期
       this.getApproveInfo()
-
     },
     // 详情
     detailsMeet(row) {
@@ -409,9 +432,11 @@ export default {
         width: 180px;
         height: 36px;
       }
+      .choose-date{
+        width: 260px;
+      }
       /deep/.el-button{
         width: 80px;
-        height: 32px;
         font-size: 14px;
       }
     }
@@ -429,6 +454,7 @@ export default {
       height: 24px;
       line-height: 24px;
       border-radius: 20px;
+      cursor: pointer;
       background-color: #F5F8FF;
     }
   }
@@ -521,6 +547,17 @@ export default {
       border-color: #cc2121;
       color: #FFF;
     }
+  }
+}
+</style>
+<style lang="less">
+.tooltip-per{
+  max-width: 340px;
+  div:first-child{
+    font-size: 12px;
+    max-height: 80px;
+    overflow-y: auto;
+    line-height: 20px;
   }
 }
 </style>

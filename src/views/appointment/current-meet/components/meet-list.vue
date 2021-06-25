@@ -11,7 +11,6 @@
             type="daterange"
             class="choose-date"
             :placeholder="$t('placeholder.date')"
-            size="mini"
             value-format="yyyy-MM-dd"
             :editable="false"
             :picker-options="pickerOptions"
@@ -25,7 +24,7 @@
         <div class="filter-item-box">
           <span>{{$t('labe.name')}}：</span>
           <el-input type="text" 
-          v-model="searchForm.title" 
+          v-model="searchForm.keyword" 
           :placeholder="$t('placeholder.nameTypes')"
           @clear="getMyMeetingInfo"
           clearable></el-input>
@@ -76,6 +75,12 @@
             @click="getMyMeetingInfo"
             :loading="searchBtnStatus"
             >{{$t('button.search')}}</el-button
+          >
+          <el-button
+            type="info"
+            class="search"
+            @click="resetMeetingInfo"
+            >{{$t('button.reset')}}</el-button
           >
         </div>
       </div>
@@ -153,7 +158,16 @@
             align="center"
           >
           <template slot-scope="scope">
-            <span class="part_num">{{scope.row.participant}}</span>
+            <el-tooltip 
+             :disabled="!scope.row.participant" 
+             placement="top" 
+             effect="light" 
+             :open-delay="350"
+             popper-class="tooltip-per"
+            >
+              <div slot="content">{{scope.row.personnel}}</div>
+              <span :class="{'part_num':scope.row.participant>0}">{{scope.row.participant||'/'}}</span>
+            </el-tooltip>
           </template>
           </el-table-column>
           <!-- 发起人 -->
@@ -216,11 +230,9 @@ export default {
     return {
       isCurrent: 1,
       searchForm:{
-        // start_date: '',	// 开始时间
-        // end_date: '', // 结束时间
         user_type: '',	// 用户类型
         status: [],	// 状态
-        title: '' // 会议名称
+        keyword: '' // 会议名称
       },
       chooseDate: null, // 日期
       statusList: [ // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
@@ -298,7 +310,10 @@ export default {
       meetings.map( v => {
         v.satrtTime = `${v.date} ${v.start}`
         v.endTime = `${v.end_date} ${v.end}`
-        v.categoryStr= `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）`
+        v.categoryStr= v.category == 2 ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）` : this.categoryList[v.category]
+        v.participant_users.map( item => {
+          v.personnel = v.personnel ?  v.personnel + ',' + item.nickname : item.nickname
+        })
       })
       this.myMeetingInfo = meetings
       this.total = result.data.total// 总条数 
@@ -361,7 +376,20 @@ export default {
           this.getMyMeetingInfo()
           this.$refs.cancel.dialogVisible = false // 弹框
         })
-        
+    },
+    // 重置
+    resetMeetingInfo() {
+      this.paginationQuery = { 
+        page: 1, // 当前页
+        limit: 10, // 每页显示条目个数
+      }
+      this.searchForm= {
+        user_type: '',	// 用户类型
+        status: [],	// 状态
+        keyword: '' // 会议名称
+      }
+      this.chooseDate= null, // 日期
+      this.getMyMeetingInfo()
     },
     handleClose() {
       this.cancelTitle = ''
@@ -402,9 +430,11 @@ export default {
         width: 180px;
         height: 36px;
       }
+      .choose-date{
+        width: 260px;
+      }
       /deep/.el-button{
         width: 80px;
-        height: 32px;
         font-size: 14px;
       }
     }
@@ -417,14 +447,15 @@ export default {
        display: block;
     }
     .part_num{
-      display: flex;
+      display: inline-block;
       width: 50px;
       height: 24px;
+      line-height: 24px;
       border-radius: 20px;
-      justify-content: center;
-      align-items: center;
+      cursor: pointer;
       background-color: #F5F8FF;
     }
+    
   }
 
   /deep/.table-header{
@@ -515,6 +546,19 @@ export default {
       border-color: #cc2121;
       color: #FFF;
     }
+  }
+}
+
+
+</style>
+<style lang="less">
+.tooltip-per{
+  max-width: 340px;
+  div:first-child{
+    font-size: 12px;
+    max-height: 80px;
+    overflow-y: auto;
+    line-height: 20px;
   }
 }
 </style>

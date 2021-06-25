@@ -168,7 +168,7 @@ export const asyncRoutes = [
       name: 'Conflict',
       hidden: true,
       meta: {
-        title: 'Conflict',
+        title: 'conflict',
         affix: false,
         activeMenu: '/approve/approve_list'
       }

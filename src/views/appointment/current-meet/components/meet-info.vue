@@ -12,8 +12,12 @@
     <div class="save-submit" v-show="dataType === 2">
       <el-button type="button" class="reservation-submit el-button--primary" @click="save" round>{{$t('button.save')}}</el-button>
     </div>
+    
     <div class="meeting-edit-wrap">
-
+      <div 
+        v-if="menuStr == 'conflict' && ruleForm.approve_msg"
+        :class="['meeting-edit-conflict',bgclass]"
+      >{{ruleForm.approve_msg}}</div>
       <!-- 会议信息 -->
       <div class="edit-box">
          <div class="edit-box-title">{{$t('placeholder.conferenceInfor')}}</div>
@@ -223,7 +227,7 @@
                </div>
                
             </div>
-            <div class="edit-service-tips">（ {{$t('message.serveTips')}} ）</div>
+            <div v-if="dataType===2" class="edit-service-tips">（ {{$t('message.serveTips')}} ）</div>
 
          </div>
       </div>
@@ -489,8 +493,16 @@ export default {
         error: { // 验证提示
         title: { isFocus: false },
       },
-         outParticipantGuids: [],
-         outParticipantVal: ''
+      outParticipantGuids: [],
+      outParticipantVal: '',
+      activeMenuList: {
+        current: '/current/current_list',
+        history: '/history/history_list',
+        conflict: '/approve/approve_list',
+        services: '/service/service_list'
+      },
+      menuStr: '',
+      bgclass: ''
      }
   },
   props: {
@@ -514,8 +526,9 @@ export default {
    // 注销onresizes事件
     window.onresize = null;
    // 活动菜单
-   let menu = this.$route.params.menu
-   this.$route.meta.activeMenu = menu === 'current' ? '/current/current_list' : '/history/history_list'
+   this.menuStr = this.$route.params.menu
+   console.log(this.menuStr,'this.menuStr')
+   this.$route.meta.activeMenu = this.activeMenuList[this.menuStr]
   },
   methods: {
    
@@ -524,6 +537,21 @@ export default {
       this.formLoading = true
       getMeetingDetailApi({id: id}).then( res=> {
          this.ruleForm = res.data.meeting
+         // 会议审批描述
+         
+         switch(this.ruleForm.status){
+            case 0:
+              this.bgclass = 'waiting' // 待审批     
+              break;
+            case 2:
+              this.bgclass = 'passed'  // 已通过    
+              break;
+            case 4:
+              this.bgclass = 'refused' // 已拒绝    
+              break;
+            
+         }
+
          // 会议时间
          this.meetTime = this.setMeetTime(this.ruleForm.start, this.ruleForm.end, this.ruleForm.category)
          // 预约类型
@@ -542,15 +570,6 @@ export default {
          })
          // 获取服务
          this.getServiceInfo()
-         // if(this.ruleForm.service.length>0){
-         //    let services = this.ruleForm.service
-         //    services.map(res=>{
-         //       res.value = 0
-         //    })
-         //    this.serviceList = services 
-         // }
-         
-         
          
          // 设备
           let device = ''
@@ -573,8 +592,6 @@ export default {
          // 外部参会人
          this.outParticipantHandle()
          
-         // let equipment = this.ruleForm.equipment
-
          this.formLoading = false
 
       })
@@ -1009,6 +1026,26 @@ export default {
     width: 100%;
     min-width: 600px;
     overflow-y: auto;
+    .meeting-edit-conflict{
+      width: 100%;
+      color: #F56C6C;
+      font-size: 16px;
+      padding: 8px;
+      text-align: center;
+      background-color: #FEF0F0;
+    }
+    .meeting-edit-conflict.passed{
+       color: #67C23A;
+       background-color: #F0F9EB;
+    }
+    .meeting-edit-conflict.refused{
+       color: #F56C6C;
+       background-color: #FEF0F0;
+    }
+    .meeting-edit-conflict.waiting{
+       color: #E6A23C;
+       background-color: #FDF6EC;
+    }
     .meeting-edit-register {
         padding: 16px 30px;
         background: #f5f7e4;
