@@ -180,6 +180,7 @@ export default {
     operation: 'Operation',
     serial: 'Serial',
     sender: 'Host',
+    senderMan: 'sender',
     telephoneInfo: 'Telephone Information',
     LocalMeetings: 'Local meetings',
     Teleconferencing: 'Teleconferencing',
@@ -199,7 +200,15 @@ export default {
     Refreshment: 'Refreshment services',
     equipmentServices: 'Equipment services',
     serveTips:'Highlight and fill in the number of refreshment services / select the equipment. If the meeting appointment is successful, the service will receive the email notification',
-    people: 'people'
+    people: 'people',
+    week: 'week',
+    month: 'month',
+    year: 'year',
+    CumulativeDuration: 'Cumulative duration',
+    CumulativeNumber: 'Cumulative field number',
+    meeting: 'My Meeting',
+    invited: 'Invited',
+    statistics: 'Statistics of appointment times / duration:'
   },
   placeholder: {
     MeetingFloor: 'Floor',

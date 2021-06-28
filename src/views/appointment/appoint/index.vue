@@ -510,9 +510,9 @@ export default {
           if( value.status === 1 ){
             let chils = []
             chils.push(idx)
-            chils.push(value.id)
+            chils.push(value.meeting[0]['id'])
             chils.push(index)
-            if(meetingArr[count] && meetingArr[count][1] === value.id){
+            if(meetingArr[count] && meetingArr[count][1] === value.meeting[0]['id']){
               meetingArr[count].push(index)
             } else  {
               if (meetingArr.length > 0) {

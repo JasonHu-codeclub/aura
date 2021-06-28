@@ -4,7 +4,6 @@
 
 <template>
   <div>
-  <!-- <div class="time-cell-time" v-if="startIndex">选中：{{scope.row.day}}&nbsp;{{startTime}}&nbsp;至&nbsp;{{endTime}}</div> -->
   <div class="time-cell" v-if="scope.row.message">
     <div class="time-cell-list" :class="{fixed_wrap: scope.row.message.length == 48}">
       <div
@@ -21,34 +20,70 @@
         startActive: (startIndex === index && endIndex !== index), 
         endActive: (endIndex === index && startIndex !== index)}]"></span>
         <!-- 提示框 -->
-        <el-popover v-if="scope.row.message[index].status === 1" :disabled="scope.row.message[index].status === 0"  placement="bottom" effect="light" trigger="hover" :open-delay="100">
-          <div >
-            <div class="tip-list">
-              <span class="tip-list-label">{{$t('message.theme')}}：</span>
-              {{scope.row.message[index].title}}
+        <el-popover 
+          v-if="item.status === 1"
+          width="210"
+          placement="bottom" 
+          effect="light" 
+          trigger="hover"
+          :open-delay="300"
+          @show="showPopover(String(item.meeting[0]['id']) + String(index))" 
+          @hide="popoverIsShow = false"
+        >
+            <div 
+            v-loading="popoverLoading"
+            element-loading-text="加载中..."
+            element-loading-spinner="el-icon-loading"
+            >
+              <!-- <div class="popover-head">
+                <span>会议详情</span>
+                <span 
+                :class="['popover-initial-index',{initial_hide: item.meeting.length < 2}]"
+                >{{initialVal}}/<i class="details-length">{{item.meeting.length}}</i></span>
+              </div> -->
+                <el-carousel 
+                height="80px"
+                trigger="click"
+                direction="vertical"
+                :loop="false"
+                :initial-index="0"
+                :autoplay="false"
+                :class="{carousel_srol_hide: item.meeting.length < 2}"
+                :ref="String(item.meeting[0]['id']) + String(index)"
+                @change="changeCarousel"
+                >
+                  <el-carousel-item v-for="item in item.meeting" :key="item.guid">
+                    <div class="popover-list">
+                        <div class="tip-list overhid">
+                          <span class="tip-list-label" >{{$t('message.theme')}}：</span>
+                          {{item.title || '--'}}
+                        </div>
+                        <div class="tip-list overhid">
+                          <span class="tip-list-label">{{$t('message.senderMan')}}：</span>
+                          {{item.sender ||'--' }}
+                        </div>
+                        <div class="tip-list overhid">
+                          <span class="tip-list-label">{{$t('message.startTime')}}：</span>
+                          {{item.start_time ||'--'}}
+                        </div>
+                        <div class="tip-list overhid">
+                          <span class="tip-list-label">{{$t('message.endTime')}}：</span>
+                          {{item.end_time ||'--'}}
+                        </div>
+                    </div>
+                    
+                  </el-carousel-item>
+                </el-carousel>
             </div>
-            <div class="tip-list">
-              <span class="tip-list-label">{{$t('message.sender')}}：</span>
-              {{scope.row.message[index].sender}}
-            </div>
-            <div class="tip-list">
-              <span class="tip-list-label">{{$t('message.startTime')}}：</span>
-              {{scope.row.message[index].start_time}}
-            </div>
-            <div class="tip-list">
-              <span class="tip-list-label">{{$t('message.endTime')}}：</span>
-              {{scope.row.message[index].end_time}}
-            </div>
-          </div>
-          <span slot="reference" :class="['time-cell-status time-chil', 
-                {meetings: scope.row.message[index].status === 1,
-                startclass:  scope.row.message[index].start, 
-                endclass: scope.row.message[index].end, 
-                width_min: scope.row.message[index].widthMin
-              }]"
-          ></span>
+            <span slot="reference" :class="['time-cell-status time-chil', 
+                  {meetings: item.status === 1,
+                  startclass:  item.start, 
+                  endclass: item.end, 
+                  width_min: item.widthMin,
+                }]"
+            >
+          </span>
         </el-popover>
-
       </div>
     </div>
   </div>
@@ -64,7 +99,13 @@ export default {
       endTime: null, // 结束时间
       startIndex: null,// 开始时间下标
       endIndex: null, // 结束时间下标
-      errorStatus: true // 时间冲突
+      errorStatus: true, // 时间冲突
+      popoverLoading: false,
+      popoverIsShow: false,
+      carouselDom: '',
+      initialIndex: 0,
+      maxIndex: 0,
+      initialVal: 1,
     }
   },
   props: {
@@ -97,6 +138,45 @@ export default {
     }
   },
   methods: {
+    // 鼠标滚动切换会议详情 判断滚动方向
+    handleScroll(e){
+      if(!this.popoverIsShow) return
+      let direction = e.deltaY > 0 ? 'down':'up';  //deltaY为正则滚轮向下，为负滚轮向上
+      if(direction=='down' && e.deltaY >= 0){ //125为用户一次滚动鼠标的wheelDelta的值
+          if(this.initialIndex >= this.maxIndex){
+              this.initialIndex = this.maxIndex
+          }else{
+              this.initialIndex += 1;
+              this.setActiveItem(this.initialIndex)
+          }
+      }
+      if(direction=='up' && e.deltaY <= 0){
+          if(this.initialIndex <= 0){
+              this.initialIndex = 0;
+          }else{
+              this.initialIndex -= 1;
+              this.setActiveItem(this.initialIndex)
+          }
+      }
+    },
+    setActiveItem(index) {  //index为走马灯当前页码
+        let nextIndex = index ++; 
+        this.carouselDom(nextIndex)
+    },
+    // 会议详情触发
+    showPopover(refsNmae){
+      // 提示窗监听鼠标滚动事件
+      window.addEventListener('mousewheel',this.handleScroll);
+      this.popoverIsShow = true // 数据加载loading
+      this.carouselDom = this.$refs[refsNmae][0].setActiveItem;
+      // 重置提示窗状态激活位置
+      this.initialIndex = 0 
+      this.carouselDom(0)
+    },
+    // 幻灯片索引
+    changeCarousel(index) {
+      this.initialVal = index+1
+    },
     showErrorStatus () {
       this.errorStatus = true
     },
@@ -313,6 +393,9 @@ export default {
         }
       }
     }
+    .initial_hide{
+      display: none;
+    }
   }
   .fixed_width{
     flex: auto;
@@ -321,7 +404,7 @@ export default {
 }
 .tip-list{
   font-size: 12px;
-  color: #8094A7;
+  color: #3A3B4C;
   margin-bottom: 4px;
   span.tip-list-label {
     display: inline-block;
@@ -329,10 +412,13 @@ export default {
     text-align: right;
   }
 }
+/deep/.carousel_srol_hide .el-carousel__indicators{
+  display: none;
+}
 
 </style>
 <style lang="less">
 .el-popover{
-  padding: 12px 28px 10px 4px !important;
+  padding: 12px 10px 10px 4px !important;
 }
 </style>

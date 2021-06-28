@@ -216,3 +216,11 @@ export function appointmentApi (data) {
   })
 }
 
+// 数据概览
+export function getStatisticsApi (data) {
+  return request({
+    url: "/meeting-statistics",
+    method: "get",
+    params: data
+  })
+}
