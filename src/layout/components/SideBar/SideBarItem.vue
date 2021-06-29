@@ -5,7 +5,6 @@
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
           <i class="icon iconfont" :class="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" />
           <span>&nbsp;{{ generateTitle(onlyOneChild.meta.title) }}</span>
-          <!-- <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" /> -->
         </el-menu-item>
       </app-link>
     </template>
@@ -14,7 +13,6 @@
       <template slot="title">
         <i v-if="item.meta" class="icon iconfont" :class="item.meta && item.meta.icon" />
         <span>&nbsp;{{ generateTitle(item.meta.title) }}</span>
-        <!-- <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" /> -->
       </template>
       <side-bar-item
         v-for="child in item.children"
@@ -116,28 +114,45 @@ export default {
     background-size: contain;
   }
   .current{
-    background: url('../../../assets/icon/current.png') no-repeat;
+    background: url('../../../assets/icon/current_1.png') no-repeat;
     background-size: contain;
   }
   .is-active .current{
-    background: url('../../../assets/icon/current-active.png') no-repeat;
+    background: url('../../../assets/icon/current-active_1.png') no-repeat;
     background-size: contain;
   }
-  .data{
-    background: url('../../../assets/icon/data.png') no-repeat;
+  .overview{
+    background: url('../../../assets/icon/overview.png') no-repeat;
     background-size: contain;
   }
-  .is-active .data{
-    background: url('../../../assets/icon/data-active.png') no-repeat;
+  .is-active .overview{
+    background: url('../../../assets/icon/overview-active.png') no-repeat;
     background-size: contain;
   }
   .history{
-    background: url('../../../assets/icon/history.png') no-repeat;
+    background: url('../../../assets/icon/history_1.png') no-repeat;
     background-size: contain;
   }
   .is-active .history{
-    background: url('../../../assets/icon/history-active.png') no-repeat;
+    background: url('../../../assets/icon/history-active_1.png') no-repeat;
     background-size: contain;
   }
+  .approve{
+    background: url('../../../assets/icon/approve.png') no-repeat;
+    background-size: contain;
+  }
+  .is-active .approve{
+    background: url('../../../assets/icon/approve-active.png') no-repeat;
+    background-size: contain;
+  }
+  .service{
+    background: url('../../../assets/icon/service.png') no-repeat;
+    background-size: contain;
+  }
+  .is-active .service{
+    background: url('../../../assets/icon/service-active.png') no-repeat;
+    background-size: contain;
+  }
+  
 
 </style>

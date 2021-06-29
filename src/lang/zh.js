@@ -77,7 +77,9 @@ export default {
     meetingClosed: '结束',
     details: '详情',
     completeService: '完成服务',
-    confirmationService: '确认服务'
+    confirmationService: '确认服务',
+    modify: '修改',
+    modifyUserImg: '修改头像'
   },
   message: {
     loginTitle: 'XXX数字办公空间',
@@ -211,6 +213,12 @@ export default {
     meeting: '我发起（场）',
     invited: '被邀约（场）',
     statistics: '会议预约次数/时长统计：',
+    originalPassword: '原密码',
+    newPassword: '新密码',
+    confirmPassword: '确认密码',
+    passwordRules: '密码由6-20位字母数字组成',
+    uploadAvatar: '上传头像',
+    saveSuccess: '保存成功'
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',

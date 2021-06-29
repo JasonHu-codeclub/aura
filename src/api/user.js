@@ -44,15 +44,20 @@ export function getCodeApi (data) {
   })
 }
 
-// 修改密码
-export function resetPassReq (data) {
+// 确认密码
+export function resetPassApi (data) {
   return request({
-    url: "/user/changepassword/",
-    method: "post",
+    url: "/personal-center/password",
+    method: "put",
     data
   })
 }
 
-// export const sendCodeReq = function (data) {
-//   return ajax(`${baseURL}/user/get_code`, data)
-// }
+// 个人中心修改
+export function serviceCenterApi (data, id) {
+  return request({
+      url: "/personal-center/" + id,
+      method: "post",
+      data
+  })
+}

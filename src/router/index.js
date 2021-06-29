@@ -26,27 +26,12 @@ export const constantRoutes = [
       }
     ]
   },
+  // 登录
   {
     path: '/login',
     component: () => import('@views/login'),
     hidden: true
   },
-  // {
-  //   path: '/',
-  //   component: Layout,
-  //   redirect: '/home',
-  //   children: [{
-  //     path: 'home',
-  //     component: () => import('@views/home'),
-  //     name: 'Home',
-  //     meta: {
-  //       title: '首页',
-  //       icon: 'username',
-  //       affix: true
-  //     }
-  //   }]
-  // },
-  
   {
     path: '/profile',
     component: Layout,
@@ -69,6 +54,7 @@ export const constantRoutes = [
 
 // 动态显示的路由表
 export const asyncRoutes = [
+  // 预约页面
   {
     path: '/',
     component: Layout,
@@ -98,6 +84,7 @@ export const asyncRoutes = [
           affix: false
         }
       },
+      // 详情
       {
         path: 'details/:menu/:id',
         component: () => import('@views/appointment/current-meet/details'),
@@ -109,6 +96,7 @@ export const asyncRoutes = [
           activeMenu: '/current/current_list'
         }
       },
+      // 重复会议列表
       {
           path: 'repeat/:menu/:id',
           component: () => import('@views/appointment/current-meet/repeat'),
@@ -120,6 +108,7 @@ export const asyncRoutes = [
             activeMenu: '/current/current_list'
           }
       },
+      // 编辑
       {
           path: 'edit/:menu/:id',
           component: () => import('@views/appointment/current-meet/edit'),
@@ -133,6 +122,7 @@ export const asyncRoutes = [
       },
     ]
   },
+  // 历史会议
   {
     path: '/history',
     component: Layout,
@@ -148,6 +138,7 @@ export const asyncRoutes = [
       }
     }]
   },
+  // 数据概览
   {
     path: '/overview',
     component: Layout,
@@ -158,11 +149,12 @@ export const asyncRoutes = [
       name: 'overview',
       meta: {
         title: 'overview',
-        icon: 'history',
+        icon: 'overview',
         affix: false
       }
     }]
   },
+  // 审批管理
   {
     path: '/approve',
     component: Layout,
@@ -173,10 +165,11 @@ export const asyncRoutes = [
       name: 'Approve',
       meta: {
         title: 'Approve',
-        icon: 'history',
+        icon: 'approve',
         affix: false
       }
     },
+    // 冲突
     {
       path: 'conflict/:menu/:id',
       component: () => import('@views/appointment/approve/conflictList'),
@@ -189,6 +182,7 @@ export const asyncRoutes = [
       }
     }]
   },
+  // 会议服务
   {
     path: '/service',
     component: Layout,
@@ -199,11 +193,12 @@ export const asyncRoutes = [
       name: 'service',
       meta: {
         title: 'service',
-        icon: 'history',
+        icon: 'service',
         affix: false
       }
     }]
   },
+  // 用户中心
   {
     path: '/user',
     component: Layout,

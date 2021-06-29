@@ -76,7 +76,9 @@ export default {
     meetingClosed: 'End',
     details: 'Details',
     completeService: 'complete',
-    confirmationService: 'confirm'
+    confirmationService: 'confirm',
+    modify: 'modify',
+    modifyUserImg: 'Change your Avatar'
   },
   message: {
     loginTitle: 'Digital office space',
@@ -208,7 +210,13 @@ export default {
     CumulativeNumber: 'Cumulative field number',
     meeting: 'My Meeting',
     invited: 'Invited',
-    statistics: 'Statistics of appointment times / duration:'
+    statistics: 'Statistics of appointment times / duration:',
+    originalPassword: 'original password',
+    newPassword: 'new password',
+    confirmPassword: 'confirm password',
+    passwordRules: 'The password consists of 6-20 alphanumeric',
+    uploadAvatar: 'upload Avatar',
+    saveSuccess: 'Save Success'
   },
   placeholder: {
     MeetingFloor: 'Floor',
