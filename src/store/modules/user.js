@@ -70,9 +70,10 @@ const actions = {
         if (!user) {
           reject('需要重新登录')
         }
-        const { nickname, group, id} = user
+        const { nickname, group, id, thumb_avatar} = user
         commit('SET_ROLES', group.permissions)
         commit('SET_USERNAME', nickname)
+        commit('SET_AVATAR', thumb_avatar)
         commit('SET_ROLEID', id)
         resolve(group.permissions)
       }).catch(error => {

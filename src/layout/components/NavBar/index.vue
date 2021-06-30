@@ -30,7 +30,7 @@
       >
         <div class="avatar-wrapper">
           <span class="user-name">{{ name }}</span>
-          <span class="user-avatar" :style="{backgroundImage: 'url('+ avatar +')'}"></span>
+          <span class="user-avatar" :style="{backgroundImage: 'url('+ baseURL + avatar +')'}"></span>
           <!-- <img :src="avatar" class="user-avatar" /> -->
           <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
@@ -38,7 +38,7 @@
           <router-link to="/user">
             <el-dropdown-item>{{$t('message.personalCenter')}}</el-dropdown-item>
           </router-link> 
-          <el-dropdown-item @click.native="dialogVisible=true">{{$t('message.setPassord')}}</el-dropdown-item>
+          <!-- <el-dropdown-item @click.native="dialogVisible=true">{{$t('message.setPassord')}}</el-dropdown-item> -->
           <el-dropdown-item divided @click.native="logout">
             <span style="display: block">{{$t('message.loginOut')}}</span>
           </el-dropdown-item>
@@ -148,6 +148,7 @@ export default {
       }
     }
     return {
+      baseURL: process.env.NODE_ENV === 'development' ? 'https://alc01.aa-iot.com/' : getHost(),
       dialogVisible: false,
       ruleForm: {
         pass: '',

@@ -164,11 +164,11 @@
       <!-- 会议服务 -->
       <div class="edit-box">
          <div class="edit-box-title">{{$t('route.service')}}</div>
-         <div class="edit-box-list">
+         <div class="edit-box-list" :class="{ 'disabled_edit-box': dataType === 1 }">
             <!-- 茶点服务 -->
             <div class="edit-box-item f-start" v-if="ruleForm.service_show == 1">
                <div class="edit-box-label margin-top-10">{{$t('message.Refreshment')}}：</div>
-               <div class="edit-box-value">
+               <div class="edit-box-value" >
                   <el-select
                      v-model="ruleForm.serviceId"
                      multiple
@@ -188,7 +188,7 @@
                   </el-select>
                   <div class="edit-box-service">
                     <div class="edit-box-refreshment" v-for="(item, index) in ruleForm.service" :key="index">
-                        <span class="edit-refreshment-label" >{{item.name}}：</span>
+                        <span class="edit-refreshment-label" :class="{highlight: item.value > 0 }">{{item.name}}：</span>
                         <el-input
                            :class="{highlight: item.value > 0 }" 
                            v-model="item.value" 
@@ -1164,7 +1164,7 @@ export default {
                 color: #898FA8;
                 .edit-box-service{
                   margin-top: 20px;
-                  min-width: 600px;
+                  max-width: 375px;
                 }
                 .edit-box-refreshment{
                   display: inline-block;
@@ -1195,7 +1195,7 @@ export default {
                   .highlight{
                      color: #43434D;
                      /deep/.el-input__inner{
-                        color: #43434D;
+                        color: #69788A;
                      }
                   }
                 }
@@ -1209,6 +1209,9 @@ export default {
                   }
                   
                 }
+              }
+              /deep/.el-input.is-disabled .el-input__inner{
+                 color: #69788A;
               }
                /deep/.el-tag.el-tag--info .el-tag__close:hover {
                   color: #FFF !important;
@@ -1243,7 +1246,7 @@ export default {
               .disabled_edit{
                 background-color: #F5F7FA;
                 border-color: #E4E7ED;
-                color: #C0C4CC;
+                color: #69788A;
                 cursor: not-allowed;
               }
               .edit-box-input{
@@ -1370,6 +1373,13 @@ export default {
           .margin-top{
             margin-top: 24px;
           }
+        }
+        .disabled_edit-box{
+            /deep/.el-tag.el-tag--info{
+               background-color: #F5F7FA !important;
+               border-color: #c6c6c6 !important;
+               color: #69788A !important;
+            }
         }
         .edit-sign_in{
            position: absolute;

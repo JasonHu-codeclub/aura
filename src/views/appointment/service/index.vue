@@ -126,16 +126,6 @@
             align="center"
             width="100"
           ></el-table-column>
-          <!-- 预约类型 -->
-          <el-table-column
-            prop="category"
-            :label="$t('message.AppointmentType')"
-            align="center"
-          >
-            <template slot-scope="scope">
-              {{scope.row.conflict_dec ? scope.row.conflict_dec : scope.row.categoryStr}}
-            </template>
-          </el-table-column>
           <!-- 状态 -->
           <el-table-column
             prop="status"

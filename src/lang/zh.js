@@ -218,7 +218,10 @@ export default {
     confirmPassword: '确认密码',
     passwordRules: '密码由6-20位字母数字组成',
     uploadAvatar: '上传头像',
-    saveSuccess: '保存成功'
+    saveSuccess: '保存成功',
+    imgType: '请上传JPG、JPEG、PNG格式图片，大小不超过2M',
+    clickUpload: '点击上传',
+    avatarPreview: '头像预览'
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',

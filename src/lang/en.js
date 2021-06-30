@@ -216,7 +216,11 @@ export default {
     confirmPassword: 'confirm password',
     passwordRules: 'The password consists of 6-20 alphanumeric',
     uploadAvatar: 'upload Avatar',
-    saveSuccess: 'Save Success'
+    saveSuccess: 'Save Success',
+    imgType: 'Please upload pictures in JPG, JPEG and PNG format, with the size no more than 2m',
+    clickUpload: 'Click upload',
+    avatarPreview: 'Avatar Preview'
+  
   },
   placeholder: {
     MeetingFloor: 'Floor',
