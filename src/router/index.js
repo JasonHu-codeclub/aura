@@ -85,20 +85,20 @@ export const asyncRoutes = [
         }
       },
       // 详情
-      {
-        path: 'details/:menu/:id',
-        component: () => import('@views/appointment/current-meet/details'),
-        name: 'Details',
-        hidden: true,
-        meta: {
-          title: 'detailsMeet',
-          affix: false,
-          activeMenu: '/current/current_list'
-        }
-      },
+      // {
+      //   path: 'details',
+      //   component: () => import('@views/appointment/current-meet/details'),
+      //   name: 'Details',
+      //   hidden: true,
+      //   meta: {
+      //     title: 'detailsMeet',
+      //     affix: false,
+      //     activeMenu: '/current/current_list'
+      //   }
+      // },
       // 重复会议列表
       {
-          path: 'repeat/:menu/:id',
+          path: 'repeat',
           component: () => import('@views/appointment/current-meet/repeat'),
           name: 'Repeat',
           hidden: true,
@@ -110,7 +110,7 @@ export const asyncRoutes = [
       },
       // 编辑
       {
-          path: 'edit/:menu/:id',
+          path: 'edit',
           component: () => import('@views/appointment/current-meet/edit'),
           name: 'Edit',
           hidden: true,
@@ -121,6 +121,23 @@ export const asyncRoutes = [
           }
       },
     ]
+  },
+  // 详情
+  {
+    path: '/details',
+    component: Layout,
+    redirect: '/details/info',
+    children: [{
+      path: 'info',
+      component: () => import('@views/appointment/current-meet/details'),
+      name: 'Details',
+      meta: {
+        title: 'detailsMeet',
+        affix: false,
+        activeMenu: ''
+      },
+      hidden: true
+    }]
   },
   // 历史会议
   {
@@ -171,7 +188,7 @@ export const asyncRoutes = [
     },
     // 冲突
     {
-      path: 'conflict/:menu/:id',
+      path: '/conflict',
       component: () => import('@views/appointment/approve/conflictList'),
       name: 'Conflict',
       hidden: true,

@@ -180,6 +180,15 @@ export function getMansionFloorApi (data) {
   })
 }
 
+// 获取会议室
+export function roomListApi (data) {
+  return request({
+      url: "/get-rooms-list",
+      method: "get",
+      params: data
+  })
+}
+
 // 获取设备
 export function getEquipmentApi (data) {
   return request({

@@ -2,7 +2,7 @@
 export function generateTitle(title) {
   // console.log(title,'title')
   // return
-  const hasKey = this.$te('route.' + title)
+  const hasKey = this.$t('route.' + title)
 
   if (hasKey) {
     // $t :this method from vue-i18n, inject in @/lang/index.js

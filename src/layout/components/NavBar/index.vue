@@ -18,7 +18,7 @@
     <!-- 面包屑 -->
     <!-- <breadcrumb id="breadcrumb-container" class="breadcrumb-container" /> -->
     <!-- 标题 -->
-    <div class="right-left">会议预约系统</div>
+    <div class="right-left">{{$t('navbar.title')}}</div>
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
         <!-- <search id="header-search" class="right-menu-item" /> -->

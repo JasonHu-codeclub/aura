@@ -276,7 +276,7 @@ export default {
     getApproveInfo () {
       let params = { 
         type: 2,
-        id: this.$route.params.id,
+        id: this.$route.query.id,
         page: this.paginationQuery.page,	// 当前页
         size: this.paginationQuery.limit,
         start_date: this.chooseDate ? this.chooseDate[0] : '',
@@ -313,8 +313,8 @@ export default {
     // 详情
     detailsMeet(row) {
       this.$router.push({
-        name: 'Details',
-        params: {
+        path: '/details',
+        query: {
           menu: 'conflict',
           id: row.id
         }

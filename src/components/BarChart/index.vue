@@ -19,7 +19,7 @@ export default {
     },
     height: {
       type: String,
-      default: '300px'
+      default: '80%'
     },
     dataJson: {
       type: Object,
@@ -47,6 +47,8 @@ export default {
   },
   methods: {
     initChart() {
+      let duration = this.$t('message.duration')
+      let frequency = this.$t('message.frequency')
       this.chart = echarts.init(this.$el)
 
       this.chart.setOption({
@@ -62,11 +64,11 @@ export default {
           top:"0",
           right: 'left',
           data: [{
-              name: '时长',
+              name: duration,
               icon: 'rect',
               textStyle: {color: '#A6B6C6'}
             },{
-              name: '次数',
+              name: frequency,
               icon: 'rect',
               textStyle: { color: '#A6B6C6' }
             }
@@ -81,7 +83,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: this.dataJson.title,//['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          data: this.dataJson.title,
           axisTick: {
             alignWithLabel: true
           }
@@ -94,7 +96,7 @@ export default {
         }],
         series: [
           {
-            name: '时长',
+            name: duration,
             type: 'bar',
             barGap: 0,
             barWidth: '38',
@@ -107,7 +109,7 @@ export default {
             },
         },
         {
-            name: '次数',
+            name: frequency,
             type: 'bar',
             barWidth: '38',
             emphasis: {

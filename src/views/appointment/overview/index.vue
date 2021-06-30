@@ -54,19 +54,20 @@ import { getStatisticsApi } from '@/api/appoint'
 import LineChart from '@/components/LineChart'
 import BarChart from '@/components/BarChart'
 import PieChart from '@/components/PieChart'
+import zh from '@/lang/zh'
 const lineChartData = {
   weeks: {
-    title: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+    title: [],
     duration: ['', '', '', '', '', '', ''],
     frequency: ['', '', '', '', '', '', '']
   },
   months: {
-    title: ['第一周', '第二周', '第三周', '第四周'],
+    title: [],
     duration: [],
     frequency: []
   },
   years: {
-    title: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+    title: [],
     duration: [],
     frequency: []
   }
@@ -79,7 +80,6 @@ export default {
       chartData: lineChartData.weeks,
       statisticsData: {},
       getType: [0,1,2,3],
-      monthsStr: ['第一周', '第二周', '第三周', '第四周', '第五周'],
     }
   },
   watch: {
@@ -118,12 +118,23 @@ export default {
       let dataObj = this.handelArr(data[types])
       lineChartData[types]['duration'] = dataObj.arr_hours // 总小时数
       lineChartData[types]['frequency'] = dataObj.arr_count // 总场数
+      if(types == 'weeks'||types == 'years'){
+        lineChartData[types]['title'] = []
+        for(let key in zh[types]){
+          lineChartData[types]['title'].push(this.$t(types+'.'+key))
+        }
+      }
       if(types == 'months'){
         lineChartData[types]['title'] = []
+        let monthsStr = []
+        for(let key in zh[types]){
+          monthsStr.push(this.$t(types+'.' + key))
+        }
         data[types].map((res, index)=>{
-          lineChartData[types]['title'].push(this.monthsStr[index])
+          lineChartData[types]['title'].push(monthsStr[index])
         })
       }
+      
       this.chartData = lineChartData[types]
         this.$refs.chartRef.refreshData(this.chartData)
     },
@@ -158,6 +169,7 @@ export default {
       padding: 0 20px;
       align-items: center;
       justify-content: space-between;
+      overflow-x: auto;
       .overview-top-left {
         flex: 1;
         min-width: 240px;
@@ -169,6 +181,7 @@ export default {
         }
       }
       .overview-top-right{
+        display: flex;
         text-align: right;
         .overview-top-rigth_item{
           display: inline-flex;

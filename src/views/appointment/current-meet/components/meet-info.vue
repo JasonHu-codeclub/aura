@@ -512,23 +512,21 @@ export default {
    }
   },
   mounted() {
-   let params = this.$route.params
+   let query = this.$route.query
+   // 活动菜单
+   this.menuStr = query.menu
+   this.$route.meta.activeMenu = this.activeMenuList[this.menuStr]
    // 获取详情信息
-   this.getDateilsInfo(params.id)
-   
+   this.getDateilsInfo(query.id)
    // 获取会议类型
    this.getMeetingTypeInfo()
    // 获取部门信息
    this.getDepartmentInfo()
-   
    // 设备
    this.getEquipmentInfo()
    // 注销onresizes事件
     window.onresize = null;
-   // 活动菜单
-   this.menuStr = this.$route.params.menu
-   console.log(this.menuStr,'this.menuStr')
-   this.$route.meta.activeMenu = this.activeMenuList[this.menuStr]
+   
   },
   methods: {
    

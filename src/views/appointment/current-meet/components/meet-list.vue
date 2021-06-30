@@ -66,7 +66,8 @@
             ></el-option>
           </el-select>
         </div>
-
+      </div>
+      <div class="filter-item">
         <div class="filter-item-box">
           <!-- 查询 -->
           <el-button
@@ -76,6 +77,7 @@
             :loading="searchBtnStatus"
             >{{$t('button.search')}}</el-button
           >
+          <!-- 重置 -->
           <el-button
             type="info"
             class="search"
@@ -322,10 +324,10 @@ export default {
     // 详情
     detailsMeet(row) {
       // 判断单次还是重复预约 category会议类型 1=》单次预约，2=》重复预约 ，3=》跨日预约
-      let meetType = !!row.category && row.category == 2 && this.dataType != 2 ? 'Repeat':'Details' 
+      let meetType = !!row.category && row.category == 2 && this.dataType != 2 ? 'repeat':'/details' 
       this.$router.push({
-        name: meetType,
-        params: {
+        path: meetType,
+        query: {
           menu: this.dataType=== 1 ? 'current' : 'history',
           id: row.id
         }
@@ -342,8 +344,8 @@ export default {
       }
       // 跳转编辑页
       this.$router.push({
-        name: 'Edit',
-        params: {
+        path: 'edit',
+        query: {
           menu: 'current',
           id: row.id
         }

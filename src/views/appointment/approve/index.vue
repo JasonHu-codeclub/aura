@@ -339,10 +339,10 @@ export default {
     // 详情
     detailsMeet(row) {
       // 判断是否冲突row.conflict_number>1冲突
-      let path = row.conflict_number > 1 ? 'Conflict' : 'Details' 
+      let path = row.conflict_number > 1 ? '/conflict' : '/details' 
       this.$router.push({
-        name: path,
-        params: {
+        path: path,
+        query: {
           menu: 'conflict',
           id: row.meeting_id
         }

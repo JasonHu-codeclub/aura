@@ -102,6 +102,7 @@ export default {
     Reserved: '已预约',
     Selected: '已选中',
     Expired: '已过期',
+    select: '选中',
     all: '全部',
     cancelMeet: '已取消',
     closedMeet: '已结束',
@@ -208,6 +209,8 @@ export default {
     week: '周',
     month: '月',
     year: '年',
+    duration: '时长',
+    frequency: '次数',
     CumulativeDuration: '累计时长',
     CumulativeNumber: '累计场数',
     meeting: '我发起（场）',
@@ -304,6 +307,36 @@ export default {
     completed: '请确认此会议服务是否已完成',
     successful: '操作成功'
   },
+  weeks: {
+    Monday: '周一',
+    Tuesday: '周二',
+    Wednesday: '周三',
+    Thursday: '周四',
+    Friday: '周五',
+    Saturday: '周六',
+    Sunday: '周日',
+  },
+  months: {
+    firstWeek: '第一周',
+    secondWeek: '第二周',
+    thirdWeek: '第三周',
+    fourthWeek: '第四周',
+    fiveWeek: '第五周'
+  },
+  years: {
+    January: '一月', 
+    February: '二月', 
+    March: '三月', 
+    April:'四月', 
+    may: '五月', 
+    June: '六月', 
+    July:'七月', 
+    August: '八月', 
+    September: '九月', 
+    October: '十月', 
+    November: '十一月',
+    December: '十二月'
+  }
   
 
   // login: {

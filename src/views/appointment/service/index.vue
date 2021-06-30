@@ -33,6 +33,7 @@
           :props="props" 
           :placeholder="$t('placeholder.MeetingFloor')"
           :show-all-levels="true"
+          @change="getApproveInfo"
           clearable
           ></el-cascader>
         </div>
@@ -51,6 +52,24 @@
               :key="item.key"
               :label="item.name"
               :value="item.key"
+            ></el-option>
+          </el-select>
+        </div>
+        <!-- 会议室 -->
+        <div class="filter-item-box">
+          <span>{{$t('message.room')}}：</span>
+          <el-select
+            v-model="searchForm.meeting_room_id"
+            :placeholder="$t('message.room')"
+            @change="getApproveInfo"
+            @clear="getApproveInfo"
+            clearable
+          >
+            <el-option
+              v-for="item in roomList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
             ></el-option>
           </el-select>
         </div>
@@ -212,6 +231,7 @@
 </template>
  <script>
  import { 
+   roomListApi,
   getMansionFloorApi,
 } from '@api/appoint'
  import {serviceListApi, serviceConfirmApi, serviceFinishApi} from '@/api/service'
@@ -224,8 +244,8 @@ export default {
       isCurrent: 1,
       searchForm:{
         status: '',	// 状态
-        floor: '', // 会议名称
-        meeting_room: '' // 会议室名称
+        floor: [], // 会议名称
+        meeting_room_id: ''
       },
       optionsFloor: [], // 大厦楼层
       props: { // 楼层级联配置
@@ -234,6 +254,7 @@ export default {
         children: 'floor'
       }, 
       chooseDate: null, // 日期
+      roomList: [], // 会议室下拉
       statusList: [ // 会服状态 1:服务中 2:待确认 3:已完成 4:已取消 5:过期未服务
         {key: 1, name: '服务中'},
         {key: 2, name: '待确认'},
@@ -320,15 +341,13 @@ export default {
   mounted () { 
     // 大厦楼层
     this.getFloorList()
+    // 获取会议
+    this.getRoomList()
     // 获取数据
     this.getApproveInfo()
     this.resizeHeight(100)
   },
   methods: {
-     // 选择日期
-    // dateChange (value) {
-    //   this.getApproveInfo()
-    // },
     // 大厦信息，楼层
     async getFloorList () {
       const result = await getMansionFloorApi()
@@ -338,15 +357,24 @@ export default {
         }
         this.optionsFloor = data
     },
+     // 选择日期
+    getRoomList() {
+      roomListApi({}).then(res=> {
+        this.roomList = res.data.rooms
+      })
+    },
     // 获取列表数据
     getApproveInfo () {
       let params = { 
         type: 1,
         page: this.paginationQuery.page,	// 当前页
-        size: this.paginationQuery.limit,
-        start_date: this.chooseDate ? this.chooseDate[0] : '',
-        end_date: this.chooseDate ? this.chooseDate[1] : '',
-        ...this.searchForm
+        size: this.paginationQuery.limit,// 每页显示条数
+        status: this.searchForm.status, // 状态
+        start_date: this.chooseDate ? this.chooseDate[0] : '',// 开始时间
+        end_date: this.chooseDate ? this.chooseDate[1] : '',// 结束时间
+        mansion: this.searchForm.floor[0],// 大厦id
+        floor: this.searchForm.floor[1],// 楼层id
+        meeting_room_id: this.searchForm.meeting_room_id,// 会议室id
       }
       this.dataLoading = true
       serviceListApi(params).then(res=>{
@@ -375,8 +403,8 @@ export default {
       }
       this.searchForm= {
         status: '',	// 状态
-        floor: '', // 会议名称
-        meeting_room: '' // 会议室名称
+        floor: [], // 会议名称
+        meeting_room_id: '' // 会议室名称
       }
       this.chooseDate= null, // 日期
       this.getApproveInfo()
@@ -385,8 +413,8 @@ export default {
     detailsMeet(row) {
       // 判断是否冲突row.conflict_number>1冲突
       this.$router.push({
-        name: 'Details',
-        params: {
+        path: '/details',
+        query: {
           menu: 'services',
           id: row.meeting_id
         }

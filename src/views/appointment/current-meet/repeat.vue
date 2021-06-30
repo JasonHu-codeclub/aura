@@ -7,19 +7,35 @@
     <div class="filter">
       <div class="filter-item">
         <!-- 参会人员 -->
-        <div class="filter-item-box">
+        <!-- <div class="filter-item-box">
           <el-input type="text" 
           v-model="searchForm.member" 
           size="mini" 
           :placeholder="$t('placeholder.participants')" 
           @clear="getMeetingRepet" 
           clearable></el-input>
+        </div> -->
+        <!-- 日期 -->
+        <div class="filter-item-box">
+          <span>{{$t('labe.date')}}：</span>
+          <el-date-picker
+            v-model="chooseDate"
+            type="daterange"
+            class="choose-date"
+            :placeholder="$t('placeholder.date')"
+            value-format="yyyy-MM-dd"
+            :editable="false"
+            :picker-options="pickerOptions"
+            :start-placeholder="$t('message.startTime')"
+            :end-placeholder="$t('message.endTime')"
+            range-separator="-"
+            @change="getMeetingRepet"
+            >></el-date-picker>
         </div>
         <div class="filter-item-box">
           <!-- 查询 -->
           <el-button
             type="primary"
-            size="mini"
             class="search"
             @click="getMeetingRepet"
             :loading="searchBtnStatus"
@@ -110,7 +126,7 @@
         <!-- 数据统计 -->
         <div class="repeat-statistics" >
            <div class="repeat-box">
-             <span class="repeat-box-value">{{$t('message.total')}}<i class="blue">{{repeInfo.total}}</i>{{repeInfo.meetTotal}}</span>
+             <span class="repeat-box-value">{{$t('message.total')}}<i class="blue"> {{repeInfo.total}} </i>{{repeInfo.meetTotal}}</span>
            </div>
            <div class="repeat-box">
              <span class="repeat-box-label">{{$t('message.DateRange')}}：</span>
@@ -157,6 +173,7 @@ export default {
         meetRoom: '',// 会议室
         member: ''// 参会人员
       },
+      chooseDate: null, // 日期
       paginationQuery: { 
         page: 1, // 当前页
         limit: 10, // 每页显示条目个数
@@ -178,6 +195,11 @@ export default {
       category: ['', '单次预约', '重复预约', '跨日预约'],
       repetitionType: ['', '每日', '每周', '每月'],
       categoryStr: '', // 会议重复类型
+      pickerOptions: {// 控制日期选择
+        disabledDate (time) {
+          // return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
+        }
+      },
     }
   },
   mounted () { 
@@ -185,7 +207,7 @@ export default {
     this.getMeetingRepet()
     this.resizeHeight(100)
     // 活动菜单
-    let menu = this.$route.params.menu
+    let menu = this.$route.query.menu
     this.$route.meta.activeMenu = menu === 'current' ? '/current/current_list' : '/history/history_list'
     this.isInvitation =  menu === 'current' ? false : true
   },
@@ -204,12 +226,14 @@ export default {
     },
     // 获取数据
     getMeetingRepet () {
-      let id = this.$route.params.id
+      let id = this.$route.query.id
       let params = {
         type: 3, // 重复会议
         id: id,
         page: this.paginationQuery.page,
-        size: this.paginationQuery.limit
+        size: this.paginationQuery.limit,
+        start_date: this.chooseDate ? this.chooseDate[0] : '',
+        end_date: this.chooseDate ? this.chooseDate[1] : '',
       }
       this.dataLoading = true
       getRepeatDetailApi(params).then(res=>{
@@ -244,7 +268,7 @@ export default {
       meetCancelApi(param).then(res=>{
         this.deleteBtnLoading = false 
         this.$message({
-          message: this.$t('message.meetCancelled'),
+          message: this.$t('tip.meetCancelled'),
           type: 'success'
         })
         this.getMeetingRepet()
@@ -269,29 +293,34 @@ export default {
 
 <style lang='less' scoped>
 .repeat-wrap {
-  .filter {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    box-sizing: border-box;
-    padding: 20px 0 0;
+    .filter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      box-sizing: border-box;
+      padding: 20px 0 0;
     .filter-item{
       display: flex;
       flex-wrap: wrap;
       align-items: center;
+      /deep/.el-input{
+        width: auto;
+      }
     }
     .filter-item-box{
       display: flex;
-      width: 180px;
       margin: 0 20px 20px 0;
       align-items: center;
       /deep/.el-input__inner{
-        height: 32px;
+        width: 180px;
+        height: 36px;
+      }
+      .choose-date{
+        width: 260px;
       }
       /deep/.el-button{
         width: 80px;
-        height: 32px;
         font-size: 14px;
       }
     }

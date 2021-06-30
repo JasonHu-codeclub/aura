@@ -113,7 +113,8 @@
             v-loading="addLoading"
             element-loading-spinner="el-icon-loading"
             class="add-dropdown"
-            disabled='true'
+            :disabled='true'
+            trigger="click"
             >
               {{$t('button.reservationSingle')}}
               <el-dropdown-menu slot="dropdown">
@@ -136,7 +137,7 @@
         :data="meetingRoomsFillter"
         style="width: 100%;"
         @cell-click="clickTableCell"
-        :height="tableHeight-150"
+        :height="tableHeight-126"
         border
       >
         <el-table-column
@@ -219,7 +220,9 @@
         </el-table-column>
       </el-table>
       </div>
-      <div class="res-select-time" v-if="selectRowTime.time.startTime">选中：{{searchData.date}}&nbsp;{{selectRowTime.time.startTime}}&nbsp;至&nbsp;{{selectRowTime.time.endTime}}</div>
+      <div class="res-select-time">
+        <span  v-if="selectRowTime.time.startTime">{{$t('message.select')}}：{{searchData.date}}&nbsp;{{selectRowTime.time.startTime}}&nbsp;至&nbsp;{{selectRowTime.time.endTime}}</span>
+      </div>
     </div>
     <!-- /表格 -->
     
@@ -264,9 +267,11 @@
 
     <!-- 重复预约，跨日预约 -->
     <el-dialog
+      width="520px"
       :title="appointmentTitle"
       :visible.sync="repeatNexdayDialog"
-      width="520px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
       @closed="handleCloseAppointment">
       <div class="appointment-box">
         <div class="appointment-repeat" v-if="reservationType == 2" >
@@ -299,6 +304,7 @@
               clearable
             >></el-date-picker>
             <span class="appointment-err" v-if="error.repeatDate.isFocus">{{$t('tip.validateRepeatTime')}}</span>
+            <span class="appointment-tips">{{$t('message.term')}}</span>
           </div>
         </div>
         <!-- 跨日时间设置 -->
@@ -346,10 +352,12 @@
               </el-time-select>
               <span class="appointment-err end-date" v-if="error.nextEndDate.isFocus">{{$t('message.selsectDate')}}</span>
               <span class="appointment-err end-time" v-if="error.nextEndTime.isFocus">{{$t('message.selectEndTime')}}</span>
+              
           </div>
         </div>
       </div>
       <div class="dialog-bottom">
+         <div class="appointment-next-tips"  v-if="reservationType == 3">{{$t('message.term')}}</div>
          <el-button @click="repeatNexdayDialog = false">{{$t('button.cancel')}}</el-button>
          <el-button type="primary" @click="confirmReservation">{{$t('button.confirm')}}</el-button>
       </div>
@@ -628,6 +636,13 @@ export default {
     // 预约
     handleClick(num) {
       this.reservationType = num
+      if(!this.selectRoomData.day || !this.selectRowTime.time.startTime){
+        this.$message({
+          message: this.$t('message.selectRoom'),
+          type: 'warning'
+        });
+        return
+      }
       if(num === 1){
         this.conflictValidator()
       } else if(num === 2){
@@ -644,6 +659,7 @@ export default {
     },
     // 重复，跨日时间设置弹框确认预约
     confirmReservation() {
+      
       let num = this.reservationType
       this.isPass = true
       if(num == 2){
@@ -674,13 +690,6 @@ export default {
     // 预约冲突判断
     async conflictValidator(){
       
-      if(!this.selectRoomData.day || !this.selectRowTime.time.startTime){
-        this.$message({
-          message: '请选择会议室',
-          type: 'warning'
-        });
-        return
-      }
       let repeType = ''
       let endDate = ''
       this.approveCount = 0
@@ -976,7 +985,6 @@ export default {
   .res-table{
     overflow-y: hidden;
     overflow-x: hidden;
-    margin-bottom: 40px;
     .res-table-centent{
       overflow-x: auto;
       /deep/.el-table{
@@ -994,10 +1002,11 @@ export default {
       font-weight: normal;
     }
     .res-select-time{
+      min-height: 16px;
       color: #5473E8;
       font-size: 14px;
       text-align: center;
-      margin: 30px 0 0;
+      margin: 20px 0;
     }
   }
   // .floor-name {
@@ -1249,7 +1258,16 @@ export default {
         position: absolute;
         color: #FF5050;
         top: 39px;
-        right: 15px;
+        left: 124px;
+        font-size: 12px;
+        transition: inherit;
+      }
+      .appointment-tips{
+        position: absolute;
+        color: #FF5050;
+        top: -16px;
+        right: 17px;
+        font-size: 12px;
         transition: inherit;
       }
       
@@ -1270,12 +1288,14 @@ export default {
     .edit-nex-input{
       margin-right: 10px;
     }
-    .appointment-err{
+      .appointment-err{
         position: absolute;
         color: #FF5050;
         top: 39px;
+        font-size: 12px;
         transition: inherit;
       }
+      
       .start-date{
         left: 209px;
       }
@@ -1300,8 +1320,15 @@ export default {
 }
 
 .dialog-bottom {
-    padding-top: 28px;
+    padding-top: 0;
     text-align: right;
+    /deep/.el-button{
+      width: 80px;
+    }
+    .appointment-next-tips{
+      color: #58585D;
+      margin-bottom: 28px;
+    }
 }
 
 /deep/.add-dropdown{
