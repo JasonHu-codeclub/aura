@@ -116,6 +116,7 @@ export default {
     meetRoomTable: 'Location',
     meetingType: 'Support meeting type',
     selectRoom: 'Please select conference room',
+    selectTime: 'Please select the appointment time',
     nothing: 'None',
     meetType: 'Meeting Type',
     AppointmentType: 'Reservation type',

@@ -240,6 +240,10 @@
             <span class="room-list-value">{{roomforms.name}}</span>
           </div>
           <div class="room-list">
+            <span class="room-list-labe">{{$t('labe.approvalCriteria')}}：</span>
+            <span class="room-list-value">{{roomforms.mansion.name}}</span>
+          </div>
+          <div class="room-list">
             <span class="room-list-labe">{{$t('labe.numberPeople')}}：</span>
             <span class="room-list-value">{{roomforms.reservable}}</span>
             
@@ -433,7 +437,11 @@ export default {
         {name: '每周', value: 2},
         {name: '每月', value: 3},
       ],
-      roomforms: '', // 会议室信息
+      roomforms: {
+        mansion: {
+          name: ''
+        }
+      }, // 会议室信息
       Host: process.env.NODE_ENV === 'development' ? 'https://alc01.aa-iot.com' : getHost(),
       tableLoading: false,
       btnLoading: false,
@@ -638,7 +646,7 @@ export default {
       this.reservationType = num
       if(!this.selectRoomData.day || !this.selectRowTime.time.startTime){
         this.$message({
-          message: this.$t('message.selectRoom'),
+          message: this.$t('message.selectTime'),
           type: 'warning'
         });
         return
@@ -843,16 +851,13 @@ export default {
       this.searchBtnStatus = true
       const result = await getAppointmentApi(params)
       this.meetingRooms = result.data.meeting_rooms
-      // this.meetingRooms.map(res=>{
-      //   res.equipment = ['电子屏','投影仪','投影仪']
-      // })
+      this.setTimesOptions()
       // 清除选择的时间印记
       this.selectRowTime.time.startIndex = null
       this.selectRowTime.time.endIndex = null
       this.tableLoading = false
       this.searchBtnStatus = false
     },
-    
     // 轮询会议室
     async pollingSearchRoom (type) {
       let params= {
@@ -864,10 +869,8 @@ export default {
       }
       this.tableLoading = true
       const result = await getAppointmentApi(params)
-        this.meetingRooms = result.data.meeting_rooms
-      //   this.meetingRooms.map(res=>{
-      //   res.equipment = ['电子屏','投影仪','投影仪']
-      // })
+      this.meetingRooms = result.data.meeting_rooms
+      this.setTimesOptions()
       // 如果是预约成功后的刷新
       if (type === 'reserveSuccess') {
         // 清除选择的时间印记
@@ -875,6 +878,15 @@ export default {
         this.selectRowTime.time.endIndex = null
       }
       this.tableLoading = false
+    },
+    // 设置跨日预约时间步长
+    setTimesOptions() {
+      let msg = this.meetingRooms[0]['message']
+      let leng = msg.length
+      this.endTimesOptions.start = msg[0]['time']
+      this.endTimesOptions.end = msg[leng-1]['time']
+      this.startTimesOptions.start = msg[0]['time']
+      this.startTimesOptions.end = msg[leng-1]['time']
     },
     // 重置搜索关键字
     resetMeetingRoom() {

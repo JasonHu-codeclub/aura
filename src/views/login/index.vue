@@ -213,7 +213,7 @@ export default {
           left: 50%;
           top: 50%;
           transform: translate(-50%, -50%);
-          background: #16459a;
+          background: #1c52b5;
           padding: 3px 12px;
           color: #82ADF1;
         }

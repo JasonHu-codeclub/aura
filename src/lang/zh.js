@@ -118,6 +118,7 @@ export default {
     meetRoomTable: '所在会议室',
     meetingType: '支持会议类型',
     selectRoom: '请选择会议室',
+    selectTime: '请选择预约时间',
     nothing: '无',
     AppointmentType: '预约类型',
     essentialInformation: '基本信息',
