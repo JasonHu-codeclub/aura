@@ -6,7 +6,7 @@
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
 
-import { loginApi, logoutApi, getInfoApi, getCodeApi } from '@api/user'
+import { loginApi, logoutApi, getInfoApi, getCodeApi, qyWechatLoginApi } from '@api/user'
 import { getToken, setToken, removeToken, setUserName, getUserName, removeUserName } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import qs from 'querystring'
@@ -15,7 +15,7 @@ const state = {
   username: '',// 用户名称
   avatar: '', // 用户头像
   userId: '', // 用户id
-  roles: [], // 用户菜单权限列表
+  roles: '', // 用户菜单权限列表
   roleId: '',  // 角色id
   userInfo: '',// 用户信息
   isQrCode: false,
@@ -52,10 +52,29 @@ const actions = {
     const { username, pwd, company } = data
     return new Promise((resolve, reject) => {
       loginApi(qs.stringify({ name: username.trim(), password: pwd })).then(response => {
-        const { data: { token } } = response
-        commit('SET_TOKEN', token)
-        setToken(token)
-        resolve()
+        if(response&&response.meta.code=="RESP_OKAY"){
+          const { data: { token } } = response
+          commit('SET_TOKEN', token)
+          setToken(token)
+        }
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  // 第三方登录
+  otherLogin ({ commit }, data) {
+    const { code, state, appid } = data
+    return new Promise((resolve, reject) => {
+      qyWechatLoginApi({ appid, code }).then(response => {
+        if(response&&response.meta.code=="RESP_OKAY"){
+          const { data: { userinfo: { token } } } = response
+          /* cookie保存 */
+          commit('SET_TOKEN', token)
+          setToken(token)
+        }
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -70,12 +89,12 @@ const actions = {
         if (!user) {
           reject('需要重新登录')
         }
-        const { nickname, group, id, thumb_avatar} = user
+        const { nickname, group, id, thumb_avatar, pc_permissions} = user
         commit('SET_ROLES', group.permissions)
         commit('SET_USERNAME', nickname)
         commit('SET_AVATAR', thumb_avatar)
         commit('SET_ROLEID', id)
-        resolve(group.permissions)
+        resolve(pc_permissions)
       }).catch(error => {
         reject(error)
       })
@@ -94,7 +113,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       logoutApi().then((response) => {
         commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
+        commit('SET_ROLES', '')
         removeToken()
         resetRouter()
         resolve()
@@ -107,7 +126,7 @@ const actions = {
   resetToken ({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
+      commit('SET_ROLES', '')
       removeToken()
       resolve()
     })

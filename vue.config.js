@@ -20,7 +20,7 @@ function resolve (dir) {
 const Timestamp = new Date().getTime();
 
 module.exports = {
-  publicPath: '/pcmeet',
+  publicPath: '/sp-pcmeet',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',

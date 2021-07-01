@@ -202,7 +202,7 @@
               <el-button
                 type="text"
                 v-if="dataType==1"
-                :disabled="scope.row.status == 1"
+                :disabled="scope.row.status == 1 || scope.row.can_update == 0"
                 @click="editMeetingInfo(scope.row)">
                 {{ $t("button.edit") }}
               </el-button>

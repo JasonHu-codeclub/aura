@@ -231,6 +231,7 @@
       :title="$t('message.roomInfo')"
       :visible.sync="dialogVisible"
       width="700px"
+      class="room-detail"
       @closed="handleClose">
       <div class="room-content">
         
@@ -240,28 +241,21 @@
             <span class="room-list-value">{{roomforms.name}}</span>
           </div>
           <div class="room-list">
-            <span class="room-list-labe">{{$t('labe.approvalCriteria')}}：</span>
+            <span class="room-list-labe">{{$t('labe.meetAddress')}}：</span>
             <span class="room-list-value">{{roomforms.mansion.name}}</span>
           </div>
           <div class="room-list">
-            <span class="room-list-labe">{{$t('labe.numberPeople')}}：</span>
+            <span class="room-list-labe letter-spacing">{{$t('labe.approvalLevel')}}：</span>
+            <span class="room-list-value">{{approveLevel[roomforms.approve_level]}}</span>
+          </div>
+          <div class="room-list">
+            <span class="room-list-labe letter-spacing">{{$t('labe.numberPeople')}}：</span>
             <span class="room-list-value">{{roomforms.reservable}}</span>
             
           </div>
           <div class="room-list">
-            <span class="room-list-labe">{{$t('labe.approvalCriteria')}}：</span>
-            <span class="room-list-value">{{approveLevel[roomforms.approve_level]}}</span>
-          </div>
-          <div class="room-list">
             <span class="room-list-labe">{{$t('labe.equipmentOfroom')}}：</span>
-            <span class="room-list-value">
-              <i 
-                v-for="(item, index) in roomforms.equipment" 
-                :key="index" 
-                class="floor-device-list">
-                {{item.name}}
-              </i>
-            </span>
+            <span class="room-list-value">{{roomforms.mansioDec}}</span>
           </div>
         </div>
         
@@ -378,6 +372,7 @@
 import dayjs from 'dayjs'
 import TimeTableCell from './components/time-table-cell'
 import qs from 'querystring'
+import { imgBaseUrl } from '@/utils/varible'
 import { mapGetters } from 'vuex'
 import { 
   getStatusApi,
@@ -440,9 +435,10 @@ export default {
       roomforms: {
         mansion: {
           name: ''
-        }
+        },
+        mansioDec: ''
       }, // 会议室信息
-      Host: process.env.NODE_ENV === 'development' ? 'https://alc01.aa-iot.com' : getHost(),
+      Host: imgBaseUrl,
       tableLoading: false,
       btnLoading: false,
       searchData: {
@@ -646,7 +642,7 @@ export default {
       this.reservationType = num
       if(!this.selectRoomData.day || !this.selectRowTime.time.startTime){
         this.$message({
-          message: this.$t('message.selectTime'),
+          message: this.$t('message.selectRoom'),
           type: 'warning'
         });
         return
@@ -851,7 +847,7 @@ export default {
       this.searchBtnStatus = true
       const result = await getAppointmentApi(params)
       this.meetingRooms = result.data.meeting_rooms
-      this.setTimesOptions()
+      // this.setTimesOptions()
       // 清除选择的时间印记
       this.selectRowTime.time.startIndex = null
       this.selectRowTime.time.endIndex = null
@@ -870,7 +866,7 @@ export default {
       this.tableLoading = true
       const result = await getAppointmentApi(params)
       this.meetingRooms = result.data.meeting_rooms
-      this.setTimesOptions()
+      // this.setTimesOptions()
       // 如果是预约成功后的刷新
       if (type === 'reserveSuccess') {
         // 清除选择的时间印记
@@ -879,14 +875,35 @@ export default {
       }
       this.tableLoading = false
     },
-    // 设置跨日预约时间步长
     setTimesOptions() {
       let msg = this.meetingRooms[0]['message']
       let leng = msg.length
+      // let endTime = msg[leng-1]['time']
+      // let hour = endTime.split(':')[0]
+      // let minute = endTime.split(':')[1]
+      // let strTime = ''
+      // console.log(minute,'minute')
+      // if(minute != '30' ){
+      //   if(hour != '23'){
+      //     hour = Number(hour) + 1
+      //     minute = '30'
+      //   }else{
+      //     minute = '59'
+      //   }
+      // }else{
+      //   if(hour != '23'){
+      //     hour = Number(hour) + 1
+      //     minute = '00'
+      //   }else{
+      //     minute = '59'
+      //   }
+      // }
+      // console.log(hour +':'+ minute)
       this.endTimesOptions.start = msg[0]['time']
       this.endTimesOptions.end = msg[leng-1]['time']
       this.startTimesOptions.start = msg[0]['time']
       this.startTimesOptions.end = msg[leng-1]['time']
+
     },
     // 重置搜索关键字
     resetMeetingRoom() {
@@ -916,6 +933,11 @@ export default {
       this.dialogVisible = true
       this.roomforms = JSON.parse(JSON.stringify(row))
       this.roomforms.image = this.Host + this.roomforms.image
+      let str = ''
+      this.roomforms.equipment && this.roomforms.equipment.forEach((item) => {
+        str = str ? str + '，' + item.name : item.name
+      })
+      this.roomforms.mansioDec = str
     },
     handleClose() {
     },
@@ -1210,24 +1232,34 @@ export default {
 
     
 }
-
+.room-detail{
+  /deep/.el-dialog__header{
+    padding: 20px 34px 10px;
+  }
+  /deep/.el-dialog__body{
+    padding: 30px 35px 50px;
+  }
+}
 .room-content{
-      display: flex;
+    display: flex;
       justify-content: center;
       .room-content-l{
         position: relative;
+        flex: 1;
         margin-right: 20px;
         padding-right: 20px;
         .room-list {
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             color: #58585D;
             font-size: 14px;
-            display: flex;
             .room-list-labe {
                 display: inline-block;
                 flex-basis: 100px;
                 width: 100px;
-                text-align: right;
+                text-align: left;
+            }
+            .letter-spacing{
+              letter-spacing: 3.6px;
             }
             .room-list-value {
                 width: 260px;
@@ -1248,8 +1280,10 @@ export default {
       .room-content-r{
         width: 230px;
         height: 230px;
-        background-size: 100% 100%; 
+        margin-right: 20px;
+        background-size: cover;
         background-repeat: no-repeat;
+        background-position: center;
       }
     }
 

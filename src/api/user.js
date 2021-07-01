@@ -17,6 +17,15 @@ export function loginApi (data) {
     data
   })
 }
+// 获取用户信息
+export function qyWechatLoginApi (data) {
+  return request({
+    url: "/wechat/login",
+    method: "get",
+    params: data
+  })
+}
+
 // 登出
 export function logoutApi (data) {
   return request({
@@ -25,6 +34,7 @@ export function logoutApi (data) {
     data
   })
 }
+
 
 // 获取用户信息
 export function getInfoApi (data) {

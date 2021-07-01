@@ -99,6 +99,7 @@
 <script>
 import upload from '@/components/Upload'
 import { getInfoApi, resetPassApi, serviceCenterApi } from '@/api/user'
+import { imgBaseUrl } from '@/utils/varible'
 export default {
   components: {upload},
   data(){
@@ -142,7 +143,7 @@ export default {
       userDialogVisible: false,// 修改用户头像
       saveLoading: false,// 保存按钮loading
       submitLoading: false, // 确认密码按钮loading
-      baseURL: process.env.NODE_ENV === 'development' ? 'https://alc01.aa-iot.com/' : getHost(),
+      baseURL: imgBaseUrl,
       userForm: {},
       sexList: ['女', '男'],
       imgUrl: 'https://alc01.aa-iot.com/storage/uploads/user/QWRnUNs6BQ2dFjzDrsZMIUvyA.png',

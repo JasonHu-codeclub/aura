@@ -183,7 +183,8 @@ export const asyncRoutes = [
       meta: {
         title: 'Approve',
         icon: 'approve',
-        affix: false
+        affix: false,
+        role: 'is_belong_approve' // 权限
       }
     },
     // 冲突
@@ -211,7 +212,8 @@ export const asyncRoutes = [
       meta: {
         title: 'service',
         icon: 'service',
-        affix: false
+        affix: false,
+        role: 'is_belong_service' // 权限
       }
     }]
   },

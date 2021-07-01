@@ -111,6 +111,7 @@ import Hamburger from './components/Hamburger'
 import Screenfull from './components/Screenfull'
 import LangSelect from '@/components/LangSelect'
 // import Search from './components/HeaderSearch'
+import { imgBaseUrl } from '@/utils/varible'
 import { resetPassReq } from '@/api/user' 
 export default {
   components: {
@@ -148,7 +149,7 @@ export default {
       }
     }
     return {
-      baseURL: process.env.NODE_ENV === 'development' ? 'https://alc01.aa-iot.com/' : getHost(),
+      baseURL: imgBaseUrl,
       dialogVisible: false,
       ruleForm: {
         pass: '',

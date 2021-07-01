@@ -88,6 +88,8 @@ export default {
     }
   },
   mounted(){
+    // 注销onresizes事件
+    window.onresize = null;
      this.getStatistics()
   },
   methods: {

@@ -9,7 +9,7 @@
    element-loading-spinner="el-icon-loading"
    element-loading-background="rgba(0, 0, 0, 0.38)" 
  >
-    <div class="save-submit" v-show="dataType === 2">
+    <div class="save-submit" v-show="dataType === 2 && ruleForm.can_update != 0">
       <el-button type="button" class="reservation-submit el-button--primary" @click="save" round>{{$t('button.save')}}</el-button>
     </div>
     
@@ -39,9 +39,8 @@
             </div>
          </div>
          <div class="edit-sign_in" v-if="ruleForm.status == 1">
-            <!-- {{ruleForm.is_is_sign == 1 ? $t('tip.signIn') : $t('tip.notSignIn')}} -->
-            <span v-if="ruleForm.is_is_sign == 1"><i class="el-icon-circle-check"></i>{{$t('tip.signIn')}}</span>
-            <span v-else><i class="el-icon-warning"></i>{{$t('tip.notSignIn')}}</span>
+            <span v-if="ruleForm.is_is_sign == 1" class="sign_item-in"><i class="el-icon-circle-check"></i>{{$t('tip.signIn')}}</span>
+            <span v-else class="sign_item-warn"><i class="el-icon-warning"></i>{{$t('tip.notSignIn')}}</span>
          </div>
       </div>
 
@@ -53,8 +52,8 @@
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('placeholder.conferenceInfor')}}：</div>
                <div class="edit-box-value">
-                  <span v-if="dataType===1">{{ruleForm.is_secrecy?'保密':'公开'}}</span>
-                  <el-radio-group v-if="dataType===2" v-model="ruleForm.is_secrecy">
+                  <span v-if="dataType===1 || ruleForm.can_update == 0">{{ruleForm.is_secrecy?'保密':'公开'}}</span>
+                  <el-radio-group v-if="dataType===2 && ruleForm.can_update==1" v-model="ruleForm.is_secrecy">
                      <el-radio  :label="0">{{$t('message.open')}}</el-radio>
                      <el-radio  :label="1">{{$t('message.private')}}</el-radio>
                   </el-radio-group>
@@ -69,7 +68,7 @@
                      v-model="ruleForm.title"
                      :placeholder="$t('placeholder.theme')"
                      :class="error.title.isFocus ? 'inputError' : ''"
-                     :disabled="dataType===1"
+                     :disabled="dataType===1||ruleForm.can_update == 0"
                      maxlength="15"
                      clearable
                   ></el-input>
@@ -122,7 +121,7 @@
                   <el-select 
                      v-model="ruleForm.meeting_type_id" 
                      class="edit-box-input"
-                     :disabled="dataType===1"
+                     :disabled="dataType===1||ruleForm.can_update == 0"
                      clearable
                   >
                      <el-option
@@ -139,7 +138,7 @@
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('message.internalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 }" @click="showInnerDialog">
+                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0 }" @click="showInnerDialog">
                      {{participantVal||$t('message.promptInternalParticipants')}}
                   </span>
                </div>
@@ -148,7 +147,7 @@
             <div class="edit-box-item" v-if="ruleForm.external_participants_show==1">
                <div class="edit-box-label">{{$t('message.externalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 }" @click="showExtDialog">
+                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0 }" @click="showExtDialog">
                      {{outParticipantVal||$t('message.addExtParticipants')}}
                   </span>
                   <!-- <el-input
@@ -164,7 +163,7 @@
       <!-- 会议服务 -->
       <div class="edit-box">
          <div class="edit-box-title">{{$t('route.service')}}</div>
-         <div class="edit-box-list" :class="{ 'disabled_edit-box': dataType === 1 }">
+         <div class="edit-box-list" :class="{ 'disabled_edit-box': dataType === 1 || ruleForm.can_update == 0 }">
             <!-- 茶点服务 -->
             <div class="edit-box-item f-start" v-if="ruleForm.service_show == 1">
                <div class="edit-box-label margin-top-10">{{$t('message.Refreshment')}}：</div>
@@ -178,7 +177,7 @@
                      class="input edit-box-input"
                      @change="selectServeChange"
                      :placeholder="$t('placeholder.selectServe')"
-                     :disabled="dataType===1">
+                     :disabled="dataType===1 || ruleForm.can_update == 0">
                      <el-option
                         v-for="item in serviceList"
                         :key="item.id"
@@ -193,7 +192,7 @@
                            :class="{highlight: item.value > 0 }" 
                            v-model="item.value" 
                            controls-position="right" :min="0" 
-                           :disabled="dataType===1"
+                           :disabled="dataType===1 || ruleForm.can_update == 0"
                            clearable
                            @input="changeValueHandle(item)"
                            >
@@ -216,7 +215,7 @@
                      class="input edit-box-input"
                      @change="selectEquimentChange"
                      :placeholder="$t('placeholder.selectEquipment')"
-                     :disabled="dataType===1">
+                     :disabled="dataType===1 || ruleForm.can_update == 0">
                      <el-option
                         v-for="item in equipmentList"
                         :key="item.id"
@@ -245,7 +244,7 @@
                   v-model="ruleForm.remark"
                   :autosize="{ minRows: 4, maxRows: 4}"
                   :placeholder="$t('message.EnterComments')"
-                  :disabled="dataType===1"
+                  :disabled="dataType===1 && ruleForm.can_update == 0"
                   maxlength="50"
                   show-word-limit
                ></el-input>
@@ -529,11 +528,17 @@ export default {
    
   },
   methods: {
-   
      // 获取详情
    getDateilsInfo(id) {
+      let that = this
       this.formLoading = true
       getMeetingDetailApi({id: id}).then( res=> {
+         if(!res||res.meta.code != "RESP_OKAY"){
+            setTimeout(() => {
+               that.$router.push('/current')
+            }, 1500);
+            return
+         }
          this.ruleForm = res.data.meeting
          // 会议审批描述
          
@@ -694,7 +699,7 @@ export default {
     },
    //  添加外部参会人弹窗
    showExtDialog() {
-      if(this.dataType==1){// 详情
+      if(this.dataType==1 || this.ruleForm.can_update == 0){// 详情
          return
       }
       this.extVisible = true
@@ -799,7 +804,7 @@ export default {
     },
    // 显示内部参会人员弹框
     showInnerDialog () {
-      if(this.dataType==1){// 详情
+      if(this.dataType==1 || this.ruleForm.can_update == 0){// 详情
          return
       }
       this.innerVisible = true
@@ -969,11 +974,18 @@ export default {
          remark: this.ruleForm.remark
       }
       saveMeetEditApi(dataJson).then(res=> {
-         this.$message({
-            message: this.$t('tip.infoEditSuccess'),
-            type: 'success'
-         })
-         this.$router.push('/current')
+         if(res.meta.code == "RESP_OKAY"){
+            this.$message({
+               message: this.$t('tip.infoEditSuccess'),
+               type: 'success'
+            })
+            this.$router.push('/current')
+         }else{
+            this.$message({
+               message: res.meta.message,
+               type: 'error'
+            })
+         }
       })
    },
    
@@ -1162,7 +1174,7 @@ export default {
                 color: #898FA8;
                 .edit-box-service{
                   margin-top: 20px;
-                  max-width: 375px;
+                  max-width: 475px;
                 }
                 .edit-box-refreshment{
                   display: inline-block;
@@ -1383,6 +1395,21 @@ export default {
            position: absolute;
            top: 30px;
            right: 20px;
+           font-size: 16px;
+           .sign_item-in{
+              color: #41B172;
+              .el-icon-circle-check{
+                 display: inline-block;
+                 margin-right: 2px;
+              }
+           }
+           .sign_item-warn{
+              color: #FA715A;
+              .el-icon-warning{
+                 display: inline-block;
+                 margin-right: 2px;
+              }
+           }
         }
         .f-start{
             align-items: flex-start !important;

@@ -9,8 +9,7 @@
 <template>
   <div id="login">
     <div class="login-content">
-      
-      <h3 class="login-content-title">{{$t('message.loginTitle')}}</h3>
+      <h3 class="login-content-logo" :style="{backgroundImage: 'url(' + host + baseImg + ')'}"></h3>
       <div class="login-content-box">
         <div class="login-content-form">
           <div class="login-content-divider">
@@ -56,49 +55,18 @@
           </div>
         </div>
       </div>
+      <div class="login-content-name">{{$t('message.loginTitle')}}</div>
     </div>
-    <!-- <el-card class="box-card">
-      <div class="login-box"></div>
-      <div class="login-box" >
-        <h3 class="welcome">登录</h3>
-        <el-form
-          ref="ruleForm"
-          :model="ruleForm"
-          :rules="rules"
-          label-width="80px"
-          hide-required-asterisk
-        >
-          <el-form-item label="用户名" prop="username">
-            <svg-icon icon-class="username" slot="label" />
-            <el-input
-              v-model="ruleForm.username"
-              autocomplete="off"
-              placeholder="请输入用户名"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <svg-icon icon-class="password" slot="label" />
-            <el-input
-              show-password
-              type="password"
-              v-model="ruleForm.password"
-              placeholder="请输入密码"
-              @keyup.enter.native="handleLogin"
-            ></el-input>
-          </el-form-item>
-          <div class="submit-btn">
-            <el-button type="primary" @click.native.prevent="handleLogin()" :loading="loginLoading">登录</el-button>
-          </div>
-        </el-form>
-      </div>
-    </el-card> -->
   </div>
 </template>
 <script>
+import { imgBaseUrl } from '@/utils/varible'
 export default {
   components: {},
   data () {
     return {
+      host: imgBaseUrl,
+      baseImg: require('../../assets/logo.png'),
       loginLoading : false,
       ruleForm: {
         username: '',
@@ -138,9 +106,11 @@ export default {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.loginLoading = true
-          this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((result) => {
-            this.loginLoading = false
-            this.$router.replace({ path: '/' })
+          this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((res) => {
+            if(res.meta.code=="RESP_OKAY"){
+              this.loginLoading = false
+              this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+            }
           })
         } 
       })
@@ -148,7 +118,7 @@ export default {
     // 第三方登录
     handleLoginType (type) {
       if (type === 'qiye') { // 企业微信
-        const redirect_uri = 'https://alc01.aa-iot.com/pcmeet/#/login'
+        const redirect_uri = 'https://alc01.aa-iot.com/sp-pcmeet/#/login'
         window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${this.appid}&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=STATE`
       } else if (type === 'wechat') { // 微信登录
       }
@@ -168,8 +138,10 @@ export default {
     if (this.otherQuery.code) {
       this.pageLoading = false
       this.$store.dispatch('user/otherLogin', { appid: this.appid, code: this.otherQuery.code, state: this.otherQuery.state }).then(() => {
-        this.pageLoading = true
-        this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+        if(res.meta.code=="RESP_OKAY"){
+          this.pageLoading = true
+          this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+        }
       })
     }
   }
@@ -194,10 +166,22 @@ export default {
     align-items: center;
     justify-content: center;
     box-shadow: 2px 0 32px #191633;
-    .login-content-title {
+    .login-content-logo{
       position: absolute;
-      top: 10%;
-      color: #fff;
+      top: 5%;
+      width: 80px;
+      height: 80px;
+      color: #88B6FF;
+      font-size: 18px;
+      z-index: 1000;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    .login-content-name {
+      position: absolute;
+      bottom: 5%;
+      color: #88B6FF;
+      font-size: 18px;
     }
     .login-content-box{
       width: 300px;
@@ -213,7 +197,7 @@ export default {
           left: 50%;
           top: 50%;
           transform: translate(-50%, -50%);
-          background: #1c52b5;
+          background: #134eb9;
           padding: 3px 12px;
           color: #82ADF1;
         }

@@ -43,6 +43,7 @@ export function filterAsyncRoutes (routes, roles) {
   const res = []
   routes.forEach(route => {
     const tmp = { ...route }
+    
     if (hasPermission(roles, tmp)) {
       if (tmp.children) {
         tmp.children = filterAsyncRoutes(tmp.children, roles)
@@ -66,7 +67,13 @@ export function filterAsyncRoutes (routes, roles) {
 function hasPermission (roles, route) {
   if (route.meta && route.meta.role) {
     // 只要route的role标识在权限列表中
-    return roles.some(role => route.meta.role === role)
+    let per = ''
+    for(let key in roles){
+      if(key == route.meta.role){
+        per = !!roles[key]
+      }
+    }
+    return per
   } else {
     return true
   }
