@@ -66,6 +66,15 @@ export function getStatusApi (data) {
     })
 }
 
+// 获取时间规则
+export function getTimeConfigApi (data) {
+  return request({
+    url: "/get-time-config",
+    method: "get",
+    params: data
+  })
+}
+
 // 获取会议室列表
 export function getMeetingsApi (data) {
     return request({
@@ -233,3 +242,5 @@ export function getStatisticsApi (data) {
     params: data
   })
 }
+
+

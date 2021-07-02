@@ -244,7 +244,7 @@ export default {
         if(timeIndexVal !='23:30'){
           timeName = Number(timeIndexVal.split(':')[0]) + 1 + ':00'
         }else{
-          timeName = '23:59'
+          timeName = '24:00'
         }
       }else{
         timeName = times[index + 1].time

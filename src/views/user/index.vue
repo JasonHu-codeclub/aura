@@ -89,10 +89,6 @@
          </el-form>
       </div>
    </el-dialog>
-
-   
-
-
   </div>
 </template>
 
@@ -147,7 +143,7 @@ export default {
       userForm: {},
       sexList: ['女', '男'],
       imgUrl: 'https://alc01.aa-iot.com/storage/uploads/user/QWRnUNs6BQ2dFjzDrsZMIUvyA.png',
-      baseImg: require('../../assets/user-icon.png'),
+      baseImg: require('../../assets/user.png'),
       isOpen: false, // 显示密码
       saveForm: {},
       thumb_avatar_file: '',
@@ -185,14 +181,12 @@ export default {
     // 图片上传成功
     uploadSuccess (rawFile) {
       this.thumb_avatar_file = rawFile
-      console.log(rawFile,'thumb_avatar_file')
     },
     /*用户信息*/
     async getUserInfo() {
        const result = await getInfoApi()
        this.userForm = result.data.user
        this.imgUrl = this.userForm.thumb_avatar ? this.baseURL + this.userForm.thumb_avatar : this.baseImg
-       console.log(this.imgUrl,'imgUrl')
     },
     /*修改密码*/ 
     setPassword() {

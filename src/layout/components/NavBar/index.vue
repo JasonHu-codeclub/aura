@@ -30,7 +30,7 @@
       >
         <div class="avatar-wrapper">
           <span class="user-name">{{ name }}</span>
-          <span class="user-avatar" :style="{backgroundImage: 'url('+ baseURL + avatar +')'}"></span>
+          <span class="user-avatar" :style="{backgroundImage: avatar?'url('+ baseURL + avatar +')': 'url('+userImg+')'}"></span>
           <!-- <img :src="avatar" class="user-avatar" /> -->
           <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
@@ -166,7 +166,8 @@ export default {
         oldPass: [
           { validator: checkOldPass, trigger: 'blur' }
         ]
-      }
+      },
+      userImg: require('../../../assets/user.png') 
     }
   },
   computed: {

@@ -30,7 +30,7 @@
             <!-- 会议设备 -->
             <div class="edit-box-item" >
                <div class="edit-box-label">{{$t('labe.equipmentOfroom')}}：</div>
-               <div class="edit-box-value">{{equipmentStr||'--'}}</div>
+               <div class="edit-box-value">{{ruleForm.meeting_room_equipment||'--'}}</div>
             </div>
             <!-- 预约类型 -->
             <div class="edit-box-item">
@@ -194,8 +194,10 @@
                            controls-position="right" :min="0" 
                            :disabled="dataType===1 || ruleForm.can_update == 0"
                            clearable
+                           oninput="value=value.replace(/[^\d]/g,'')"
                            @input="changeValueHandle(item)"
                            >
+                           <!-- (/^[0]+[0-9]*$/gi,"") 不能以0开头-->
                         </el-input>
                      </div>
                   </div>
@@ -575,12 +577,9 @@ export default {
          this.getServiceInfo()
          
          // 设备
-          let device = ''
-          this.ruleForm.equipment && this.ruleForm.equipment.forEach((item) => {
-            device = device ? device + ' / ' + item.name : item.name
+         this.ruleForm.equipment && this.ruleForm.equipment.forEach((item) => {
             this.checkListEquipment.push(item.id)
-          })
-          this.equipmentStr = device || '--'
+         })
 
          // 内部参会人员
          let str = ''
@@ -651,7 +650,10 @@ export default {
    changeValueHandle(item){
       this.serviceList.map(res=>{
          if(res.id == item.id){
-            res.value = item.value 
+            console.log(item, 'item',item.value)
+            item.value = item.value ? item.value : 0
+            res.value = item.value
+            console.log(res.value,'res.value')
          }
       })
    },

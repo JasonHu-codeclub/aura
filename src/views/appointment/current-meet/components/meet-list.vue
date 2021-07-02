@@ -174,7 +174,7 @@
           </el-table-column>
           <!-- 发起人 -->
           <el-table-column
-            prop="user_name"
+            prop="user_nickname"
             :label="$t('message.sender')"
             width="120"
             align="center"
@@ -190,7 +190,7 @@
               <el-button 
                 type="text" 
                 v-if="dataType==1"
-                :disabled="scope.row.status == 1"
+                :disabled="scope.row.status == 1||scope.row.can_release == 0"
                 @click="deleteMeeting(scope.row)">
                 {{ $t("button.cancel") }}
               </el-button>

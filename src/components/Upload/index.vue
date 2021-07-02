@@ -31,7 +31,8 @@
                 <div class="upload-content">
                     <div class="upload-content-left">
                         <div class="upload-content-img">
-                            <img :src="originalImg||img" alt="" :style="{transform: 'scale('+ scaleNum +')'}">
+                            <img :src="originalImg||img" alt="" :style="{transform: 'scale('+ scaleNum +')'}" align="absmiddle">
+                            <!-- <span :style="{backgroundImage: 'url('++')'}"></span> -->
                         </div>
                         <div class="upload-content-bot">
                             <span class="upload-content-upload" @click="clickUpload">{{$t('message.clickUpload')}}</span>
@@ -195,6 +196,8 @@ export default {
             justify-content: space-between;
             .upload-content-left {
                 .upload-content-img{
+                    width: 300px;
+                    height: 300px;
                     overflow: hidden;
                 }
                 width: 300px;
@@ -202,6 +205,8 @@ export default {
                 img{
                     display: block;
                     width: 100%;
+                    height: 100%;
+                    object-fit:cover
                 }
                 .upload-content-bot {
                     display: flex;
@@ -233,8 +238,10 @@ export default {
                 img{
                     display: block;
                     width: 120px;
+                    height: 120px;
                     border-radius: 50%;
                     margin: 0 auto;
+                    object-fit:cover
                 }
                 span.upload-content-dec {
                     display: block;
