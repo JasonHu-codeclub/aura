@@ -508,7 +508,9 @@ export default {
       },
       isPass: false,
       addLoading: false,
-      timeConfig: {} // 可预约时间段
+      timeConfig: {}, // 可预约时间段
+      appStartTimes: '', // 预约开始时间
+      appEndTimes: '' // 预约结束时间
     }
   },
   computed: {
@@ -687,7 +689,7 @@ export default {
     // 跨日开始时间
     selectNextTimes(time, names){
       this.setStatus(time, names)
-      this.endTimesOptions.minTime = time 
+      // this.endTimesOptions.minTime = time 
       this.initTime()
       // 判断开始结束时间大小
       if(!time) return
@@ -702,22 +704,22 @@ export default {
         if(startHour > endHour||(startHour === endHour && startMinute >= endMinute)){ // 当前开始结束小时分钟判断
           this.nextDateForm.nextEndTime = ''
         }
+      }else{
+        this.endTimesOptions.minTime = ''
       }
     },
     // 跨日结束日期
     selectNextEndDate(dates, names) {
-      this.setStatus(dates, names) 
+      this.setStatus(dates, names)
+      this.nextDateForm.nextEndTime = '' 
       let start = dayjs(this.nextDateForm.nextStartDate).valueOf()// 开始日期
       let end = dayjs(this.nextDateForm.nextEndDate).valueOf()// 结束日期
       if(start == end){
         this.endTimesOptions.minTime = this.nextDateForm.nextStartTime 
-        // this.endTimesOptions.minTime = selectTime
-      } else if(start > end){
-         
-      } else if(start < end){
-
+      } else {
+        this.endTimesOptions.minTime = ''
+        this.startTimesOptions.maxTime= ''
       }
-      
     },
     // 初始化跨日预约开始、结束时间选择范围
     initTime() {
@@ -798,20 +800,20 @@ export default {
       let repeType = ''
       let endDate = ''
       this.approveCount = 0
-      let startTime = `${this.selectRoomData.day} ${this.timesHandle(this.selectRowTime.time.startTime)}`
-      let endTime = `${this.selectRoomData.day} ${this.timesHandle(this.selectRowTime.time.endTime)}`
+      this.appStartTimes = `${this.selectRoomData.day} ${this.timesHandle(this.selectRowTime.time.startTime)}`
+      this.appEndTimes = `${this.selectRoomData.day} ${this.timesHandle(this.selectRowTime.time.endTime)}`
       this.approveTitle = this.$t('message.conflictTips')// 冲突弹窗title
       if(this.reservationType === 2){// 重复预约
         repeType = this.repeatForm.repeatType
         endDate = this.repeatForm.repeatDate
       }
       if(this.reservationType === 3) {// 跨日预约
-        startTime = `${this.nextDateForm.nextStartDate} ${this.timesHandle(this.nextDateForm.nextStartTime)}`
-        endTime = `${this.nextDateForm.nextEndDate} ${this.timesHandle(this.nextDateForm.nextEndTime)}`
+        this.appStartTimes = `${this.nextDateForm.nextStartDate} ${this.timesHandle(this.nextDateForm.nextStartTime)}`
+        this.appEndTimes = `${this.nextDateForm.nextEndDate} ${this.timesHandle(this.nextDateForm.nextEndTime)}`
       }
       let dataJson = {
-        start: startTime,	// date	预约最近一场开始时间
-        end: endTime,	// date	预约最近一场结束时间
+        start: this.appStartTimes,	// date	预约最近一场开始时间
+        end: this.appEndTimes,	// date	预约最近一场结束时间
         meeting_room_id: this.selectRoomData.id,	// number	会议室
         category: this.reservationType,	// number	预约类型 1单次预约 2重复预约 3跨日预约
         repetition_type: repeType || null,	// number	重复类型 1=》每日，2=》每周，3=》每月
@@ -833,12 +835,10 @@ export default {
       } else {
         this.approveMessage = '成功预定！'
         this.addReservation()
-        // this.approveContent = `${this.selectRoomData.name}会议室，此时间段已有${result.data.count}场会议，请重新选择`
       }
     },
     // 时间末端处理
     timesHandle(times) {
-      console.log(times,'timesHandle')
       let timeStr = times == '24:00' ? '23:59:59' : times+':00'
       return timeStr
     },
@@ -850,28 +850,24 @@ export default {
     addReservation () {
       let repeType = ''
       let endDate = ''
-      let startTime = `${this.selectRoomData.day} ${this.selectRowTime.time.startTime}:00`
-      let endTime = `${this.selectRoomData.day} ${this.selectRowTime.time.endTime}:00`
       if(this.reservationType === 2){
         repeType = this.repeatForm.repeatType
         endDate = this.repeatForm.repeatDate
       }
-      if(this.reservationType === 3) {
-        let end = this.nextDateForm.nextEndTime == '24:00' ? '23:59' : this.nextDateForm.nextEndTime
-        startTime = `${this.nextDateForm.nextStartDate} ${this.nextDateForm.nextStartTime}:00`
-        endTime = `${this.nextDateForm.nextEndDate} ${end}:00`
-      }
       const data = {
-        meeting_room_id: this.selectRoomData.id,	//是	number	会议室id
-        category: this.reservationType,	//是	number	1 单次预约 2重复预约 3跨日预约
-        start: startTime,	//是	string	会议预约开始时间
-        end: endTime,	//是	string	会议预约结束时间（category=2时结束时间只传当天截止））
-        is_conflict: this.approveCount ? 1 : 0,	//是	number	是否冲突 0否 1是
+        meeting_room_id: this.selectRoomData.id,	// number	会议室id
+        category: this.reservationType,	// number	1 单次预约 2重复预约 3跨日预约
+        start: this.appStartTimes,	// string	会议预约开始时间
+        end: this.appEndTimes,	// string	会议预约结束时间（category=2时结束时间只传当天截止））
+        is_conflict: this.approveCount ? 1 : 0,	// number	是否冲突 0否 1是
+        conflict_count: this.approveCount // number 默认0，有冲突数量加进来
       }
       if( repeType && endDate ){
         data.repetition_type = repeType // 当category=2时才需要传 会议重复类型 1=》每日，2=》每周，3=》每月
         data.repetition_end_date = endDate // 当category=2时才需要传 会议重复截止时间
       }
+      // console.log(data,'data')
+      // return
       this.addLoading = true
       // 确定预约
       appointmentApi(data).then(res=>{
@@ -900,6 +896,9 @@ export default {
       this.selectRoomData = {}
       this.repeatNexdayDialog = false // 重复跨日弹窗
       this.$refs.conflict.dialogVisible = false //  冲突弹窗
+      this.appStartTimes = ''// 会议预约开始时间
+      this.appEndTimes = ''// 会议预约结束时间
+      
       this.handleCloseAppointment()
     },
     // 获取容纳人数数据
@@ -1023,7 +1022,7 @@ export default {
       this.roomforms.equipment && this.roomforms.equipment.forEach((item) => {
         str = str ? str + '，' + item.name : item.name
       })
-      this.roomforms.mansioDec = str
+      this.roomforms.mansioDec = str || '无'
     },
     handleClose() {
     },

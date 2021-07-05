@@ -238,9 +238,9 @@ export default {
       },
       chooseDate: null, // 日期
       statusList: [ // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
-        {key: 0, name: '审批中'},
-        {key: 1, name: '会议中'},
-        {key: 2, name: '未开始'},
+        // {key: 0, name: '审批中'},
+        // {key: 1, name: '会议中'},
+        // {key: 2, name: '未开始'},
         {key: 3, name: '已结束'},
         {key: 4, name: '已拒绝'},
         {key: 5, name: '已取消'},

@@ -174,7 +174,7 @@ export default {
       overflow-x: auto;
       .overview-top-left {
         flex: 1;
-        min-width: 240px;
+        min-width: 300px;
         .overview-top-statis{
           min-width: 167px;
           font-size: 14px;

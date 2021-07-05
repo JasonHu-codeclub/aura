@@ -35,7 +35,7 @@
         </div>
         <!-- 状态 -->
         <div class="filter-item-box">
-          <span>{{$t('labe.status')}}：</span>
+          <span>{{$t('labe.approvalStatus')}}：</span>
           <el-select
             v-model="searchForm.approve_status"
             :placeholder="$t('message.status')"

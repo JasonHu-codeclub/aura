@@ -32,6 +32,7 @@ export default {
     type: 'type',
     roomName: 'Name',
     approvalLevel: 'Approval level',
+    approvalStatus: 'approval status',
     meetAddress: 'Address',
     equipmentOfroom: 'equipment',
     AppointmentType: 'Reservation type',

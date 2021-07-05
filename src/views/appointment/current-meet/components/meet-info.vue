@@ -30,12 +30,12 @@
             <!-- 会议设备 -->
             <div class="edit-box-item" >
                <div class="edit-box-label">{{$t('labe.equipmentOfroom')}}：</div>
-               <div class="edit-box-value">{{ruleForm.meeting_room_equipment||'--'}}</div>
+               <div class="edit-box-value">{{ruleForm.showStart ? '*' : ruleForm.meeting_room_equipment||'--'}}</div>
             </div>
             <!-- 预约类型 -->
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('labe.AppointmentType')}}：</div>
-               <div class="edit-box-value">{{categoryStr||'--'}}</div>
+               <div class="edit-box-value">{{ruleForm.showStart ? '*' : categoryStr||'--'}}</div>
             </div>
          </div>
          <div class="edit-sign_in" v-if="ruleForm.status == 1">
@@ -161,7 +161,7 @@
       </div>
 
       <!-- 会议服务 -->
-      <div class="edit-box">
+      <div class="edit-box" v-if="ruleForm.service_show == 1 || ruleForm.equipment_show == 1">
          <div class="edit-box-title">{{$t('route.service')}}</div>
          <div class="edit-box-list" :class="{ 'disabled_edit-box': dataType === 1 || ruleForm.can_update == 0 }">
             <!-- 茶点服务 -->
@@ -246,7 +246,7 @@
                   v-model="ruleForm.remark"
                   :autosize="{ minRows: 4, maxRows: 4}"
                   :placeholder="$t('message.EnterComments')"
-                  :disabled="dataType===1 && ruleForm.can_update == 0"
+                  :disabled="dataType===1 || ruleForm.can_update == 0"
                   maxlength="50"
                   show-word-limit
                ></el-input>
@@ -590,6 +590,9 @@ export default {
          })
          this.participantGuids = arr
          this.participantVal = str
+
+         // 会服
+         this.ruleForm.showStart = this.ruleForm.is_secrecy && this.menuStr == 'services' ? 1 : 0
          
          // 外部参会人
          this.outParticipantHandle()
@@ -760,7 +763,7 @@ export default {
             item.mailError = false
             item.phoneError = false
           }else{
-            if(item.email != ''){
+            if(item.email != '' && item.email != null){
                var reg = /^(\w)+(\.\w+)*@(.)+((\.\w+)+)$/
                if (reg.test(item.email)) {// 邮箱
                   item.mailError = false
@@ -769,9 +772,9 @@ export default {
                   item.mailError = true
                }
             } else {
-              item.mailError = false
+               item.mailError = false
             }
-            if(item.phone != ''){
+            if(item.phone != '' && item.phone != null){
               let phonereg = /^[1][3,4,5,7,8][0-9]{9}$/;
               if (phonereg.test(item.phone)) {
                  item.phoneError = false

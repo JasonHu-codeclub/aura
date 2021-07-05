@@ -31,6 +31,7 @@ export default {
     type: '发起方式',
     roomName: '会议室名称',
     approvalLevel: '审批等级',
+    approvalStatus: '审批状态',
     meetAddress: '会议室地址',
     equipmentOfroom:'会议室设备',
     AppointmentType: '预约类型',

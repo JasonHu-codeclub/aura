@@ -109,7 +109,8 @@ export default {
           this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((res) => {
             if(res.meta.code=="RESP_OKAY"){
               this.loginLoading = false
-              this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+              this.$router.replace('/')
+              // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })// 因为权限控制
             }
           })
         } 
@@ -140,7 +141,8 @@ export default {
       this.$store.dispatch('user/otherLogin', { appid: this.appid, code: this.otherQuery.code, state: this.otherQuery.state }).then(() => {
         if(res.meta.code=="RESP_OKAY"){
           this.pageLoading = true
-          this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+          this.$router.replace('/')
+          // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
         }
       })
     }

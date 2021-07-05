@@ -135,7 +135,7 @@
             show-overflow-tooltip
             >
             <template slot-scope="scope">
-              <span >{{scope.row.satrtTime}}<br>{{scope.row.endTime}}</span>
+              <span :class="{color_tips: scope.row.colorRed}">{{scope.row.satrtTime}}<br>{{scope.row.endTime}}</span>
             </template>
           </el-table-column>
           <!-- 会议室 -->
@@ -346,8 +346,17 @@ export default {
     // 获取数据
     this.getApproveInfo()
     this.resizeHeight(100)
+    const fn = function () {
+      that.setTimeSatus()
+    }
+    // fn()
+    // this.timer = setInterval(fn, 1000 * 60, true)
   },
   methods: {
+    // 更新状态
+    setTimeSatus() {
+       
+    },
     // 大厦信息，楼层
     async getFloorList () {
       const result = await getMansionFloorApi()
@@ -366,7 +375,6 @@ export default {
     // 获取列表数据
     getApproveInfo () {
       let params = { 
-        type: 1,
         page: this.paginationQuery.page,	// 当前页
         size: this.paginationQuery.limit,// 每页显示条数
         status: this.searchForm.status, // 状态
@@ -612,5 +620,8 @@ export default {
       color: #FFF;
     }
   }
+}
+.color_tips{
+  color: red;
 }
 </style>
