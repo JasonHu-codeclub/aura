@@ -120,7 +120,6 @@
             prop="meeting_room_name"
             :label="$t('message.room')"
             align="center"
-            width="100"
           ></el-table-column>
           <!-- 预约类型 -->
           <el-table-column
@@ -217,6 +216,8 @@
     :content="cancelContent" 
     :title="cancelTitle" 
     :btnLoading="deleteBtnLoading"
+    :iconUrl="iconUrl"
+    :confirmColor="confirmBg"
     @handleClose="handleClose" 
     @hanldConfirm="hanldDeleteMeeting"
     ></dialog-cancel>
@@ -276,7 +277,9 @@ export default {
       cancelContent: '',// 弹窗内容
       deleteBtnLoading: false,// 弹窗确认loading
       isShowInput: false, // 拒绝理由
-      operationType: null
+      operationType: null,
+      iconUrl: require('../../../assets/icon/approve_tips.png'),// 弹窗icon
+      confirmBg: '#5C7BEA'
     }
   },
   props: {
@@ -358,9 +361,11 @@ export default {
       let msg = ''
       if(type == 1){
         msg= this.$t('tip.agreeMeet')
+        this.confirmBg= '#5C7BEA'
       }else{
         this.isShowInput = true
         msg = this.$t('tip.refuseMeet')
+        this.confirmBg= '#FF5B5B'
       }
       this.cancelContent = `${this.$t('tip.confirmMeet')}【${data.title}】<br/>${msg}`
     },
@@ -377,7 +382,6 @@ export default {
           ajaxName = serviceRefuseApi
           params.reason = value || ''
         }
-        console.log(params,'params')
         this.deleteBtnLoading = true // 确认按钮loading
         ajaxName(params).then(res=>{
           this.deleteBtnLoading = false // 确认按钮loading
@@ -508,7 +512,7 @@ export default {
       color: #43434D;
       .ancel-title-icon{
         display: inline-block;
-        width: 26px;
+        width: 24px;
         height: 24px;
         // background: url('../../../../assets/icon/warning.png') no-repeat;
         background-size: 100% 100%;

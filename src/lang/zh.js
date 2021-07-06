@@ -221,12 +221,14 @@ export default {
     originalPassword: '原密码',
     newPassword: '新密码',
     confirmPassword: '确认密码',
-    passwordRules: '密码由6-20位字母数字组成',
+    passwordRules: '请输入6~20位密码',
     uploadAvatar: '上传头像',
     saveSuccess: '保存成功',
     imgType: '请上传JPG、JPEG、PNG格式图片，大小不超过2M',
     clickUpload: '点击上传',
-    avatarPreview: '头像预览'
+    avatarPreview: '头像预览',
+    cancels: '取消会议后，',
+    confirms: '场会议时间段将被释放'
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',

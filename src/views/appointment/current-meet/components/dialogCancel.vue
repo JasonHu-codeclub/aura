@@ -7,7 +7,7 @@
       @closed="handleClose">
       <div class="cancel-tips">
         <div class="cancel-title">
-          <span class="ancel-title-icon"></span>
+          <span class="ancel-title-icon" :style="{backgroundImage: 'url('+ iconUrl +')'}"></span>
           <span class="ancel-title-text">{{title}}</span>
         </div>
         <div class="cancel-content" v-html="content"></div>
@@ -24,7 +24,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{$t('button.cancel')}}</el-button>
-        <el-button type="primary" @click="hanldDeleteMeeting" :loading="dialogBtnLoading">{{$t('button.confirm')}}</el-button>
+        <el-button type="primary" @click="hanldDeleteMeeting" :loading="dialogBtnLoading" :style="{background: confirmColor, borderColor: confirmColor}">{{$t('button.confirm')}}</el-button>
       </span>
     </el-dialog>
 </template>
@@ -34,7 +34,7 @@ export default {
    data() {
        return {
         dialogVisible: false,
-        reasons: ''
+        reasons: '',
        }
    },
    props: {
@@ -53,6 +53,14 @@ export default {
     showInput: {
         type: Boolean,
         default: false
+    },
+    iconUrl: {
+      type: String,
+      default: require('../../../../assets/icon/warning.png')
+    },
+    confirmColor: {
+      type: String,
+      default: '#FF5B5B'
     }
    },
    computed: {
@@ -64,6 +72,9 @@ export default {
         set() {
         } 
      }
+   },
+   mounted() {
+     console.log(this.iconUrl,'iconUrl')
    },
    methods: {
     // 确认
@@ -99,8 +110,7 @@ export default {
       .ancel-title-icon{
         display: inline-block;
         width: 26px;
-        height: 24px;
-        background: url('../../../../assets/icon/warning.png') no-repeat;
+        height: 26px;
         background-size: 100% 100%;
       }
       .cancel-title{

@@ -167,7 +167,7 @@
                   <div class="floor-info-box">
                     <div class="floor-info-approve">{{approveLevel[scope.row.approve_level]}}</div>
                     <div class="floor-info-address">
-                      <i class="el-icon-caret-bottom address-icon"></i>
+                      <i class="address-icon"></i>
                       <span class="address-text overhidden">{{scope.row.mansion.name}}</span>
                     </div>
                   </div>
@@ -1175,11 +1175,14 @@ export default {
     height: 22px;
     .floor-people-icon{
       display: inline-block;
-      width: 10px;
-      height: 10px;
-      background: url('../../../assets/icon/number.png') no-repeat;
+      width: 14px;
+      height: 12px;
+      background: url('../../../assets/icon/user_count.png') no-repeat;
       background-size: contain;
       margin-right: 4px;
+    }
+    .floor-people-dec {
+        color: #B6BDCC;
     }
   }
   
@@ -1265,8 +1268,12 @@ export default {
         justify-content: left;
         align-items: center;
         .address-icon{
-          color: #5473E8;
-          font-size: 16px;
+          display: inline-block;
+          width: 10px;
+          height: 11px;
+          background: url('../../../assets/icon/address.png') no-repeat;
+          background-size: cover;
+          background-position: center;
         }
         .address-text {
             color: #7F93A8;

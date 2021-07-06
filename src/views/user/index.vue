@@ -9,8 +9,9 @@
             </div>
             <div class="user-list-box">
                <span class="user-list-labe">{{$t('labe.Password')}}：</span>
-               <span class="user-list-value">{{isOpen ? (saveForm.pass?saveForm.pass:'--') : '******'}}</span> 
-               <span class="user-list-view" :class="{'is-open': isOpen}" @click="openView"></span>
+               <span class="user-list-value">******</span>
+               <!-- <span class="user-list-value">{{isOpen ? (saveForm.pass?saveForm.pass:'--') : '******'}}</span>  -->
+               <!-- <span class="user-list-view" :class="{'is-open': isOpen}" @click="openView"></span> -->
                <span class="user-list-set" @click="setPassword">{{$t('button.modify')}}</span>   
             </div>
             <div class="user-list-box">
@@ -48,7 +49,7 @@
             </div>
             <!-- 保存 -->
             <div class="btn-group">
-               <el-button type="primary" @click="serve">{{$t('button.save')}}</el-button>
+               <el-button type="primary" @click="serve" :loading="saveLoading">{{$t('button.save')}}</el-button>
             </div>
          </div>
          
@@ -76,15 +77,15 @@
                <el-input type="password" v-model="passwordForm.oldPass" autocomplete="off" show-password clearable></el-input>
             </el-form-item>
             <el-form-item :label="$t('message.newPassword')" prop="pass">
-               <el-input type="password" v-model="passwordForm.pass" autocomplete="off" clearable></el-input>
+               <el-input type="password" v-model="passwordForm.pass" autocomplete="off" maxLength="20" clearable></el-input>
                <span class="pass-rules-tips">{{$t('message.passwordRules')}}</span>
             </el-form-item>
             <el-form-item :label="$t('message.confirmPassword')" prop="newkPass">
-               <el-input type="password" v-model="passwordForm.newkPass" autocomplete="off" clearable></el-input>
+               <el-input type="password" v-model="passwordForm.newkPass" autocomplete="off" maxLength="20" clearable></el-input>
             </el-form-item>
             <el-form-item>
                <el-button @click="dialogVisible = false">{{$t('button.cancel')}}</el-button>
-               <el-button type="primary" v-loading="submitLoading" @click="submitForm('ruleForm')">{{$t('button.confirm')}}</el-button>
+               <el-button type="primary" :loading="submitLoading" @click="submitForm('ruleForm')">{{$t('button.confirm')}}</el-button>
             </el-form-item>
          </el-form>
       </div>
@@ -99,7 +100,6 @@ import { imgBaseUrl } from '@/utils/varible'
 export default {
   components: {upload},
   data(){
-     
      var validatePass0 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入原密码'));
@@ -112,15 +112,14 @@ export default {
           callback(new Error('请输入密码'));
         } else {
           if (this.passwordForm.newkPass !== '') {
-            let reg =/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
+            // let reg =/^(?![0-9]+$)[0-9]{6,20}$/
+            let reg = /^.{6,20}$/ // /^[^\s]{6,20}$/ 不含空格; // 6-20位数字、字母和特殊字符(仅限!@#$%^&*())
             let re = new RegExp(reg)
-            console.log(value,'value')
-            if (re.test(value)) { 
-               callback();
-            }else{ 
+            if (!re.test(value)) { 
                callback(new Error(this.$t('message.passwordRules')));
                return false; 
             }
+            callback();
           }
           callback();
         }
@@ -230,6 +229,12 @@ export default {
             })
             this.getUserInfo()
             this.$store.dispatch('user/getInfo')
+            this.passwordForm= {
+               oldPass: '', // 旧密码
+               pass: '', // 新密码
+               newkPass: '',// 确认密码
+            }
+            this.saveForm.pass = ''
          }
       })
    },
@@ -239,12 +244,11 @@ export default {
    },
    //  弹窗关闭
     handleClose() {
-       console.log('passwordForm')
-       this.passwordForm= {
-         oldPass: '', // 旧密码
-         pass: '', // 新密码
-         newkPass: '',// 确认密码
-      }
+      //  this.passwordForm= {
+      //    oldPass: '', // 旧密码
+      //    pass: '', // 新密码
+      //    newkPass: '',// 确认密码
+      // }
     }
   }
 }

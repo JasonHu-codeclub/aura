@@ -131,7 +131,6 @@
             prop="meeting_room_name"
             :label="$t('message.room')"
             align="center"
-            width="100"
           ></el-table-column>
           <!-- 预约类型 -->
           <el-table-column
@@ -150,7 +149,7 @@
             align="center"
           >
             <template slot-scope="scope">
-              <span >{{statusList[scope.row.status]['name']}}</span>
+              <span >{{listStatus[scope.row.status]['name']}}</span>
             </template>
           </el-table-column>
           <!-- 参会人数 -->
@@ -237,10 +236,22 @@ export default {
         keyword: '' // 会议名称
       },
       chooseDate: null, // 日期
-      statusList: [ // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
-        // {key: 0, name: '审批中'},
-        // {key: 1, name: '会议中'},
-        // {key: 2, name: '未开始'},
+      statusList: [], // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
+      currentStatus: [ // 当前会议状态
+        {key: 1, name: '会议中'},
+        {key: 0, name: '待审批'},
+        {key: 2, name: '未开始'},
+      ],
+      historyStatus: [ // 历史会议状态
+        {key: 3, name: '已结束'},
+        {key: 6, name: '过期未审批'},
+        {key: 4, name: '已拒绝'},
+        {key: 5, name: '已取消'},
+      ],
+      listStatus: [ // 表格列表状态
+        {key: 0, name: '待审批'},
+        {key: 1, name: '会议中'},
+        {key: 2, name: '未开始'},
         {key: 3, name: '已结束'},
         {key: 4, name: '已拒绝'},
         {key: 5, name: '已取消'},
@@ -289,6 +300,9 @@ export default {
   mounted () { 
     // 获取数据
     this.getMyMeetingInfo()
+    // 状态查询
+    this.statusList = this.dataType == 1 ? this.currentStatus: this.historyStatus
+
     this.resizeHeight(100)
   },
   methods: {
@@ -357,7 +371,11 @@ export default {
       this.$refs.cancel.dialogVisible= true
       this.selectCurrentRowData = data
       this.cancelTitle = this.$t('message.cancelTips')
-      this.cancelContent = `${this.$t('tip.cancelMeeting')}<br/>${this.$t('tip.confirmTips')}`
+      if(data.category == 2){
+        this.cancelContent = `${this.$t('message.cancels')}${data.meeting_count}${this.$t('message.confirms')}<br/>${this.$t('tip.confirmTips')}`
+      }else{
+        this.cancelContent = `${this.$t('tip.cancelMeeting')}<br/>${this.$t('tip.confirmTips')}`
+      }
     },
     // 取消会议请求
     hanldDeleteMeeting() {

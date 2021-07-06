@@ -267,12 +267,14 @@ export default {
       this.deleteBtnLoading = true // 确认按钮loading
       meetCancelApi(param).then(res=>{
         this.deleteBtnLoading = false 
-        this.$message({
-          message: this.$t('tip.meetCancelled'),
-          type: 'success'
-        })
-        this.getMeetingRepet()
-        this.$refs.cancel.dialogVisible = false // 弹框
+        if(res.meta.code == "RESP_OKAY"){
+          this.$message({
+            message: this.$t('tip.meetCancelled'),
+            type: 'success'
+          })
+          this.getMeetingRepet()
+          this.$refs.cancel.dialogVisible = false // 弹框
+        }
       })
     },
 

@@ -219,13 +219,14 @@ export default {
     originalPassword: 'original password',
     newPassword: 'new password',
     confirmPassword: 'confirm password',
-    passwordRules: 'The password consists of 6-20 alphanumeric',
+    passwordRules: 'Please enter 6-20 digits of password',
     uploadAvatar: 'upload Avatar',
     saveSuccess: 'Save Success',
     imgType: 'Please upload pictures in JPG, JPEG and PNG format, with the size no more than 2m',
     clickUpload: 'Click upload',
-    avatarPreview: 'Avatar Preview'
-  
+    avatarPreview: 'Avatar Preview',
+    cancels: 'After canceling the meeting, ',
+    confirms: 'meeting periods will be released'
   },
   placeholder: {
     MeetingFloor: 'Floor',

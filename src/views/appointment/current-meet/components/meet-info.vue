@@ -30,12 +30,12 @@
             <!-- 会议设备 -->
             <div class="edit-box-item" >
                <div class="edit-box-label">{{$t('labe.equipmentOfroom')}}：</div>
-               <div class="edit-box-value">{{ruleForm.showStart ? '*' : ruleForm.meeting_room_equipment||'--'}}</div>
+               <div class="edit-box-value">{{isServices() ? '*' : ruleForm.meeting_room_equipment||'--'}}</div>
             </div>
             <!-- 预约类型 -->
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('labe.AppointmentType')}}：</div>
-               <div class="edit-box-value">{{ruleForm.showStart ? '*' : categoryStr||'--'}}</div>
+               <div class="edit-box-value">{{isServices() ? '*' : categoryStr||'--'}}</div>
             </div>
          </div>
          <div class="edit-sign_in" v-if="ruleForm.status == 1">
@@ -568,6 +568,8 @@ export default {
            this.categoryStr = `${this.category[this.ruleForm.category]}（${this.repetitionType[this.ruleForm.repetition_type]}）`
          }
 
+         this.ruleForm.meeting_type_id = !this.ruleForm.meeting_type_id && this.isServices() ? '*' : this.ruleForm.meeting_type_id 
+         
          // 茶点服务
          this.ruleForm.serviceId = []
          this.ruleForm.service && this.ruleForm.service.map(item=> {
@@ -589,10 +591,10 @@ export default {
             str = str ? str + '，' + item.name : item.name
          })
          this.participantGuids = arr
-         this.participantVal = str
+         this.participantVal = !arr.length && this.isServices() ? '*' : str
 
          // 会服
-         this.ruleForm.showStart = this.ruleForm.is_secrecy && this.menuStr == 'services' ? 1 : 0
+         // this.ruleForm.showStart = this.isServices()
          
          // 外部参会人
          this.outParticipantHandle()
@@ -600,6 +602,9 @@ export default {
          this.formLoading = false
 
       })
+   },
+   isServices() {
+      return this.ruleForm.is_secrecy == 1 && this.menuStr == 'services' ? true : false
    },
    // 获取茶点服务
    getServiceInfo() {
@@ -730,7 +735,8 @@ export default {
          arrExt = valExt
       }
       this.outParticipantGuids = arrExt
-      this.outParticipantVal = strExt
+      this.outParticipantVal = !outData.length && this.isServices() ? '*' : strExt  
+      console.log(arrExt,'arrExt.length')
    },
    // 选择外部参会人回调
     callbackForExtDialogOpen () {
@@ -1030,7 +1036,7 @@ export default {
   z-index: 1000;
   .reservation-submit{
       width: 120px;
-      height: 32px;
+      // height: 32px;
     }
 }
 .meeting-edit-wrap {

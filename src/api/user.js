@@ -17,6 +17,18 @@ export function loginApi (data) {
     data
   })
 }
+
+
+// 获取系统前台信息
+export function getSystemInfoApi (data) {
+  return request({
+    url: "/get-front-system-info",
+    method: "get",
+    headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
+    params: data
+  })
+}
+
 // 获取用户信息
 export function qyWechatLoginApi (data) {
   return request({

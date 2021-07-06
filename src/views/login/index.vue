@@ -17,7 +17,7 @@
           </div>
           <div class="login-content-type">
             <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('qiye')"></span>
-            <span class="login-content-type-icon login-content-type-weixin-2" @click="handleLoginType('wechat')"></span>
+            <span class="login-content-type-icon login-content-type-weixin-2" @click="handleLoginType('wechat')" ></span>
           </div>
           <div class="login-content-divider">
             <span class="divider-text">使用账号密码登录</span>
@@ -48,8 +48,7 @@
                   </el-input>
                 </el-form-item>
                 <div class="submit-btn">
-                  <!-- :loading="loginLoading" -->
-                  <el-button type="primary" @click.native.prevent="handleLogin()" >登录</el-button>
+                  <el-button type="primary" @click.native.prevent="handleLogin()" :loading="loginLoading">登录</el-button>
                 </div>
               </el-form>
           </div>
@@ -61,6 +60,7 @@
 </template>
 <script>
 import { imgBaseUrl } from '@/utils/varible'
+import { getSystemInfoApi } from '@/api/user'
 export default {
   components: {},
   data () {
@@ -107,8 +107,8 @@ export default {
         if (valid) {
           this.loginLoading = true
           this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((res) => {
+            this.loginLoading = false
             if(res.meta.code=="RESP_OKAY"){
-              this.loginLoading = false
               this.$router.replace('/')
               // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })// 因为权限控制
             }
@@ -133,7 +133,14 @@ export default {
       }, {})
     },
   },
-  mounted () {},
+  mounted () {
+    // 获取系统前台信息
+    // getSystemInfoApi().then(res=>{
+    //   if(res){
+
+    //   }
+    // })
+  },
   created() {
     /* 存在code,第三方登录 */
     if (this.otherQuery.code) {

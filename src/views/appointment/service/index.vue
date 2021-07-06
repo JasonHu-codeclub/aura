@@ -143,7 +143,6 @@
             prop="meeting_room_name"
             :label="$t('message.room')"
             align="center"
-            width="100"
           ></el-table-column>
           <!-- 状态 -->
           <el-table-column
@@ -163,7 +162,13 @@
           >
           <template slot-scope="scope">
             <span v-if="scope.row.conflict_dec">{{scope.row.conflict_dec}}</span>
-            <el-tooltip :disabled="!scope.row.attendence_number" v-else placement="top" effect="light" :open-delay="350">
+            <el-tooltip 
+            :disabled="!scope.row.attendence_number" 
+            v-else placement="top" 
+            effect="light" 
+            :open-delay="350"
+            popper-class="tooltip-per"
+            >
               <div slot="content">{{scope.row.participant_users}}</div>
               <span :class="{'part_num':scope.row.attendence_number>0}">{{scope.row.attendence_number||'/'}}</span>
             </el-tooltip>
@@ -224,6 +229,8 @@
     :content="cancelContent" 
     :title="cancelTitle" 
     :btnLoading="deleteBtnLoading"
+    :iconUrl="iconUrl"
+    :confirmColor="'#5C7BEA'"
     @handleClose="handleClose" 
     @hanldConfirm="hanldDeleteMeeting"
     ></dialog-cancel>
@@ -329,7 +336,8 @@ export default {
       cancelContent: '',// 弹窗内容
       deleteBtnLoading: false,// 弹窗确认loading
       isShowInput: false, // 拒绝理由
-      operationType: null
+      operationType: null,
+      iconUrl: require('../../../assets/icon/service-active.png')// 弹窗icon
     }
   },
   props: {
@@ -580,8 +588,8 @@ export default {
       color: #43434D;
       .ancel-title-icon{
         display: inline-block;
-        width: 26px;
-        height: 24px;
+        width: 24px;
+        height: 18px;
         // background: url('../../../../assets/icon/warning.png') no-repeat;
         background-size: 100% 100%;
       }
@@ -623,5 +631,16 @@ export default {
 }
 .color_tips{
   color: red;
+}
+</style>
+<style lang="less">
+.tooltip-per{
+  max-width: 340px;
+  div:first-child{
+    font-size: 12px;
+    max-height: 80px;
+    overflow-y: auto;
+    line-height: 20px;
+  }
 }
 </style>
