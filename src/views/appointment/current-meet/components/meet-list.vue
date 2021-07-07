@@ -66,8 +66,27 @@
             ></el-option>
           </el-select>
         </div>
+        
+        <div class="filter-item-box">
+          <!-- 查询 -->
+          <el-button
+            type="primary"
+            class="search"
+            @click="getMyMeetingInfo"
+            :loading="searchBtnStatus"
+            >{{$t('button.search')}}</el-button
+          >
+          <!-- 重置 -->
+          <el-button
+            type="info"
+            class="search"
+            @click="resetMeetingInfo"
+            >{{$t('button.reset')}}</el-button
+          >
+        </div>
+
       </div>
-      <div class="filter-item">
+      <div class="filter-item" v-if="false">
         <div class="filter-item-box">
           <!-- 查询 -->
           <el-button
@@ -258,8 +277,8 @@ export default {
         {key: 6, name: '过期未审批'},
       ],
       userList: [
-        {key: 1, name: '发起人'},
-        {key: 2, name: '参会人'}
+        {key: 1, name: '我发起'},
+        {key: 2, name: '被邀约'}
       ],
       paginationQuery: { 
         page: 1, // 当前页

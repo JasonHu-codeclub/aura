@@ -129,6 +129,7 @@ export default {
     repeatTime: 'Recurring end date',
     selectRepeatTime: 'Please select recurring end date',
     term :'Recurring bookings limited to 180 days',
+    nextTips: 'The longest cross day period is 180 days',
     meetingTime: 'Meeting Time',
     internalParticipants: 'Internal Participants',
     promptInternalParticipants: 'Please select Internal Participants',
@@ -226,7 +227,9 @@ export default {
     clickUpload: 'Click upload',
     avatarPreview: 'Avatar Preview',
     cancels: 'After canceling the meeting, ',
-    confirms: 'meeting periods will be released'
+    confirms: 'meeting periods will be released',
+    phoneEmailTips: 'Please input one of the phone / email information',
+    receiving: 'For receiving email / SMS notification'
   },
   placeholder: {
     MeetingFloor: 'Floor',

@@ -131,6 +131,7 @@ export default {
     repeatTime: '重复截止日期',
     selectRepeatTime: '请选择重复截止日期',
     term: '最长重复时间段为180天',
+    nextTips: '最长跨日时间段为180天',
     meetingTime: '会议时间',
     internalParticipants: '内部参会人员',
     promptInternalParticipants: '请选择内部参会人员',
@@ -228,7 +229,9 @@ export default {
     clickUpload: '点击上传',
     avatarPreview: '头像预览',
     cancels: '取消会议后，',
-    confirms: '场会议时间段将被释放'
+    confirms: '场会议时间段将被释放',
+    phoneEmailTips: '电话/邮箱信息，请务必输入其中一项',
+    receiving: '用于接收邮件/短信通知'
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',

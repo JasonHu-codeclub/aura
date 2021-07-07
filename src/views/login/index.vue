@@ -16,8 +16,8 @@
             <span class="divider-text">使用第三方账号登录</span>
           </div>
           <div class="login-content-type">
-            <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('qiye')"></span>
-            <span class="login-content-type-icon login-content-type-weixin-2" @click="handleLoginType('wechat')" ></span>
+            <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('wechat')"></span>
+            <span class="login-content-type-icon login-content-type-weixin-2" @click="handleLoginType('qiye')" ></span>
           </div>
           <div class="login-content-divider">
             <span class="divider-text">使用账号密码登录</span>
@@ -106,7 +106,7 @@ export default {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.loginLoading = true
-          this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then((res) => {
+          this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then(res => {
             this.loginLoading = false
             if(res.meta.code=="RESP_OKAY"){
               this.$router.replace('/')
@@ -145,7 +145,7 @@ export default {
     /* 存在code,第三方登录 */
     if (this.otherQuery.code) {
       this.pageLoading = false
-      this.$store.dispatch('user/otherLogin', { appid: this.appid, code: this.otherQuery.code, state: this.otherQuery.state }).then(() => {
+      this.$store.dispatch('user/otherLogin', { appid: this.appid, code: this.otherQuery.code, state: this.otherQuery.state }).then(res => {
         if(res.meta.code=="RESP_OKAY"){
           this.pageLoading = true
           this.$router.replace('/')

@@ -68,7 +68,7 @@
             :placeholder="$t('placeholder.date')"
             value-format="yyyy-MM-dd"
             :editable="false"
-            :picker-options="pickerOptions"
+            :picker-options="searchPickerOptions"
             @change="dateChange"
             clearable
             >></el-date-picker>
@@ -85,7 +85,7 @@
             >{{$t('button.search')}}</el-button
           >
         </div>
-        <div class="filter-item-box">
+        <div class="filter-item-box margin_right">
           <!-- 重置 -->
           <el-button
             type="info"
@@ -95,29 +95,25 @@
             >{{$t('button.reset')}}</el-button
           >
         </div>
-      </div>
-        <!-- 预约 -->
-        <div class="filter-item">
         <!-- 添加预约 -->
-        <div class="filter-item-box">
-            <el-dropdown size="medium" 
-            split-button type="primary" 
-            @click="handleClick(1)"
-            v-loading="addLoading"
-            element-loading-spinner="el-icon-loading"
-            class="add-dropdown"
-            :disabled='true'
-            trigger="click"
-            >
-              {{$t('button.reservationSingle')}}
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="handleClick(2)">{{$t('button.reservationRepeat')}}</el-dropdown-item>
-                <el-dropdown-item @click.native="handleClick(3)">{{$t('button.reservationNext')}}</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+          <div class="filter-item-box">
+              <el-dropdown size="medium" 
+              split-button type="primary" 
+              @click="handleClick(1)"
+              v-loading="addLoading"
+              element-loading-spinner="el-icon-loading"
+              class="add-dropdown"
+              :disabled='true'
+              trigger="click"
+              >
+                {{$t('button.reservationSingle')}}
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleClick(2)">{{$t('button.reservationRepeat')}}</el-dropdown-item>
+                  <el-dropdown-item @click.native="handleClick(3)">{{$t('button.reservationNext')}}</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+          </div>
         </div>
-        </div> 
-      <!-- /预约 -->
       </div>
     <!-- /搜索 -->
 
@@ -150,7 +146,7 @@
                 <!-- 会议室名字 -->
                 <div class="floor-name">{{ scope.row.name }}</div>
                 <!-- 支持的会议类型 -->
-                <div class="floor-device">
+                <div class="floor-device" :class="{padding_set: scope.row.equipment.length>0}">
                     <span 
                       v-for="(item, index) in scope.row.equipment" 
                       :key="index" 
@@ -352,7 +348,7 @@
         </div>
       </div>
       <div class="dialog-bottom">
-         <div class="appointment-next-tips"  v-if="reservationType == 3">{{$t('message.term')}}</div>
+         <div class="appointment-next-tips"  v-if="reservationType == 3">{{$t('message.nextTips')}}</div>
          <el-button @click="repeatNexdayDialog = false">{{$t('button.cancel')}}</el-button>
          <el-button type="primary" @click="confirmReservation">{{$t('button.confirm')}}</el-button>
       </div>
@@ -407,11 +403,22 @@ export default {
         nextStartTime: '', // 开始时间
         nextEndTime: ''// 结束时间
       },
-      // 重复，跨日预约开始日期范围控制
+      // 重复预约日期范围控制
       repetPickerOptions: {
         disabledDate: this.disabledDateRepet
       },
-      
+      // 顶部查询日期范围控制
+      searchPickerOptions: {
+        disabledDate: this.disabledDateRepet
+      },
+      // 跨日预约开始日期范围控制
+      pickerOptions: {
+        disabledDate: this.disabledDateRepet
+      },
+      // 跨日预约结束日期范围控制
+      endPickerOptions: {
+        disabledDate: this.disabledDateRepet
+      },
       startTimesOptions: { // 会议时间 开始时间配置
         start: '08:00',
         step: '00:30',
@@ -486,18 +493,7 @@ export default {
         functional_display: '',
         virtual_: 'all'
       },
-      // 开始日期
-      pickerOptions: {
-        // 控制日期选择
-        // disabledDate (time) {
-        //   return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
-        // }
-        disabledDate: this.disabledDateRepet
-      },
-      // 跨日预约结束日期范围控制
-      endPickerOptions: {
-        disabledDate: this.disabledDateRepet
-      },
+      
       error: { // 验证提示
         repeatType: {isFocus: false},// 重复类型
         repeatDate: { isFocus: false },// 重复截止日
@@ -630,19 +626,6 @@ export default {
       this.selectRowTime.id = scope.row.id
       this.selectRoomData = scope.row
     },
-    // startTimesOptions: { // 会议时间 开始时间配置
-    //     start: '08:00',
-    //     step: '00:30',
-    //     end: '19:30:00',
-    //     minTime: '',
-    //     maxTime: ''
-    //   },
-    //   endTimesOptions: { // 会议时间 结束时间配置
-    //     start: '08:30',
-    //     step: '00:30',
-    //     end: '20:00:00',
-    //     minTime: ''
-    //   },
     
     // 单次预约，重复/跨日预约弹窗
     handleClick(num) {
@@ -659,7 +642,7 @@ export default {
       } else if(num === 2){
         this.repeatNexdayDialog = true
         this.appointmentTitle = '重复预约时间设置'
-        
+        this.repetPickerOptions.disabledDate = this.setEndPickerOptions // 设置重复预约日期选择范围
       } else {
         this.repeatNexdayDialog = true
         this.appointmentTitle = '跨日预约时间设置'
@@ -667,10 +650,12 @@ export default {
         this.nextDateForm.nextStartTime = this.selectRowTime.time.startTime || ''
         this.nextDateForm.nextEndDate = this.selectRoomData.day || ''
         this.nextDateForm.nextEndTime = this.selectRowTime.time.endTime || ''
+        this.pickerOptions.disabledDate = this.setEndPickerOptions // 设置跨日开始日期选择范围
+        this.endPickerOptions.disabledDate = this.setEndPickerOptions // 设置跨日结束日期选择范围
         this.initTime()
+        this.setRange()
       }
     },
-    
         // 跨日开始日期
     selectNextStartDate(dates, names) {
       this.setStatus(dates, names)
@@ -682,21 +667,25 @@ export default {
     },
     // 设置结束日期选择范围
     setEndPickerOptions(time){
-      let nextStartDate = dayjs(this.nextDateForm.nextStartDate).valueOf()
+      let nextStartDate = dayjs(this.searchData.date).valueOf()
       let startDate = Date.now()
       return time.getTime() > startDate + 24 * 60 * 60 * 1000 * 179 || time.getTime() < nextStartDate
     },
     // 跨日开始时间
     selectNextTimes(time, names){
+      // 校验时间
       this.setStatus(time, names)
-      // this.endTimesOptions.minTime = time 
+      // 重置时间显示
       this.initTime()
       // 判断开始结束时间大小
-      if(!time) return
-      let startHour = time.split(':')[0]// 开始时间-小时
-      let startMinute = time.split(':')[1]// 开始时间-分钟
+      this.setRange()
+    },
+    // 判断开始结束时间选择大小范围
+    setRange() {
       let startDay = dayjs(this.nextDateForm.nextStartDate).valueOf()// 开始日期
       let endDay = dayjs(this.nextDateForm.nextEndDate).valueOf()// 结束日期
+      let startHour = this.nextDateForm.nextStartTime.split(':')[0]// 开始时间-小时
+      let startMinute = this.nextDateForm.nextStartTime.split(':')[1]// 开始时间-分钟
       let endHour = this.nextDateForm.nextEndTime ? this.nextDateForm.nextEndTime.split(':')[0] : ''// 结束时间-小时
       let endMinute = this.nextDateForm.nextEndTime ? this.nextDateForm.nextEndTime.split(':')[1] : ''// 结束时间-分钟
       if(startDay == endDay){ // 开始结束日期是否相同
@@ -755,10 +744,10 @@ export default {
       getTimeConfigApi().then(res=> {
         this.timeConfig = res.data.time_rule
         let start = this.timeConfig.start
-        let end = this.timeConfig.end.split(':')[0]=='00' ? '24:00' : this.timeConfig.end
+        let end = this.timeConfig.end//this.timeConfig.end.split(':')[0]=='00' ? '24:00' : this.timeConfig.end
         this.endTimesOptions.start = start
         this.endTimesOptions.end = end
-        this.startTimesOptions.maxTime = end
+        // this.startTimesOptions.maxTime = end
         this.startTimesOptions.start = start
         this.startTimesOptions.end = end
       })
@@ -1100,6 +1089,9 @@ export default {
         width: 180px;
       }
     }
+    .margin_right{
+      margin-right: 35px;
+    }
   }
   .res-table{
     overflow-y: hidden;
@@ -1206,7 +1198,7 @@ export default {
   .floor-device{
     width: auto;
     text-align: left;
-    padding: 10px 10px 14px;
+    min-height: 10px;
     .floor-device-list{
       width: auto;
       height: 20px;
@@ -1220,6 +1212,9 @@ export default {
       background-color: #FBFCFF;
       border: 1px #E2E4EA solid;
     }
+  }
+  .padding_set{
+    padding: 10px 10px 14px;
   }
   .floor-info{
     position: relative;

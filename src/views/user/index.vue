@@ -28,11 +28,11 @@
             </div>
             <div class="user-list-box">
                <span class="user-list-labe">{{$t('labe.Department')}}：</span>
-               <span class="user-list-value">{{userForm.department_id||'--'}}</span>    
+               <span class="user-list-value">{{userForm.department.name||'--'}}</span>    
             </div>
             <div class="user-list-box">
                <span class="user-list-labe">{{$t('labe.Position')}}：</span>
-               <span class="user-list-value">{{userForm.name||'--'}}</span>    
+               <span class="user-list-value">{{userForm.position||'--'}}</span>    
             </div>
             <div class="user-list-box">
                <span class="user-list-labe">{{$t('labe.Telephone')}}：</span>
@@ -45,7 +45,7 @@
             </div>
             <div class="user-list-box">
                <span class="user-list-labe">{{$t('labe.Role')}}：</span>
-               <span class="user-list-value">{{userForm.name||'--'}}</span>    
+               <span class="user-list-value">{{userForm.group.name||'--'}}</span>    
             </div>
             <!-- 保存 -->
             <div class="btn-group">
@@ -139,9 +139,16 @@ export default {
       saveLoading: false,// 保存按钮loading
       submitLoading: false, // 确认密码按钮loading
       baseURL: imgBaseUrl,
-      userForm: {},
+      userForm: {
+         department: {
+            name: ''
+         },
+         group: {
+            name: ''
+         }
+      },
       sexList: ['女', '男'],
-      imgUrl: 'https://alc01.aa-iot.com/storage/uploads/user/QWRnUNs6BQ2dFjzDrsZMIUvyA.png',
+      imgUrl: '',
       baseImg: require('../../assets/user.png'),
       isOpen: false, // 显示密码
       saveForm: {},

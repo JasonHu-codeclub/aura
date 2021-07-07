@@ -10,7 +10,7 @@
    element-loading-background="rgba(0, 0, 0, 0.38)" 
  >
     <div class="save-submit" v-show="dataType === 2 && ruleForm.can_update != 0">
-      <el-button type="button" class="reservation-submit el-button--primary" @click="save" round>{{$t('button.save')}}</el-button>
+      <el-button type="button" class="reservation-submit el-button--primary" @click="save" :loading="saveLoading" round>{{$t('button.save')}}</el-button>
     </div>
     
     <div class="meeting-edit-wrap">
@@ -54,8 +54,8 @@
                <div class="edit-box-value">
                   <span v-if="dataType===1 || ruleForm.can_update == 0">{{ruleForm.is_secrecy?'保密':'公开'}}</span>
                   <el-radio-group v-if="dataType===2 && ruleForm.can_update==1" v-model="ruleForm.is_secrecy">
-                     <el-radio  :label="0">{{$t('message.open')}}</el-radio>
-                     <el-radio  :label="1">{{$t('message.private')}}</el-radio>
+                     <el-radio :label="0">{{$t('message.open')}}</el-radio>
+                     <el-radio v-if="ruleForm.is_secret_group" :label="1">{{$t('message.private')}}</el-radio>
                   </el-radio-group>
                </div>
             </div>
@@ -138,7 +138,7 @@
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('message.internalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0 }" @click="showInnerDialog">
+                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0, not_allowed: isServices() }" @click="showInnerDialog">
                      {{participantVal||$t('message.promptInternalParticipants')}}
                   </span>
                </div>
@@ -147,7 +147,7 @@
             <div class="edit-box-item" v-if="ruleForm.external_participants_show==1">
                <div class="edit-box-label">{{$t('message.externalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0 }" @click="showExtDialog">
+                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0, not_allowed: isServices() }" @click="showExtDialog">
                      {{outParticipantVal||$t('message.addExtParticipants')}}
                   </span>
                   <!-- <el-input
@@ -268,66 +268,116 @@
       @open="callbackForExtDialogOpen"
     > 
       <div class="ext-content">
-         <div
-         class="item margin-bottom-10"
-         v-for="(item, index) in outParticipantGuids"
-         :key="index"
-         >
-            <div class="df ac">
-               <!-- 序号 -->
-               <span class="ext-content-num">{{index+1}}.</span>
-               <!-- 名称 -->
-               <el-input
-                  :placeholder="$t('message.fullName')"
-                  class="input1"
-                  v-model="item.name"
-                  clearable
-               ></el-input>
-               <!-- 邮箱 -->
-               <el-input
-                  :placeholder="$t('message.mailbox')"
-                  class="input2"
-                  v-model="item.email"
-                  clearable
-               ></el-input>
-               <!-- 电话 -->
-               <el-input
-                  :placeholder="$t('placeholder.phone')"
-                  class="input2"
-                  v-model="item.phone"
-                  oninput="value=value.replace(/^\.+|[^\d.]/g,'')"
-                  maxlength="11"
-                  clearable
-               ></el-input>
-               <!-- 新增 -->
-               <el-button
-                  type="text"
-                  class="plus-btn"
-                  icon="el-icon-circle-plus-outline"
-                  v-if="index === 0"
-                  @click="editOtherParticipant()"
-                  ></el-button
-               >
-               <!-- 删除 -->
-               <el-button
-                  type="text"
-                  class="remove-btn"
-                  icon="el-icon-remove-outline"
-                  v-else
-                  @click="editOtherParticipant(index)"
-                  ></el-button
-               >
-            </div>
-            <div class="error-box">
-               <div class="error-box-item nameError" v-if="item.nameError">{{ $t("message.nameError")}}</div>
-               <div class="error-box-item emailError" v-if="item.mailError">{{ $t("message.mailError") }}</div>
-               <div class="error-box-item phoneError" v-if="item.phoneError">{{ $t("message.phoneError")}}</div>
-               <div class="error-box-item mailPhoneError" v-if="item.error">{{ $t("message.mailPhoneError")}}</div>
+         <div v-show="dataType === 2">
+            <div
+            class="item margin-bottom-10"
+            v-for="(item, index) in outParticipantGuids"
+            :key="index"
+            >
+               <div class="df ac">
+                  <!-- 序号 -->
+                  <span class="ext-content-num">{{index+1}}.</span>
+                  <!-- 名称 -->
+                  <el-input
+                     :placeholder="$t('message.fullName')"
+                     class="input1"
+                     v-model="item.name"
+                     clearable
+                  ></el-input>
+                  <!-- 邮箱 -->
+                  <el-input
+                     :placeholder="$t('message.mailbox')"
+                     class="input2"
+                     v-model="item.email"
+                     clearable
+                  ></el-input>
+                  <!-- 电话 -->
+                  <el-input
+                     :placeholder="$t('placeholder.phone')"
+                     class="input2"
+                     v-model="item.phone"
+                     oninput="value=value.replace(/^\.+|[^\d.]/g,'')"
+                     maxlength="11"
+                     clearable
+                  ></el-input>
+                  <!-- 新增 -->
+                  <el-button
+                     type="text"
+                     class="plus-btn"
+                     icon="el-icon-circle-plus-outline"
+                     v-if="index === 0"
+                     @click="editOtherParticipant()"
+                     ></el-button
+                  >
+                  <!-- 删除 -->
+                  <el-button
+                     type="text"
+                     class="remove-btn"
+                     icon="el-icon-remove-outline"
+                     v-else
+                     @click="editOtherParticipant(index)"
+                     ></el-button
+                  >
+               </div>
+               <div class="error-box">
+                  <div class="error-box-item nameError" v-if="item.nameError">{{ $t("message.nameError")}}</div>
+                  <div class="error-box-item emailError" v-if="item.mailError">{{ $t("message.mailError") }}</div>
+                  <div class="error-box-item phoneError" v-if="item.phoneError">{{ $t("message.phoneError")}}</div>
+                  <div class="error-box-item mailPhoneError" v-if="item.error">{{ $t("message.mailPhoneError")}}</div>
+               </div>
             </div>
          </div>
+         
+
+         <div class="out_part" v-if="dataType === 1">
+            <el-table
+            :data="ruleForm.out_participant"
+            border
+            style="width: 100%">
+               <!-- 序号 -->
+               <el-table-column
+                  :label="$t('message.serial')"
+                  type="index"
+                  width="60"
+                  align="center"
+               ></el-table-column>
+               <!-- 姓名 -->
+               <el-table-column
+                  prop="name"
+                  :label="$t('message.fullName')"
+                  align="center"
+                  width="120">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.name || '/'}}</span>
+                  </template>
+               </el-table-column>
+               <!-- 邮箱 -->
+               <el-table-column
+                  prop="email"
+                  :label="$t('message.mailbox')"
+                  align="center"
+                  >
+                  <template slot-scope="scope">
+                    <span>{{scope.row.email || '/'}}</span>
+                  </template>
+               </el-table-column>
+               <!-- 电话 -->
+               <el-table-column
+                  prop="phone"
+                  :label="$t('labe.Telephone')"
+                  align="center"
+                  >
+                  <template slot-scope="scope">
+                    <span>{{scope.row.phone || '/'}}</span>
+                  </template>
+               </el-table-column>
+            </el-table>
+         </div>
+
+
       </div>
       <div slot="footer" class="dialog-footer">
-         <div class="footer-tips">提示：<span class="footer-tips-item">电话/邮箱信息，请务必输入其中一项<br>用于接收邮件/短信通知</span></div>
+         <div v-show="dataType === 2" class="footer-tips" >{{$t('message.tips')}}：<span class="footer-tips-item">{{$t('message.phoneEmailTips')}}<br>{{$t('message.receiving')}}</span></div>
          <el-button style="margin-right: 20px"  @click="extVisible = false">{{$t("button.cancel")}}</el-button>
          <el-button v-show="dataType === 2" type="primary"  @click="addExtMeetPeople">{{
           $t("button.confirm")
@@ -337,7 +387,7 @@
 
     <!-- 内部参会人弹窗 -->
     <el-dialog
-      width="890px"
+      :width="dataType === 2 ? '890px' : '640px'"
       :title="$t('message.addInteParticipants')"
       :visible.sync="innerVisible"
       append-to-body
@@ -356,14 +406,6 @@
                @clear="clearHandle"
             ></el-input>
          </div>
-         <!-- <div class="search-group-item">
-            {{$t('labe.Department')}}：
-            <el-input
-               class="inline-input"
-               v-model="searchDep"
-               clearable
-            ></el-input>
-         </div> -->
          <el-button class="search-btn" type="primary" @click="searchHandle">{{$t('button.search')}}</el-button>
       </div>
       <div class="df join-content">
@@ -404,7 +446,10 @@
                prop="name"
                :label="$t('message.fullName')"
                align="center"
-               width="80">
+               width="120">
+               <template slot-scope="scope">
+                  <span>{{scope.row.name || '/'}}</span>
+               </template>
             </el-table-column>
             <!-- 部门 -->
             <el-table-column
@@ -413,10 +458,13 @@
                align="center"
                show-overflow-tooltip
                >
+               <template slot-scope="scope">
+                  <span>{{scope.row.department_name || '/'}}</span>
+               </template>
             </el-table-column>
             <!-- 操作 -->
             <el-table-column
-            v-show="dataType === 2"
+            v-if="dataType === 2"
             :label="$t('message.operation')"
             align="center"
             width="80">
@@ -459,6 +507,7 @@ export default {
   data() {
      return {
         formLoading: false,
+        saveLoading: false,
         ruleForm: {
            is_property: '',
            repe_type: 1,
@@ -592,9 +641,6 @@ export default {
          })
          this.participantGuids = arr
          this.participantVal = !arr.length && this.isServices() ? '*' : str
-
-         // 会服
-         // this.ruleForm.showStart = this.isServices()
          
          // 外部参会人
          this.outParticipantHandle()
@@ -603,8 +649,11 @@ export default {
 
       })
    },
+   // 是否是保密组且会服详情
    isServices() {
-      return this.ruleForm.is_secrecy == 1 && this.menuStr == 'services' ? true : false
+      let arr = ['conflict', 'services']
+      let ismenu = arr.find(res=>{return res == this.menuStr})
+      return this.ruleForm.is_secrecy == 1 && !!ismenu ? true : false
    },
    // 获取茶点服务
    getServiceInfo() {
@@ -709,7 +758,7 @@ export default {
     },
    //  添加外部参会人弹窗
    showExtDialog() {
-      if(this.dataType==1 || this.ruleForm.can_update == 0){// 详情
+      if(this.isServices()){// 保密组和会服详情
          return
       }
       this.extVisible = true
@@ -735,8 +784,7 @@ export default {
          arrExt = valExt
       }
       this.outParticipantGuids = arrExt
-      this.outParticipantVal = !outData.length && this.isServices() ? '*' : strExt  
-      console.log(arrExt,'arrExt.length')
+      this.outParticipantVal = !outData.length && this.isServices() ? '*' : strExt 
    },
    // 选择外部参会人回调
     callbackForExtDialogOpen () {
@@ -815,7 +863,7 @@ export default {
     },
    // 显示内部参会人员弹框
     showInnerDialog () {
-      if(this.dataType==1 || this.ruleForm.can_update == 0){// 详情
+      if(this.isServices()){// 详情
          return
       }
       this.innerVisible = true
@@ -984,7 +1032,9 @@ export default {
          equipment: equ, // 否	array	设备数组
          remark: this.ruleForm.remark
       }
+      this.saveLoading = true
       saveMeetEditApi(dataJson).then(res=> {
+         this.saveLoading = false
          if(res.meta.code == "RESP_OKAY"){
             this.$message({
                message: this.$t('tip.infoEditSuccess'),
@@ -1002,11 +1052,6 @@ export default {
    
    setMeetTime(start, end, type){
       let time = type === 2 ? `${start.split(' ')[1]} - ${end.split(' ')[1]}` : `${start} - ${end}`
-      // if(type === 2){
-      //   time = `${start.split(' ')[1]} - ${end.split(' ')[1]}`
-      // }else{
-      //    time = `${start} - ${end}`
-      // }
       return time
    },
    // 获取会议类型
@@ -1015,8 +1060,6 @@ export default {
         this.meetTypeList = res.data.meeting_type
      })
    },
-   
-   
    // 设备信息
    getEquipmentInfo() {
      getEquipmentApi().then(res => {
@@ -1268,7 +1311,9 @@ export default {
                 background-color: #F5F7FA;
                 border-color: #E4E7ED;
                 color: #69788A;
-                cursor: not-allowed;
+              }
+              .not_allowed{
+                 cursor: not-allowed;
               }
               .edit-box-input{
                   width: 375px;
@@ -1633,7 +1678,8 @@ export default {
     }
     .right {
       flex: 1;
-      height: 400px;
+      min-height: 205px;
+      max-height: 342px;
       overflow-y: auto;
       padding: 10px 15px;
       border-left: 1px solid #ddd;

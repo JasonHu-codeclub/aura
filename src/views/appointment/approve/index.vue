@@ -151,7 +151,7 @@
             <span v-if="scope.row.conflict_dec">{{scope.row.conflict_dec}}</span>
             <el-tooltip 
               v-else
-              :disabled="!scope.row.attendence_number" 
+              :disabled="!scope.row.attendence_number||scope.row.is_secrecy == 1" 
               placement="top" 
               effect="light" 
               :open-delay="350"
@@ -245,8 +245,8 @@ export default {
         {key: 3, name: '过期未审批'},
       ],
       userList: [
-        {key: 1, name: '发起人'},
-        {key: 2, name: '参会人'}
+        {key: 1, name: '我发起'},
+        {key: 2, name: '被邀约'}
       ],
       paginationQuery: { 
         page: 1, // 当前页

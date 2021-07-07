@@ -73,8 +73,6 @@
             ></el-option>
           </el-select>
         </div>
-      </div>
-      <div class="filter-item">
         <div class="filter-item-box">
           <!-- 查询 -->
           <el-button
@@ -123,7 +121,7 @@
             show-overflow-tooltip
           >
            <template slot-scope="scope">
-             {{scope.row.conflict_dec ? scope.row.conflict_dec : scope.row.title}}
+             {{scope.row.title}}
            </template>
           </el-table-column>
           <!-- 会议时间 -->
@@ -161,10 +159,10 @@
             align="center"
           >
           <template slot-scope="scope">
-            <span v-if="scope.row.conflict_dec">{{scope.row.conflict_dec}}</span>
+            <!-- <span v-if="scope.row.conflict_dec">{{scope.row.conflict_dec}}</span> -->
             <el-tooltip 
             :disabled="!scope.row.attendence_number" 
-            v-else placement="top" 
+            placement="top" 
             effect="light" 
             :open-delay="350"
             popper-class="tooltip-per"
