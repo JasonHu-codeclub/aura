@@ -30,12 +30,12 @@
             <!-- 会议设备 -->
             <div class="edit-box-item" >
                <div class="edit-box-label">{{$t('labe.equipmentOfroom')}}：</div>
-               <div class="edit-box-value">{{isServices() ? '*' : ruleForm.meeting_room_equipment||'--'}}</div>
+               <div class="edit-box-value">{{ruleForm.is_secret ? '*' : ruleForm.meeting_room_equipment||'--'}}</div>
             </div>
             <!-- 预约类型 -->
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('labe.AppointmentType')}}：</div>
-               <div class="edit-box-value">{{isServices() ? '*' : categoryStr||'--'}}</div>
+               <div class="edit-box-value">{{ruleForm.is_secret ? '*' : categoryStr||'--'}}</div>
             </div>
          </div>
          <div class="edit-sign_in" v-if="ruleForm.status == 1">
@@ -138,7 +138,7 @@
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('message.internalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0, not_allowed: isServices() }" @click="showInnerDialog">
+                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0, not_allowed: ruleForm.is_secret }" @click="showInnerDialog">
                      {{participantVal||$t('message.promptInternalParticipants')}}
                   </span>
                </div>
@@ -147,7 +147,7 @@
             <div class="edit-box-item" v-if="ruleForm.external_participants_show==1">
                <div class="edit-box-label">{{$t('message.externalParticipants')}}：</div>
                <div class="edit-box-value">
-                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0, not_allowed: isServices() }" @click="showExtDialog">
+                  <span class="edit-box-value border" :class="{ disabled_edit: dataType === 1 || ruleForm.can_update == 0, not_allowed: ruleForm.is_secret }" @click="showExtDialog">
                      {{outParticipantVal||$t('message.addExtParticipants')}}
                   </span>
                   <!-- <el-input
@@ -617,7 +617,7 @@ export default {
            this.categoryStr = `${this.category[this.ruleForm.category]}（${this.repetitionType[this.ruleForm.repetition_type]}）`
          }
 
-         this.ruleForm.meeting_type_id = !this.ruleForm.meeting_type_id && this.isServices() ? '*' : this.ruleForm.meeting_type_id 
+         this.ruleForm.meeting_type_id = this.ruleForm.is_secret ? '*' : this.ruleForm.meeting_type_id 
          
          // 茶点服务
          this.ruleForm.serviceId = []
@@ -640,7 +640,7 @@ export default {
             str = str ? str + '，' + item.name : item.name
          })
          this.participantGuids = arr
-         this.participantVal = !arr.length && this.isServices() ? '*' : str
+         this.participantVal = this.ruleForm.is_secret ? '*' : str
          
          // 外部参会人
          this.outParticipantHandle()
@@ -758,7 +758,7 @@ export default {
     },
    //  添加外部参会人弹窗
    showExtDialog() {
-      if(this.isServices()){// 保密组和会服详情
+      if(this.ruleForm.is_secret){// 保密组和会服详情
          return
       }
       this.extVisible = true
@@ -784,7 +784,7 @@ export default {
          arrExt = valExt
       }
       this.outParticipantGuids = arrExt
-      this.outParticipantVal = !outData.length && this.isServices() ? '*' : strExt 
+      this.outParticipantVal = this.ruleForm.is_secret ? '*' : strExt 
    },
    // 选择外部参会人回调
     callbackForExtDialogOpen () {
@@ -863,7 +863,7 @@ export default {
     },
    // 显示内部参会人员弹框
     showInnerDialog () {
-      if(this.isServices()){// 详情
+      if(this.ruleForm.is_secret){// 详情
          return
       }
       this.innerVisible = true

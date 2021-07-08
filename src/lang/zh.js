@@ -49,7 +49,7 @@ export default {
     repeatType: '重复预约类型',
     repeatTime: '重复截止时间',
     senderType: '发起方式',
-    
+    keyword: '关键字',
     
   },
   button: {
@@ -170,6 +170,9 @@ export default {
     time: '时间',
     startTime: '开始时间',
     endTime: '结束时间',
+    startDates: '开始日期',
+    endDates: '结束日期',
+    dates: '日期',
     selsectDate: '请选择日期',
     selectStartTime: '请选择开始时间',
     selectEndTime: '请选择结束时间',
@@ -258,6 +261,7 @@ export default {
     companiesNum: '数量',
     selectType: '请选择预约类型',
     nameTypes: '会议主题/发起人/参会人',
+    keyword: '关键字',
     startDate: '开始日期',
     endDate: '结束时间',
     selectServe: '请选择会议室茶点服务',

@@ -17,8 +17,8 @@
             value-format="yyyy-MM-dd"
             :editable="false"
             :picker-options="pickerOptions"
-            :start-placeholder="$t('message.startTime')"
-            :end-placeholder="$t('message.endTime')"
+            :start-placeholder="$t('message.startDates')"
+            :end-placeholder="$t('message.endDates')"
             range-separator="-"
             @change="getApproveInfo"
             >></el-date-picker>
@@ -167,7 +167,7 @@
             :open-delay="350"
             popper-class="tooltip-per"
             >
-              <div slot="content">{{scope.row.participant_users}}</div>
+              <div slot="content">{{scope.row.is_secret ? '*' : scope.row.participant_users}}</div>
               <span :class="{'part_num':scope.row.attendence_number>0}">{{scope.row.attendence_number||'/'}}</span>
             </el-tooltip>
           </template>

@@ -26,8 +26,8 @@
             value-format="yyyy-MM-dd"
             :editable="false"
             :picker-options="pickerOptions"
-            :start-placeholder="$t('message.startTime')"
-            :end-placeholder="$t('message.endTime')"
+            :start-placeholder="$t('message.startDates')"
+            :end-placeholder="$t('message.endDates')"
             range-separator="-"
             @change="getMeetingRepet"
             >></el-date-picker>

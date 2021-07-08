@@ -2,6 +2,15 @@
 
 import request from "@utils/request.js"
 
+// 获取系统前台信息
+export function getSystemInfoApi (data) {
+  return request({
+    url: "/get-front-system-info",
+    method: "get",
+    params: data
+  })
+}
+
 // 获取会议类型meeting_type/会议配置configuration/会议服务provide
 export function getMeetingConfigApi (data) {
     return request({

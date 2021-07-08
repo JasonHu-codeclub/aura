@@ -49,7 +49,8 @@ export default {
     Role: 'role',
     repeatType: 'Repeat Type',
     repeatTime: 'deadline',
-    senderType: 'sender type'
+    senderType: 'sender type',
+    keyword: 'keyword',
   },
   button: {
     search: 'Search',
@@ -168,6 +169,9 @@ export default {
     time: 'Time',
     startTime: 'Start time',
     endTime: 'End time',
+    startDates: 'start date',
+    endDates: 'end date',
+    dates: 'date',
     selsectDate: 'Please select a date',
     selectStartTime: 'Please select start time',
     selectEndTime: 'Please select the end time',
@@ -255,6 +259,7 @@ export default {
     companiesNum: 'Please enter the number of participating companies',
     selectType: 'Please select appointment type',
     nameTypes: 'theme/sender/attendee',
+    keyword: 'keyword',
     selectServe: 'Please choose tea service in meeting room',
     selectEquipment: 'Please select conference room equipment service',
     enterReason: 'Please enter the reason for rejection'

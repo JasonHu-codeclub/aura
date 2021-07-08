@@ -19,14 +19,16 @@
         <h1 v-else class="sidebar-title">{{ title }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title">{{ title }}</h1>
+        <img v-if="systemLogo" :src="baseURL + systemLogo" class="sidebar-logo" />
+        <!-- <h1 class="sidebar-title">{{ systemName }}</h1> -->
       </router-link>
     </transition>
   </div>
 </template>
 <script>
 const defaultSettings = require('@/settings.js')
+import { imgBaseUrl } from '@/utils/varible'
+import { mapGetters } from 'vuex'
 export default {
   components: {},
   props: {
@@ -37,19 +39,22 @@ export default {
   },
   data () {
     return {
+      baseURL: imgBaseUrl,
       title: defaultSettings.title,
       // logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
       logo: require('@/assets/logo.png')
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['systemLogo'])
+  },
   watch: {},
   methods: {
   },
   created () {
   },
   mounted () {
-
+    console.log(this.systemLogo,'systemLogo')
   }
 }
 </script>
@@ -73,14 +78,14 @@ export default {
   overflow: hidden;
 
   & .sidebar-logo-link {
+    display: flex !important;
+    align-items: center;
     height: 100%;
     width: 100%;
-
+    padding: 10px 6px 10px 32px;
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
+      height: 100%;
       vertical-align: middle;
-      margin-right: 12px;
     }
 
     & .sidebar-title {

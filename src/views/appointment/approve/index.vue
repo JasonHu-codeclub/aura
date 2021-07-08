@@ -18,15 +18,15 @@
             value-format="yyyy-MM-dd"
             :editable="false"
             :picker-options="pickerOptions"
-            :start-placeholder="$t('message.startTime')"
-            :end-placeholder="$t('message.endTime')"
+            :start-placeholder="$t('message.startDates')"
+            :end-placeholder="$t('message.endDates')"
             range-separator="-"
             @change="dateChange"
             >></el-date-picker>
         </div>
-        <!-- 名称 -->
+        <!-- 关键字 -->
         <div class="filter-item-box">
-          <span>{{$t('labe.name')}}：</span>
+          <span>{{$t('labe.keyword')}}：</span>
           <el-input type="text" 
           v-model="searchForm.keyword" 
           :placeholder="$t('placeholder.nameTypes')"
@@ -51,8 +51,7 @@
             ></el-option>
           </el-select>
         </div>
-      </div>
-      <div class="filter-item">
+
         <div class="filter-item-box">
           <!-- 查询 -->
           <el-button
@@ -100,7 +99,7 @@
             show-overflow-tooltip
           >
            <template slot-scope="scope">
-             {{scope.row.conflict_dec ? scope.row.conflict_dec : scope.row.title}}
+             {{scope.row.title}}
            </template>
           </el-table-column>
           <!-- 会议时间 -->
@@ -128,7 +127,7 @@
             align="center"
           >
             <template slot-scope="scope">
-              {{scope.row.conflict_dec ? scope.row.conflict_dec : scope.row.categoryStr}}
+              {{scope.row.categoryStr}}
             </template>
           </el-table-column>
           <!-- 状态 -->
@@ -138,7 +137,7 @@
             align="center"
           >
             <template slot-scope="scope">
-              <span >{{statusList[scope.row.status]['name']}}</span>
+              <span >{{scope.row.statusDec}}</span>
             </template>
           </el-table-column>
           <!-- 参会人数 -->
@@ -148,10 +147,10 @@
             align="center"
           >
           <template slot-scope="scope">
-            <span v-if="scope.row.conflict_dec">{{scope.row.conflict_dec}}</span>
+            <span v-if="scope.row.is_secret">*</span>
             <el-tooltip 
               v-else
-              :disabled="!scope.row.attendence_number||scope.row.is_secrecy == 1" 
+              :disabled="!scope.row.attendence_number" 
               placement="top" 
               effect="light" 
               :open-delay="350"
@@ -170,7 +169,7 @@
             align="center"
           >
             <template slot-scope="scope">
-              {{scope.row.conflict_dec ? scope.row.conflict_dec : scope.row.user_name}}
+              {{scope.row.user_name}}
             </template>
           </el-table-column>
           <!-- 操作 -->
@@ -183,7 +182,7 @@
               <!-- 会议状态 0 待审批 1 同意 2 拒绝 3过期未审批 -->
               <el-button 
                 type="text" 
-                :disabled="!!scope.row.status||scope.row.conflict_dec!=''"
+                :disabled="!!scope.row.status||scope.row.conflict_number>1"
                 @click="agreeRefuseMeeting(scope.row, 1)">
                 {{ $t("button.agree") }}
               </el-button>
@@ -194,7 +193,7 @@
               </el-button>
               <el-button
                 type="text"
-                :disabled="!!scope.row.status||scope.row.conflict_dec!=''"
+                :disabled="!!scope.row.status||scope.row.conflict_number>1"
                 @click="agreeRefuseMeeting(scope.row, 2)">
                 {{ $t("button.refuse") }}
               </el-button>
@@ -240,7 +239,7 @@ export default {
       chooseDate: null, // 日期
       statusList: [ // 会议状态 0=>待审批 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
         {key: 0, name: '待审批'},
-        {key: 1, name: '同意'},
+        {key: 1, name: '已通过'},
         {key: 2, name: '已拒绝'},
         {key: 3, name: '过期未审批'},
       ],
@@ -278,7 +277,8 @@ export default {
       deleteBtnLoading: false,// 弹窗确认loading
       isShowInput: false, // 拒绝理由
       operationType: null,
-      iconUrl: require('../../../assets/icon/approve_tips.png'),// 弹窗icon
+      iconUrl: require('../../../assets/icon/approve_tips.png'),// 同意icon
+      iconUrlRefuse: require('../../../assets/icon/approve_tips.png'),// 拒绝icon
       confirmBg: '#5C7BEA'
     }
   },
@@ -300,6 +300,7 @@ export default {
     },
     // 获取列表数据
     getApproveInfo () {
+      console.log(this.categoryList[2],'this.categoryList[v.category]')
       let params = { 
         page: this.paginationQuery.page,	// 当前页
         size: this.paginationQuery.limit,
@@ -312,13 +313,27 @@ export default {
         let meetings = res.data.meeting_approves
         if(res.meta.code=='RESP_OKAY'){
            meetings&&meetings.map( v => {
+            // 会议时间
             v.satrtTime = `${v.date} ${v.start}`
             v.endTime = `${v.end_date} ${v.end}`
-            v.conflict_dec = v.conflict_number > 1 ? this.$t('tip.conflictDec') : ''
-            v.categoryStr= v.category == 2 ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）` : this.categoryList[v.category]
+
+            // 状态、冲突
+            let conflict = v.conflict_number > 1 ? '/' + this.$t('tip.conflictDec') : ''
+            v.statusDec = `${this.statusList[v.status]['name']} ${conflict}`
+
+            // 参会人
             v.participant_users.map( item => {
               v.personnel = v.personnel ?  v.personnel + ',' + item.nickname : item.nickname
             })
+            
+            // 是否保密
+            if(v.is_secret){
+              v.title = '*'
+              v.categoryStr = '*'
+              v.meeting_room_name = '*'
+            }else{
+              v.categoryStr= v.category == 2 ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）` : this.categoryList[v.category]
+            }
           })
           this.myMeetingInfo = meetings
           this.total = res.data.total// 总条数 

@@ -38,6 +38,7 @@ router.beforeEach(async (to, from, next) => {
         next()
       } else {
         try {
+          await store.dispatch('user/getSystemInfo')
           const roles  = await store.dispatch('user/getInfo')
           // 筛选后有权限的路由表
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)

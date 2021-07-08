@@ -14,15 +14,15 @@
             value-format="yyyy-MM-dd"
             :editable="false"
             :picker-options="pickerOptions"
-            :start-placeholder="$t('message.startTime')"
-            :end-placeholder="$t('message.endTime')"
+            :start-placeholder="$t('message.startDates')"
+            :end-placeholder="$t('message.endDates')"
             range-separator="-"
             @change="dateChange"
             >></el-date-picker>
         </div>
-        <!-- 名称 -->
+        <!-- 关键字 -->
         <div class="filter-item-box">
-          <span>{{$t('labe.name')}}：</span>
+          <span>{{$t('labe.keyword')}}：</span>
           <el-input type="text" 
           v-model="searchForm.keyword" 
           :placeholder="$t('placeholder.nameTypes')"
@@ -37,6 +37,7 @@
             :placeholder="$t('message.status')"
             @change="getMyMeetingInfo"
             @clear="getMyMeetingInfo"
+            collapse-tags
             multiple
             clearable
           >

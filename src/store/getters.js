@@ -21,5 +21,7 @@ const getters = {
   device: state => state.app.device,
   isQrCode: state => state.app.isQrCode,
   qrCodeImage: state => state.app.qrCodeImage,
+  systemLogo: state => state.user.systemLogo,
+  systemName: state => state.user.systemName,
 }
 export default getters

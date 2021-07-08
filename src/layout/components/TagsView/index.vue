@@ -249,7 +249,7 @@ export default {
       border-radius: 4px;
       box-sizing: content-box;
       &:first-of-type {
-        margin-left: 15px;
+        margin-left: 20px;
       }
       &:last-of-type {
         margin-right: 15px;

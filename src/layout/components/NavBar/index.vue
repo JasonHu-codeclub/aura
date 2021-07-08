@@ -18,7 +18,7 @@
     <!-- 面包屑 -->
     <!-- <breadcrumb id="breadcrumb-container" class="breadcrumb-container" /> -->
     <!-- 标题 -->
-    <div class="right-left">{{$t('navbar.title')}}</div>
+    <div class="right-left">{{systemName}}</div>
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
         <!-- <search id="header-search" class="right-menu-item" /> -->
@@ -167,7 +167,7 @@ export default {
           { validator: checkOldPass, trigger: 'blur' }
         ]
       },
-      userImg: require('../../../assets/user.png') 
+      userImg: require('../../../assets/user.png')
     }
   },
   computed: {
@@ -175,8 +175,12 @@ export default {
       'sidebar',
       'avatar',
       'device',
-      'name'
+      'name',
+      'systemName'
     ])
+  },
+  mounted() {
+     
   },
   methods: {
     // 切换侧边栏展开/缩起
@@ -252,7 +256,7 @@ export default {
     font-size: 18px;
     line-height: 54px;
     font-weight: 600;
-    margin-left: 44px;
+    margin-left: 41px;
   }
   .hamburger-container {
     line-height: 46px;
@@ -324,8 +328,8 @@ export default {
       .avatar-wrapper {
         position: relative;
         display: flex;
-        align-items: flex-start;
-
+        height: 100%;
+        align-items: center;
         .user-name {
           font-size: 14px;
           color: #FFFFFF;
@@ -334,7 +338,6 @@ export default {
           cursor: pointer;
           width: 40px;
           height: 40px;
-          margin-top: 5px;
           border-radius: 20px;
           margin-left: 18px;
           background-color: #dddddd;

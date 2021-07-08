@@ -49,6 +49,7 @@
             @change="searchMeetingRoom"
             @clear="searchMeetingRoom"
             multiple
+            collapse-tags
             clearable
           >
             <el-option
@@ -231,7 +232,7 @@
           </div>
           <div class="room-list">
             <span class="room-list-labe">{{$t('labe.meetAddress')}}：</span>
-            <span class="room-list-value">{{roomforms.mansion.name}}</span>
+            <span class="room-list-value">{{roomforms.mansion.name}}/{{roomforms.floor_name}}</span>
           </div>
           <div class="room-list">
             <span class="room-list-labe letter-spacing">{{$t('labe.approvalLevel')}}：</span>
@@ -287,6 +288,7 @@
               class="edit-box-input"
               value-format="yyyy-MM-dd"
               :picker-options="repetPickerOptions"
+              :placeholder="$t('message.dates')"
               @change="setStatus(repeatForm.repeatDate, 'repeatDate')"
               clearable
             >></el-date-picker>
@@ -305,6 +307,7 @@
                 class="edit-nex-input"
                 value-format="yyyy-MM-dd"
                 :picker-options="pickerOptions"
+                :placeholder="$t('message.dates')"
                 @change="selectNextStartDate(nextDateForm.nextStartDate, 'nextStartDate')"
                 >></el-date-picker>
                 <!-- 开始时间 -->
@@ -328,6 +331,7 @@
               class="edit-nex-input"
               value-format="yyyy-MM-dd"
               :picker-options="endPickerOptions"
+              :placeholder="$t('message.dates')"
               @change="selectNextEndDate(nextDateForm.nextEndDate, 'nextEndDate')"
               clearable
               >></el-date-picker>
@@ -368,6 +372,7 @@ import qs from 'querystring'
 import { imgBaseUrl } from '@/utils/varible'
 import { mapGetters } from 'vuex'
 import { 
+  getSystemInfoApi,
   getStatusApi,
   getTimeConfigApi,
   getAppointmentApi,
@@ -572,8 +577,6 @@ export default {
   watch: {
   },
   mounted () {
-    // this.repeatNexdayDialog = true
-    // this.reservationType =  3
     // 大厦楼层
     this.getFloorList()
     // 获取时间规则
@@ -596,8 +599,6 @@ export default {
       this.cancelTitle = ''
       this.cancelContent = ''
     },
-    
-
     // 大厦信息，楼层
     async getFloorList () {
       const result = await getMansionFloorApi()
