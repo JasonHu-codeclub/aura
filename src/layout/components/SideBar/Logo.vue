@@ -54,7 +54,6 @@ export default {
   created () {
   },
   mounted () {
-    console.log(this.systemLogo,'systemLogo')
   }
 }
 </script>

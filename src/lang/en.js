@@ -51,6 +51,7 @@ export default {
     repeatTime: 'deadline',
     senderType: 'sender type',
     keyword: 'keyword',
+    rejection: 'Reasons for rejection'
   },
   button: {
     search: 'Search',

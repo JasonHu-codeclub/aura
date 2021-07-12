@@ -342,7 +342,8 @@ export default {
           margin-left: 18px;
           background-color: #dddddd;
           background-repeat: no-repeat;
-          background-size: 100% 100%;
+          background-size: cover;
+          background-position: center;
         }
 
         .el-icon-caret-bottom {

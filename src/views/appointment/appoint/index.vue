@@ -354,21 +354,18 @@
       <div class="dialog-bottom">
          <div class="appointment-next-tips"  v-if="reservationType == 3">{{$t('message.nextTips')}}</div>
          <el-button @click="repeatNexdayDialog = false">{{$t('button.cancel')}}</el-button>
-         <el-button type="primary" @click="confirmReservation">{{$t('button.confirm')}}</el-button>
+         <el-button type="primary" :loading="confirmLoading" @click="confirmReservation">{{$t('button.confirm')}}</el-button>
       </div>
     </el-dialog>
-
-
 
     <!-- 冲突预约提示 -->
     <dialog-cancel ref="conflict" :content="approveContent" :title="approveTitle" :btnLoading="approveBtnLoading" @handleClose="handleApproveClose" @hanldConfirm="hanldApproveMeeting"></dialog-cancel>
   </div>
 </template>
 <script>
- import dialogCancel from './components/dialogCancel'
+import dialogCancel from './components/dialogCancel'
 import dayjs from 'dayjs'
 import TimeTableCell from './components/time-table-cell'
-import qs from 'querystring'
 import { imgBaseUrl } from '@/utils/varible'
 import { mapGetters } from 'vuex'
 import { 
@@ -509,6 +506,7 @@ export default {
       },
       isPass: false,
       addLoading: false,
+      confirmLoading: false, // 确定预约
       timeConfig: {}, // 可预约时间段
       appStartTimes: '', // 预约开始时间
       appEndTimes: '' // 预约结束时间
@@ -809,11 +807,15 @@ export default {
         repetition_type: repeType || null,	// number	重复类型 1=》每日，2=》每周，3=》每月
         repetition_end_date: endDate || null,	// date	重复会议截止日期
       }
+      this.confirmLoading = true
+      // return
 
       if(this.selectRoomData.approve_level != 0) {// 会议需要审批时调用判断冲突接口
         this.addLoading = true
+        this.confirmLoading = true
         const result = await conflictValidatorApi(dataJson)
         this.addLoading = false
+        this.confirmLoading = false
         this.approveCount = result.data.count// 冲突场次
         this.approveMessage = '您的会议已预约完成，正在等待审批'
         if(result.data.count){
@@ -859,9 +861,12 @@ export default {
       // console.log(data,'data')
       // return
       this.addLoading = true
+      this.confirmLoading = true
+      if(this.approveCount) this.approveBtnLoading = true
       // 确定预约
       appointmentApi(data).then(res=>{
         this.addLoading = false
+        this.confirmLoading = false
         this.approveBtnLoading = false
         if(res.meta.code=='RESP_OKAY'){
           this.$message({
@@ -1035,6 +1040,7 @@ export default {
         nextEndDate: { isFocus: false },// 跨日结束日期
         nextEndTime: { isFocus: false },// 跨日结束时间
       }
+      this.confirmLoading = false
     },
     // 最长重复时间段为180天 ，禁用开始日期之前的日期
     disabledDateRepet(time) {
@@ -1186,7 +1192,7 @@ export default {
       color: #43434D;
       font-weight: bold;
       text-align: left;
-      padding: 14px 10px 4px;
+      padding: 10px 10px 4px;
     }
     img.floor-image-item {
       display: block;

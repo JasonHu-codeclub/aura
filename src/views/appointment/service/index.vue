@@ -133,7 +133,7 @@
             show-overflow-tooltip
             >
             <template slot-scope="scope">
-              <span :class="{color_tips: scope.row.colorRed}">{{scope.row.satrtTime}}<br>{{scope.row.endTime}}</span>
+              <span :class="{color_tips: scope.row.warning}">{{scope.row.satrtTime}}<br>{{scope.row.endTime}}</span>
             </template>
           </el-table-column>
           <!-- 会议室 -->
@@ -239,9 +239,10 @@
    roomListApi,
   getMansionFloorApi,
 } from '@api/appoint'
- import {serviceListApi, serviceConfirmApi, serviceFinishApi} from '@/api/service'
- import Pagination from '@/components/Pagination'
- import dialogCancel from '@/views/appointment/current-meet/components/dialogCancel'
+import dayjs from 'dayjs'
+import {serviceListApi, serviceConfirmApi, serviceFinishApi} from '@/api/service'
+import Pagination from '@/components/Pagination'
+import dialogCancel from '@/views/appointment/current-meet/components/dialogCancel'
 export default {
   components: { Pagination , dialogCancel},// 分页
   data () {
@@ -345,6 +346,7 @@ export default {
     }
   },
   mounted () { 
+    
     // 大厦楼层
     this.getFloorList()
     // 获取会议
@@ -393,15 +395,22 @@ export default {
       this.dataLoading = true
       serviceListApi(params).then(res=>{
         let meetings = res.data.services
+        let dateCurrent = dayjs().format('YYYY-MM-DD') // 当前日期时间
         if(res.meta.code=='RESP_OKAY'){
            meetings&&meetings.map( v => {
             v.satrtTime = `${v.date} ${v.start}`
             v.endTime = `${v.end_date} ${v.end}`
             v.conflict_dec = v.conflict_number > 1 ? this.$t('tip.conflictDec') : ''
             v.categoryStr= v.category == 2 ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）` : this.categoryList[v.category]
-            // v.participant_users.map( item => {
-            //   v.personnel = v.personnel ?  v.personnel + ',' + item.nickname : item.nickname
-            // })
+            if(dateCurrent === v.date){
+              let start = dayjs(v.satrtTime).valueOf()
+              let end = dayjs().valueOf()// 当前时间戳
+              let step = 30*60*1000 // 30分钟
+              let diff = end - start
+              if(0 <= diff && diff <= step ){   
+                  v.warning = true
+              }
+            }
           })
           this.myMeetingInfo = meetings
           this.total = res.data.total// 总条数 

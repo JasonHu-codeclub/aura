@@ -300,7 +300,6 @@ export default {
     },
     // 获取列表数据
     getApproveInfo () {
-      console.log(this.categoryList[2],'this.categoryList[v.category]')
       let params = { 
         page: this.paginationQuery.page,	// 当前页
         size: this.paginationQuery.limit,

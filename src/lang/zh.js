@@ -50,7 +50,7 @@ export default {
     repeatTime: '重复截止时间',
     senderType: '发起方式',
     keyword: '关键字',
-    
+    rejection: '拒绝原因'
   },
   button: {
     search: '查询',
@@ -234,7 +234,8 @@ export default {
     cancels: '取消会议后，',
     confirms: '场会议时间段将被释放',
     phoneEmailTips: '电话/邮箱信息，请务必输入其中一项',
-    receiving: '用于接收邮件/短信通知'
+    receiving: '用于接收邮件/短信通知',
+    
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',

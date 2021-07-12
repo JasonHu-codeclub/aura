@@ -9,13 +9,13 @@
    element-loading-spinner="el-icon-loading"
    element-loading-background="rgba(0, 0, 0, 0.38)" 
  >
-    <div class="save-submit" v-show="dataType === 2 && ruleForm.can_update != 0">
+    <div class="save-submit" v-show="dataType === 2 && ruleForm.can_update != 0" :style="{top: ruleForm.approve_msg ? '38.5px':'18.5px'}">
       <el-button type="button" class="reservation-submit el-button--primary" @click="save" :loading="saveLoading" round>{{$t('button.save')}}</el-button>
     </div>
     
     <div class="meeting-edit-wrap">
       <div 
-        v-if="menuStr == 'conflict' && ruleForm.approve_msg"
+        v-if="ruleForm.approve_msg"
         :class="['meeting-edit-conflict',bgclass]"
       >{{ruleForm.approve_msg}}</div>
       <!-- 会议信息 -->
@@ -194,7 +194,7 @@
                            controls-position="right" :min="0" 
                            :disabled="dataType===1 || ruleForm.can_update == 0"
                            clearable
-                           oninput="value=value.replace(/[^\d]/g,'')"
+                           @blur="blurHandle(item)"
                            @input="changeValueHandle(item)"
                            >
                            <!-- (/^[0]+[0-9]*$/gi,"") 不能以0开头-->
@@ -215,7 +215,6 @@
                      allow-create
                      default-first-option
                      class="input edit-box-input"
-                     @change="selectEquimentChange"
                      :placeholder="$t('placeholder.selectEquipment')"
                      :disabled="dataType===1 || ruleForm.can_update == 0">
                      <el-option
@@ -250,6 +249,11 @@
                   maxlength="50"
                   show-word-limit
                ></el-input>
+            </div>
+            <!-- 拒绝原因 -->
+            <div class="edit-box-item" v-if="ruleForm.refuse_reason">
+               <div class="edit-box-label rejections">{{$t('labe.rejection')}}：</div>
+               <div class="edit-box-value refuse_reason">{{ruleForm.refuse_reason||'--'}}</div>
             </div>
          </div>
       </div>
@@ -592,7 +596,6 @@ export default {
          }
          this.ruleForm = res.data.meeting
          // 会议审批描述
-         
          switch(this.ruleForm.status){
             case 0:
               this.bgclass = 'waiting' // 待审批     
@@ -603,7 +606,6 @@ export default {
             case 4:
               this.bgclass = 'refused' // 已拒绝    
               break;
-            
          }
 
          // 会议时间
@@ -707,16 +709,13 @@ export default {
    changeValueHandle(item){
       this.serviceList.map(res=>{
          if(res.id == item.id){
-            console.log(item, 'item',item.value)
-            item.value = item.value ? item.value : 0
             res.value = item.value
-            console.log(res.value,'res.value')
          }
       })
    },
-   // 选择设备
-   selectEquimentChange() {
-      
+   // input失去焦点
+   blurHandle(item){
+      item.value = String(item.value).replace(/[^\d]/g,'') || 0
    },
    // 重复预约： 计算场次、会议重复类型
    repeatEndTimeHandle() {
@@ -807,7 +806,6 @@ export default {
           if(item.name === ''){// 名字
             flag = true
             item.nameError =true
-            console.log(item.error,'item.name')
           }else{
             item.nameError =false
           }
@@ -851,11 +849,6 @@ export default {
       if(flag){
          return false
       }
-      // other.map(res=>{
-      //    delete res.error
-      //    delete res.nameError
-      //    // delete res.phoneError
-      // })
       this.ruleForm.out_participant = JSON.parse(JSON.stringify(this.outParticipantGuids))
       this.outParticipantHandle()
       this.extVisible = false
@@ -1001,15 +994,17 @@ export default {
       insidePar.map(res=>{
          delete res.department_name
       })
-      let outPar = JSON.parse(JSON.stringify(this.ruleForm.out_participant))
+      
       // 外部参会人
-      outPar.map(res=>{
+      let outPar = JSON.parse(JSON.stringify(this.ruleForm.out_participant))
+      let outParArr = outPar.filter(res => res.name || res.email || res.phone)
+      outParArr.map(res=>{
          delete res.error
          delete res.nameError
          delete res.mailError
          delete res.phoneError
       })
-
+      
       // 设备
       let equ = []
       this.equipmentList.map(res=>{
@@ -1019,13 +1014,27 @@ export default {
             }
          })
       })
+
+      // 会议类型
+      if(this.ruleForm.meeting_type_id){
+         this.ruleForm.meeting_type_name = this.meetTypeList.filter(item => item.id == this.ruleForm.meeting_type_id )[0]['name']
+      }else{
+         this.ruleForm.meeting_type_name = ''
+      }
+
+      // 会议服务
+      this.ruleForm.service.map(res=>{
+         if(res.value == '') {
+            res.value = 0
+         }
+      })
       
       let dataJson = {
          id: this.ruleForm.id,
          title: this.ruleForm.title,	//是	string	主题
          is_secrecy: this.ruleForm.is_secrecy,	//是	number: '',	//是否保密会议 0公开 1保密
          inside_participant: insidePar, //	否	array	内部参会人数组
-         out_participant: outPar,//	否	array	外部参会人数组
+         out_participant: outParArr,//	否	array	外部参会人数组
          meeting_type_id: this.ruleForm.meeting_type_id || '',	//是	number	会议类型
          meeting_type_name: this.ruleForm.meeting_type_name || '',	//是	string	会议类型 名称
          service: this.ruleForm.service, //	否	array	茶点服务数组
@@ -1094,7 +1103,7 @@ export default {
       width: 100%;
       color: #F56C6C;
       font-size: 16px;
-      padding: 8px;
+      padding: 8px 16px;
       text-align: center;
       background-color: #FEF0F0;
     }
@@ -1223,6 +1232,20 @@ export default {
                   .warring{
                     color: #DD0000;
                   }
+              }
+              .rejections{
+                 color: #FA745E;
+              }
+              .refuse_reason{
+               display: inline-block;
+               width: 375px;
+               color: #69788A;
+               min-height: 34px;
+               line-height: 24px;
+               border-radius: 4px;
+               padding:5px 15px;
+               border-color: #E4E7ED;
+               background-color: #F5F7FA;
               }
               .edit-box-value{
                 color: #898FA8;

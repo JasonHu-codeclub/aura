@@ -2,6 +2,8 @@
   <el-dialog
       :visible.sync="dialogVisible"
       width="500px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
       :close="handleClose">
       <div class="cancel-tips">
         <div class="cancel-title">
