@@ -11,6 +11,15 @@ export function getSystemInfoApi (data) {
   })
 }
 
+// 获取网站相关信息(不需要登录)
+export function getWebInfoApi (data) {
+  return request({
+    url: "/get-web-info",
+    method: "get",
+    params: data
+  })
+}
+
 // 获取会议类型meeting_type/会议配置configuration/会议服务provide
 export function getMeetingConfigApi (data) {
     return request({

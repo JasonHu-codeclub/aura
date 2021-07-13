@@ -1340,9 +1340,12 @@ export default {
       .room-content-l{
         position: relative;
         flex: 1;
+        max-height: 230px;
         margin-right: 20px;
         padding-right: 20px;
+        overflow-y: auto;
         .room-list {
+            display: flex;
             margin-bottom: 16px;
             color: #58585D;
             font-size: 14px;
@@ -1369,6 +1372,7 @@ export default {
             border-radius: 12px;
             height: 160px;
             background: #F5F8FF;
+            display: none;
         }
       }
       .room-content-r{

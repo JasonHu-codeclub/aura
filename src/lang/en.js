@@ -234,7 +234,8 @@ export default {
     cancels: 'After canceling the meeting, ',
     confirms: 'meeting periods will be released',
     phoneEmailTips: 'Please input one of the phone / email information',
-    receiving: 'For receiving email / SMS notification'
+    receiving: 'For receiving email / SMS notification',
+    loginThird: 'Login with a third party account'
   },
   placeholder: {
     MeetingFloor: 'Floor',

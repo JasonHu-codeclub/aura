@@ -147,7 +147,7 @@ export default {
             name: ''
          }
       },
-      sexList: ['女', '男'],
+      sexList: ['','男', '女'],
       imgUrl: '',
       baseImg: require('../../assets/user.png'),
       isOpen: false, // 显示密码

@@ -5,7 +5,7 @@
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
-import { getSystemInfoApi } from '@/api/appoint'
+import { getSystemInfoApi, getWebInfoApi } from '@/api/appoint'
 import { loginApi, logoutApi, getInfoApi, getCodeApi, qyWechatLoginApi } from '@api/user'
 import { getToken, setToken, removeToken, setUserName, getUserName, removeUserName } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
@@ -21,7 +21,8 @@ const state = {
   isQrCode: false,
   qrCodeImage: '',
   systemLogo: '', // 系统信息
-  systemName: ''  // 系统名称 
+  systemName: '',  // 系统名称 
+  companyName: '数字办公室' // 公司名称
 }
 
 const mutations = {
@@ -49,6 +50,9 @@ const mutations = {
   SET_SYSTEMINFO (state, data) {
     state.systemLogo = data.front_system_inside_logo
     state.systemName = data.front_system_name
+  },
+  SET_COMPANYNAME (state, data) {
+    state.companyName = data
   }
 }
 
@@ -117,6 +121,20 @@ const actions = {
       })
     }).catch(error => {
       reject(error)
+    })
+  },
+  // 设置ico
+  icoSetting ({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      getWebInfoApi().then(res => {
+        let {front_system_name, front_system_title_logo} = res.data.info
+        if(res && res.meta.code=="RESP_OKAY"){
+          commit('SET_COMPANYNAME', front_system_name)
+        }
+        resolve(front_system_title_logo)
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
   // 登录方式

@@ -54,13 +54,14 @@
           </div>
         </div>
       </div>
-      <div class="login-content-name">{{$t('message.loginTitle')}}</div>
+      <div class="login-content-name">{{companyName}}</div>
     </div>
   </div>
 </template>
 <script>
 import { imgBaseUrl } from '@/utils/varible'
 import { getSystemInfoApi } from '@/api/user'
+import { mapGetters } from 'vuex'
 export default {
   components: {},
   data () {
@@ -81,14 +82,18 @@ export default {
         ]
       },
       redirect: undefined,
-      appid: 'ww63beae6c0cd72cf1',
+      appid: 'ww63beae6c0cd72cf1',// 企业号
+      wxAppid: 'wx633cde8a865d394e', // 应用appid
       agentid: '1000014',
       otherQuery: {},
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['companyName'])
+  },
   watch: {
     $route: {
+      
       handler: function (route) {
         const query = route.query
         if (query) {
@@ -118,10 +123,14 @@ export default {
     },
     // 第三方登录
     handleLoginType (type) {
+      const redirect_uri = 'https://alc01.aa-iot.com'
       if (type === 'qiye') { // 企业微信
-        const redirect_uri = 'https://alc01.aa-iot.com/sp-pcmeet/#/login'
         window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${this.appid}&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=STATE`
       } else if (type === 'wechat') { // 微信登录
+        window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${this.wxAppid}&redirect_uri=${encodeURIComponent(redirect_uri)}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect`
+                                // https://open.weixin.qq.com/connect/qrconnect?appid=wxbdc5610cc59c1631&redirect_uri=https%3A%2F%2Fpassport.yhd.com%2Fwechat%2Fcallback.do&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect
+                                // https://open.weixin.qq.com/connect/qrconnect?appid=wxbdc5610cc59c1631&redirect_uri=https%3A%2F%2Fpassport.yhd.com%2Fwechat%2Fcallback.do&response_type=code&scope=snsapi_login&state=3d6be0a4035d839573b04816624a415e#wechat_redirect
+                                
       }
     },
     getOtherQuery (query) {
@@ -164,17 +173,20 @@ export default {
   background-image: url("../../assets/login_bg.png");
   background-size: cover;
   background-repeat: no-repeat;
+  background-color: #0849b2;
   .login-content {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
-    width: 550px;
+    width: 38.2%;
+    max-width: 730px;
+    min-width: 400px;
     background: rgba(13, 80, 188 ,.7);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 2px 0 32px #191633;
+    box-shadow: 10px 0 32px #231f45;
     .login-content-logo{
       position: absolute;
       top: 5%;

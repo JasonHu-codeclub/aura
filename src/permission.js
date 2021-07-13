@@ -15,10 +15,15 @@ import { getToken } from './utils/auth'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/page-title'
-
+(async function (){
+  // 动态设置favicon.ico
+  let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      let icoUrl = await store.dispatch('user/icoSetting')
+      link.href = icoUrl
+      document.getElementsByTagName('head')[0].appendChild(link);
+})()
 // 白名单,不需要登录的路由路径
 const whiteList = ['/login']
-
 router.beforeEach(async (to, from, next) => {
   // 进度条开始
   NProgress.start()
