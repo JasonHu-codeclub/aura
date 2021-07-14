@@ -81,7 +81,8 @@ export default {
     completeService: 'complete',
     confirmationService: 'confirm',
     modify: 'modify',
-    modifyUserImg: 'Change your Avatar'
+    modifyUserImg: 'Change your Avatar',
+    leave: 'leave'
   },
   message: {
     loginTitle: 'Digital office space',
@@ -235,7 +236,10 @@ export default {
     confirms: 'meeting periods will be released',
     phoneEmailTips: 'Please input one of the phone / email information',
     receiving: 'For receiving email / SMS notification',
-    loginThird: 'Login with a third party account'
+    loginThird: 'Login with a third party account',
+    LeaveConfirm: 'Are you sure to leave the current page?',
+    changesConfirm: 'Your changes may not be saved.',
+    LeaveCurrentPage: 'You are editing information. Do you want to save the content before leaving'
   },
   placeholder: {
     MeetingFloor: 'Floor',
@@ -264,10 +268,11 @@ export default {
     keyword: 'keyword',
     selectServe: 'Please choose tea service in meeting room',
     selectEquipment: 'Please select conference room equipment service',
-    enterReason: 'Please enter the reason for rejection'
+    enterReason: 'Please enter the reason for rejection',
+    inputPassword: 'Please input a password'
   },
   tip: {
-    userNameNotEmpty: 'Username can not be empty',
+    userNameNotEmpty: 'Account number cannot be empty',
     pwdNotEmpty: 'password can not be blank',
     codeNotEmpty: 'Company code cannot be empty',
     loginSuccess: 'login successful',
@@ -314,7 +319,8 @@ export default {
     conflictDec: 'Conflict',
     confirmService: 'After confirmation, you will need to service this meeting',
     completed: 'Please confirm if this conference service has been completed',
-    successful: 'Operation successful'
+    successful: 'Operation successful',
+    leave: 'leave'
   },
   weeks: {
     Monday: 'Monday',

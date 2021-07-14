@@ -22,7 +22,8 @@ const state = {
   qrCodeImage: '',
   systemLogo: '', // 系统信息
   systemName: '',  // 系统名称 
-  companyName: '数字办公室' // 公司名称
+  companyName: '数字办公室', // 公司名称
+  companyLogo: '' // 公司名称
 }
 
 const mutations = {
@@ -53,6 +54,9 @@ const mutations = {
   },
   SET_COMPANYNAME (state, data) {
     state.companyName = data
+  },
+  SET_COMPANYLOGO(state, data) {
+    state.companyLogo = data
   }
 }
 
@@ -123,12 +127,13 @@ const actions = {
       reject(error)
     })
   },
-  // 设置ico
+  // 设置ico, 登录页公司名称，logo
   icoSetting ({ commit }, data) {
     return new Promise((resolve, reject) => {
       getWebInfoApi().then(res => {
-        let {front_system_name, front_system_title_logo} = res.data.info
+        let {front_system_inside_logo, front_system_name, front_system_title_logo} = res.data.info
         if(res && res.meta.code=="RESP_OKAY"){
+          commit('SET_COMPANYLOGO', front_system_inside_logo)
           commit('SET_COMPANYNAME', front_system_name)
         }
         resolve(front_system_title_logo)

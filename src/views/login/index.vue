@@ -9,14 +9,16 @@
 <template>
   <div id="login">
     <div class="login-content">
-      <h3 class="login-content-logo" :style="{backgroundImage: 'url(' + host + baseImg + ')'}"></h3>
+      <h3 class="login-content-logo" >
+        <img :src="host + companyLogo" class="login-content-logo-img" alt="">
+      </h3>
       <div class="login-content-box">
         <div class="login-content-form">
           <div class="login-content-divider">
             <span class="divider-text">使用第三方账号登录</span>
           </div>
           <div class="login-content-type">
-            <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('wechat')"></span>
+            <!-- <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('wechat')"></span> -->
             <span class="login-content-type-icon login-content-type-weixin-2" @click="handleLoginType('qiye')" ></span>
           </div>
           <div class="login-content-divider">
@@ -31,8 +33,7 @@
               hide-required-asterisk
             >
                 <el-form-item label="" prop="username">
-                  <!-- <input  class="myinput"  v-model="ruleForm.username"> -->
-                  <el-input placeholder="请输入用户名" v-model="ruleForm.username">
+                  <el-input placeholder="请输入账号" v-model="ruleForm.username">
                     <template slot="prepend"><svg-icon icon-class="username" slot="label" /></template>
                   </el-input>
                 </el-form-item>
@@ -89,7 +90,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['companyName'])
+    ...mapGetters(['companyLogo', 'companyName'])
   },
   watch: {
     $route: {
@@ -190,13 +191,15 @@ export default {
     .login-content-logo{
       position: absolute;
       top: 5%;
-      width: 80px;
       height: 80px;
       color: #88B6FF;
       font-size: 18px;
       z-index: 1000;
       background-size: contain;
       background-repeat: no-repeat;
+      .login-content-logo-img{
+        height: 100%;
+      }
     }
     .login-content-name {
       position: absolute;

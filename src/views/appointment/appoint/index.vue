@@ -1048,9 +1048,11 @@ export default {
       return time.getTime() > startDate + 24 * 60 * 60 * 1000 * 179 || time.getTime() < startDate - 24 * 60 * 60 * 1000
     },
   },
-  // 销毁定时器
   beforeDestroy () {
+    // 销毁定时器
     clearInterval(this.timer)
+    // 注销onresizes事件
+    window.onresize = null;
   }
 }
 </script>
@@ -1094,6 +1096,7 @@ export default {
       }
       /deep/.el-input, .el-input__inner{
         width: 180px;
+        padding-right: 10px;
       }
     }
     .margin_right{

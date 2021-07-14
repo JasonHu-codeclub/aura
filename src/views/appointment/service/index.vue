@@ -121,7 +121,7 @@
             show-overflow-tooltip
           >
            <template slot-scope="scope">
-             {{scope.row.title}}
+             <span :class="{color_tips: scope.row.warning}">{{scope.row.title}}</span>
            </template>
           </el-table-column>
           <!-- 会议时间 -->
@@ -133,7 +133,7 @@
             show-overflow-tooltip
             >
             <template slot-scope="scope">
-              <span :class="{color_tips: scope.row.warning}">{{scope.row.satrtTime}}<br>{{scope.row.endTime}}</span>
+              <span>{{scope.row.satrtTime}}<br>{{scope.row.endTime}}</span>
             </template>
           </el-table-column>
           <!-- 会议室 -->
@@ -149,7 +149,7 @@
             align="center"
           >
             <template slot-scope="scope">
-              <span >{{statusStr[scope.row.status]}}</span>
+              <span :class="{color_tips: scope.row.warning}">{{statusStr[scope.row.status]}}</span>
             </template>
           </el-table-column>
           <!-- 参会人数 -->
@@ -406,8 +406,8 @@ export default {
               let start = dayjs(v.satrtTime).valueOf()
               let end = dayjs().valueOf()// 当前时间戳
               let step = 30*60*1000 // 30分钟
-              let diff = end - start
-              if(0 <= diff && diff <= step ){   
+              let diff = start - end
+              if(0 <= diff && diff <= step && v.status === 2 ){   
                   v.warning = true
               }
             }
@@ -481,6 +481,10 @@ export default {
       this.cancelContent = ''
       this.isShowInput = false
     }
+  },
+  beforeDestroy () {
+    // 注销onresizes事件
+    window.onresize = null;
   },
   created () { },
   beforeCreate () { },

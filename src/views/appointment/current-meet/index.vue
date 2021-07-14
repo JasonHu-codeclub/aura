@@ -11,7 +11,11 @@
 import meetingTemplate from './components/meet-list'
 export default {
   name: 'current',
-  components: { meetingTemplate }
+  components: { meetingTemplate },
+  beforeDestroy () {
+    // 注销onresizes事件
+    window.onresize = null;
+  }
 }
 </script>
 

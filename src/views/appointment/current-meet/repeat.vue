@@ -289,6 +289,10 @@ export default {
         }
       })
     }
+  },
+  beforeDestroy () {
+    // 注销onresizes事件
+    window.onresize = null;
   }
 }
  </script>

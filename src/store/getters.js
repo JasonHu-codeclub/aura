@@ -23,6 +23,9 @@ const getters = {
   qrCodeImage: state => state.app.qrCodeImage,
   systemLogo: state => state.user.systemLogo,
   systemName: state => state.user.systemName,
-  companyName: state => state.user.companyName
+  companyName: state => state.user.companyName,
+  companyLogo: state => state.user.companyLogo,
+  isCloseTag: state => state.tagsView.isCloseTag,
+  isCloseTagSave: state => state.tagsView.isCloseTagSave
 }
 export default getters

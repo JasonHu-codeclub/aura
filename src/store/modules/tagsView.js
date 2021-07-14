@@ -8,7 +8,9 @@
 
 const state = {
   visitedViews: [],
-  cachedViews: []
+  cachedViews: [],
+  isCloseTag: false,
+  isCloseTagSave: false
 }
 
 const mutations = {
@@ -73,6 +75,12 @@ const mutations = {
         break
       }
     }
+  },
+  IS_CLOSE_TAG:(state, view) => {
+    state.isCloseTag = view
+  },
+  IS_CLOSE_TAG_save: (state, view) => {
+    state.isCloseTagSave = view
   }
 }
 
@@ -156,9 +164,14 @@ const actions = {
       resolve([...state.cachedViews])
     })
   },
-
   updateVisitedView({ commit }, view) {
     commit('UPDATE_VISITED_VIEW', view)
+  },
+  setCloseTagView({ commit }, view) {
+    commit('IS_CLOSE_TAG', view)
+  },
+  setCloseTagViewSave({ commit }, view) {
+    commit('IS_CLOSE_TAG_save', view)
   }
 }
 

@@ -436,6 +436,10 @@ export default {
       this.cancelContent = ''
     }
   },
+  beforeDestroy () {
+    // 注销onresizes事件
+    window.onresize = null;
+  },
   created () { },
   beforeCreate () { },
   beforeMount () { },
@@ -469,6 +473,7 @@ export default {
       /deep/.el-input__inner{
         width: 180px;
         height: 36px;
+        padding-right: 10px;
       }
       .choose-date{
         width: 260px;

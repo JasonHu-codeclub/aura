@@ -33,7 +33,7 @@
       </router-link>
     </scroll-pane>
     <!-- 自定义右键菜单 -->
-    <ul
+    <!-- <ul
       v-show="visible"
       :style="{ left: left + 'px', top: top + 'px' }"
       class="contextmenu"
@@ -44,16 +44,19 @@
       </li>
       <li @click="closeOthersTags">关闭其他</li>
       <li @click="closeAllTags(selectedTag)">关闭所有</li>
-    </ul>
+    </ul> -->
+    <!-- 切换弹窗 -->
+    <dialog-page-close ref="dialogPage" @confirmHandling="saveHanld" @cancelHandling="closeTags"/>
   </div>
 </template>
 <script>
 import { generateTitle } from '@/utils/i18n'
 import ScrollPane from './ScrollPane'
 import path from 'path'
-
+import dialogPageClose from '@/components/dialogPageClose'
+import bus from '@/utils/bus'
 export default {
-  components: { ScrollPane },
+  components: { ScrollPane, dialogPageClose },
   data () {
     return {
       visible: false,
@@ -85,6 +88,7 @@ export default {
     }
   },
   mounted () {
+    bus.$on('closeTagHanld', this.closeTags)
     this.initTags()
     this.addTags()
   },
@@ -161,13 +165,39 @@ export default {
       })
     },
     // 关闭当前tag的页面
+    // closeSelectedTag (view) {
+    //   this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
+    //     if (this.isActive(view)) {
+    //       this.toLastView(visitedViews, view)
+    //     }
+    //   })
+    // },
+
+    // 关闭当前tag的页面
     closeSelectedTag (view) {
+      this.viewData = view
+      if(view.name == "Edit"){
+        this.$refs.dialogPage.dialogVisibleLive = true
+      }else{
+        this.closeTags()    
+      }
+    },
+    // 离开前保存
+    saveHanld() {
+      bus.$emit('saveInfo', 'closeTag')
+    },
+    // 关闭当前tag的页面
+    closeTags() {
+      let view = this.viewData 
+      this.$refs.dialogPage.dialogVisibleLive = false
+      this.$store.dispatch('tagsView/setCloseTagView', true)// 标记关闭方式
       this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
           this.toLastView(visitedViews, view)
         }
       })
     },
+
     // 关闭其他页面
     closeOthersTags () {
       this.$router.push(this.selectedTag)
@@ -224,6 +254,10 @@ export default {
     handleScroll () {
       this.closeMenu()
     }
+  },
+  beforeDestroy() {
+    //组件销毁前需要解绑事件。否则会出现重复触发事件的问题
+    bus.$off('closeTagHanld');
   }
 }
 </script>

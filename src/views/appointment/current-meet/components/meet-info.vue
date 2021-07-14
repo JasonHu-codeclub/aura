@@ -506,9 +506,10 @@ import {
    getEquipmentApi,
    saveMeetEditApi
 } from '@/api/currentMeet'
+import bus from '@/utils/bus'
 import dayjs from "dayjs";
 export default {
-  data() {
+   data() {
      return {
         formLoading: false,
         saveLoading: false,
@@ -556,7 +557,7 @@ export default {
         services: '/service/service_list'
       },
       menuStr: '',
-      bgclass: ''
+      bgclass: '',
      }
   },
   props: {
@@ -578,9 +579,25 @@ export default {
    this.getDepartmentInfo()
    // 设备
    this.getEquipmentInfo()
-   // 注销onresizes事件
-    window.onresize = null;
+
+   // 关闭或刷新页面时提示用户保存
+   let _this = this
+   window.onbeforeunload = function (e) {
+      if (_this.$route.name == "Edit") {
+         e = e || window.event;
+         // 兼容IE8和Firefox 4之前的版本
+         if (e) {
+         e.returnValue = '确定离开当前页面吗？';
+         }
+         // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
+         return '系统可能不会保存您所做的更改。';
+      } else {
+         window.onbeforeunload = null
+      }
+   };
    
+   // 关闭标签保存会议信息
+   bus.$on('saveInfo', this.save) 
   },
   methods: {
      // 获取详情
@@ -981,7 +998,7 @@ export default {
 
 
    // 保存编辑
-   save() {
+   save(types) {
       if(!this.ruleForm.title) {
         this.$message({
            message: '标题不能为空',
@@ -1049,7 +1066,16 @@ export default {
                message: this.$t('tip.infoEditSuccess'),
                type: 'success'
             })
-            this.$router.push('/current')
+            if(types=='leavePage'){
+               this.$emit('saveInfo')
+            }else if(types=='closeTag'){
+               bus.$emit('closeTagHanld')
+            }else{
+               this.$emit('changeIsSave', true)
+               this.$store.dispatch('tagsView/delView', this.$route)
+               this.$router.replace('/current')
+            }
+            
          }else{
             this.$message({
                message: res.meta.message,
@@ -1057,6 +1083,10 @@ export default {
             })
          }
       })
+   },
+   // 离开前保存编辑
+   saveForm() {
+     this.save('leavePage')
    },
    
    setMeetTime(start, end, type){
@@ -1075,6 +1105,10 @@ export default {
         this.equipmentList = res.data.equipments
      })
    }
+  },
+  beforeDestroy() {
+      //组件销毁前需要解绑事件。否则会出现重复触发事件的问题
+      bus.$off('saveInfo');
   }
 }
 </script>

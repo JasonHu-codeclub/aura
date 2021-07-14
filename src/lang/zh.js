@@ -80,7 +80,8 @@ export default {
     completeService: '完成服务',
     confirmationService: '确认服务',
     modify: '修改',
-    modifyUserImg: '修改头像'
+    modifyUserImg: '修改头像',
+    leave: '离开'
   },
   message: {
     loginTitle: 'XXX数字办公空间',
@@ -235,7 +236,10 @@ export default {
     confirms: '场会议时间段将被释放',
     phoneEmailTips: '电话/邮箱信息，请务必输入其中一项',
     receiving: '用于接收邮件/短信通知',
-    loginThird: '使用第三方账号登录'
+    loginThird: '使用第三方账号登录',
+    LeaveConfirm: '确定离开当前页面吗？',
+    changesConfirm: '系统可能不会保存您所做的更改。',
+    LeaveCurrentPage: '您正在编辑信息中，离开前是否保存内容'
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',
@@ -267,10 +271,11 @@ export default {
     endDate: '结束时间',
     selectServe: '请选择会议室茶点服务',
     selectEquipment: '请选择会议室设备服务',
-    enterReason: '请输入拒绝原因'
+    enterReason: '请输入拒绝原因',
+    inputPassword: '请输入密码',
   },
   tip: {
-    userNameNotEmpty: '用户名不能为空',
+    userNameNotEmpty: '账号不能为空',
     pwdNotEmpty: '密码不能为空',
     codeNotEmpty: '公司代码不能为空',
     loginSuccess: '登录成功',
@@ -317,7 +322,8 @@ export default {
     conflictDec: '冲突',
     confirmService: '确认后，您将需要为此会议服务',
     completed: '请确认此会议服务是否已完成',
-    successful: '操作成功'
+    successful: '操作成功',
+    leave: '离开'
   },
   weeks: {
     Monday: '周一',
