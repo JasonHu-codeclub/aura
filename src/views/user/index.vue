@@ -271,6 +271,7 @@ export default {
     display: flex;
     justify-content: space-between;
     padding-left: 30px;
+    padding-right: 120px;
       .user-list-left {
          flex: 1;
          min-width: 300px;
