@@ -15,11 +15,15 @@ import { getToken } from './utils/auth'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/page-title'
+import { imgBaseUrl } from '@/utils/varible'
+import i18n from './lang'
 (async function (){
   // 动态设置favicon.ico
   let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
       let icoUrl = await store.dispatch('user/icoSetting')
-      link.href = icoUrl
+      link.href = imgBaseUrl + icoUrl
+      link.rel="icon"
+      document.title = store.getters.companyName
       document.getElementsByTagName('head')[0].appendChild(link);
 })()
 // 白名单,不需要登录的路由路径
@@ -28,7 +32,7 @@ router.beforeEach(async (to, from, next) => {
   // 进度条开始
   NProgress.start()
   // 动态设置标签页的title
-  document.title = getPageTitle(to.meta.title)
+  document.title = getPageTitle(i18n.t(to.meta.title))
   // 1.获得已经登录的包含用户信息的标识
   const hasToken = getToken()
   // 2.判断登录情况

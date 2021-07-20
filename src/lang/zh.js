@@ -1,3 +1,4 @@
+import zhLocale from "element-ui/lib/locale/lang/zh-CN"
 export default {
   route: {
     home: '会议预约',
@@ -275,8 +276,8 @@ export default {
     inputPassword: '请输入密码',
   },
   tip: {
-    userNameNotEmpty: '账号不能为空',
-    pwdNotEmpty: '密码不能为空',
+    userNameNotEmpty: '请输入账号',
+    pwdNotEmpty: '请输入密码',
     codeNotEmpty: '公司代码不能为空',
     loginSuccess: '登录成功',
     conflictHead: '该会议室此时间段已有{count}场申请未审批,',
@@ -354,7 +355,8 @@ export default {
     October: '十月', 
     November: '十一月',
     December: '十二月'
-  }
+  },
+  ...zhLocale
   
 
   // login: {

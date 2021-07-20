@@ -7,11 +7,11 @@
  */
 import { getSystemInfoApi, getWebInfoApi } from '@/api/appoint'
 import { loginApi, logoutApi, getInfoApi, getCodeApi, qyWechatLoginApi } from '@api/user'
-import { getToken, setToken, removeToken, setUserName, getUserName, removeUserName } from '@/utils/auth'
+import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import qs from 'querystring'
 const state = {
-  token: getToken(),//setUserName(), // 用户标识
+  token: getToken(), // 用户标识
   username: '',// 用户名称
   avatar: '', // 用户头像
   userId: '', // 用户id
@@ -23,7 +23,7 @@ const state = {
   systemLogo: '', // 系统信息
   systemName: '',  // 系统名称 
   companyName: '数字办公室', // 公司名称
-  companyLogo: '' // 公司名称
+  companyLogo: '' // 公司logo
 }
 
 const mutations = {

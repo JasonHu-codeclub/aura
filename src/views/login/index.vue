@@ -94,7 +94,6 @@ export default {
   },
   watch: {
     $route: {
-      
       handler: function (route) {
         const query = route.query
         if (query) {
@@ -144,12 +143,7 @@ export default {
     },
   },
   mounted () {
-    // 获取系统前台信息
-    // getSystemInfoApi().then(res=>{
-    //   if(res){
-
-    //   }
-    // })
+    
   },
   created() {
     /* 存在code,第三方登录 */

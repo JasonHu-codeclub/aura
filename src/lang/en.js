@@ -1,3 +1,4 @@
+import enLocale from 'element-ui/lib/locale/lang/en'
 export default {
   
   route: {
@@ -272,8 +273,8 @@ export default {
     inputPassword: 'Please input a password'
   },
   tip: {
-    userNameNotEmpty: 'Account number cannot be empty',
-    pwdNotEmpty: 'password can not be blank',
+    userNameNotEmpty: 'Please enter the account number',
+    pwdNotEmpty: 'Please input a password',
     codeNotEmpty: 'Company code cannot be empty',
     loginSuccess: 'login successful',
     conflictHead: 'There is already {count} application for this meeting room that has not been approved during this time period, ,',
@@ -351,7 +352,8 @@ export default {
     October: 'October', 
     November: 'November',
     December: 'December'
-  }
+  },
+  ...enLocale
 
 }
 

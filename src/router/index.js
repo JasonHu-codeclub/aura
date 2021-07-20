@@ -64,7 +64,7 @@ export const asyncRoutes = [
       component: () => import('@views/appointment/appoint'),
       name: 'Home',
       meta: {
-        title: 'home',
+        title: 'route.home',
         icon: 'appo',
         affix: true
       }
@@ -79,7 +79,7 @@ export const asyncRoutes = [
         component: () => import('@views/appointment/current-meet'),
         name: 'CurrentMeet',
         meta: {
-          title: 'current',
+          title: 'route.current',
           icon: 'current',
           affix: false
         }
@@ -103,7 +103,7 @@ export const asyncRoutes = [
           name: 'Repeat',
           hidden: true,
           meta: {
-            title: 'repeatMeet',
+            title: 'route.repeatMeet',
             affix: false,
             activeMenu: '/current/current_list'
           }
@@ -115,7 +115,7 @@ export const asyncRoutes = [
           name: 'Edit',
           hidden: true,
           meta: {
-            title: 'editMeet',
+            title: 'route.editMeet',
             affix: false,
             activeMenu: '/current/current_list'
           }
@@ -132,7 +132,7 @@ export const asyncRoutes = [
       component: () => import('@views/appointment/current-meet/details'),
       name: 'Details',
       meta: {
-        title: 'detailsMeet',
+        title: 'route.detailsMeet',
         affix: false,
         activeMenu: ''
       },
@@ -149,7 +149,7 @@ export const asyncRoutes = [
       component: () => import('@views/appointment/history-record'),
       name: 'HistoryRecord',
       meta: {
-        title: 'history',
+        title: 'route.history',
         icon: 'history',
         affix: false
       }
@@ -165,7 +165,7 @@ export const asyncRoutes = [
       component: () => import('@views/appointment/overview'),
       name: 'overview',
       meta: {
-        title: 'overview',
+        title: 'route.overview',
         icon: 'overview',
         affix: false
       }
@@ -181,7 +181,7 @@ export const asyncRoutes = [
       component: () => import('@views/appointment/approve'),
       name: 'Approve',
       meta: {
-        title: 'Approve',
+        title: 'route.Approve',
         icon: 'approve',
         affix: false,
         role: 'is_belong_approve' // 权限
@@ -194,7 +194,7 @@ export const asyncRoutes = [
       name: 'Conflict',
       hidden: true,
       meta: {
-        title: 'conflict',
+        title: 'route.conflict',
         affix: false,
         activeMenu: '/approve/approve_list'
       }
@@ -210,7 +210,7 @@ export const asyncRoutes = [
       component: () => import('@views/appointment/service'),
       name: 'service',
       meta: {
-        title: 'service',
+        title: 'route.service',
         icon: 'service',
         affix: false,
         role: 'is_belong_service' // 权限
@@ -227,7 +227,7 @@ export const asyncRoutes = [
       component: () => import('@views/user'),
       name: 'User',
       meta: {
-        title: 'user',
+        title: 'route.user',
         affix: false
       },
       hidden: true
