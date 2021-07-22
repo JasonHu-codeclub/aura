@@ -503,7 +503,7 @@ import {
    getDepartmentApi,
    getMeetingTypeApi,
    getServiceApi,
-   getEquipmentApi,
+   getRoomEquipmentApi,
    saveMeetEditApi
 } from '@/api/currentMeet'
 import bus from '@/utils/bus'
@@ -577,8 +577,7 @@ export default {
    this.getMeetingTypeInfo()
    // 获取部门信息
    this.getDepartmentInfo()
-   // 设备
-   this.getEquipmentInfo()
+   
 
    // 关闭或刷新页面时提示用户保存
    let _this = this
@@ -663,6 +662,8 @@ export default {
          
          // 外部参会人
          this.outParticipantHandle()
+         // 设备
+         this.getEquipmentInfo(this.ruleForm.meeting_room_id)
          
          this.formLoading = false
 
@@ -1099,9 +1100,9 @@ export default {
         this.meetTypeList = res.data.meeting_type
      })
    },
-   // 设备信息
-   getEquipmentInfo() {
-     getEquipmentApi().then(res => {
+   // 获取当前会议室设备信息
+   getEquipmentInfo(roomId) {
+     getRoomEquipmentApi({id: roomId }).then(res => {
         this.equipmentList = res.data.equipments
      })
    }

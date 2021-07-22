@@ -2,10 +2,6 @@
   冲突列表
   */
 
- /**
-  审批会议主页面
-  */
-
  <template>
   <div class="app-wrap invitation-wrap">
     <!-- 搜索 -->
@@ -131,9 +127,9 @@
             align="center"
           >
           <template slot-scope="scope">
-            <!-- <span class="part_num">{{scope.row.attendence_number}}</span> -->
-
+            <span v-if="scope.row.is_secret">*</span>
             <el-tooltip 
+              v-else
               :disabled="!scope.row.attendence_number" 
               placement="top" 
               effect="light" 
@@ -286,13 +282,24 @@ export default {
       this.dataLoading = true
       meetingShowApi(params).then(res=>{
         let meetings = res.data.meeting
-        meetings.map( v => {
-          v.satrtTime = `${v.date} ${v.start}`
-          v.endTime = `${v.end_date} ${v.end}`
-          v.categoryStr= v.category == 2 ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）` : this.categoryList[v.category]
-        })
-        this.myMeetingInfo = meetings
-        this.total = res.data.total// 总条数 
+        if(res.meta.code=='RESP_OKAY'){
+          meetings.map( v => {
+            // 会议时间
+            v.satrtTime = `${v.date} ${v.start}`
+            v.endTime = `${v.end_date} ${v.end}`
+            // 是否保密
+            if(v.is_secret){
+              v.title = '*'
+              v.categoryStr = '*'
+              v.meeting_room_name = '*'
+            }else{
+              v.categoryStr= v.category == 2 ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）` : this.categoryList[v.category]
+            }
+          })
+          this.myMeetingInfo = meetings
+          this.total = res.data.total// 总条数   
+        }
+        
         this.dataLoading = false
       })
       
