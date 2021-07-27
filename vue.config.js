@@ -18,7 +18,6 @@ function resolve (dir) {
 
 // 获取时间戳(保证不会版本重复)
 const Timestamp = new Date().getTime();
-
 module.exports = {
   publicPath: '/sp-pcmeet',
   outputDir: 'dist',

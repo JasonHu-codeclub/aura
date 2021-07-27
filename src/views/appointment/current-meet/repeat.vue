@@ -6,15 +6,6 @@
     <!-- 搜索 -->
     <div class="filter">
       <div class="filter-item">
-        <!-- 参会人员 -->
-        <!-- <div class="filter-item-box">
-          <el-input type="text" 
-          v-model="searchForm.member" 
-          size="mini" 
-          :placeholder="$t('placeholder.participants')" 
-          @clear="getMeetingRepet" 
-          clearable></el-input>
-        </div> -->
         <!-- 日期 -->
         <div class="filter-item-box">
           <span>{{$t('labe.date')}}：</span>
@@ -101,7 +92,17 @@
             show-overflow-tooltip
           >
            <template slot-scope="scope">
-             <span class="people-num">{{scope.row.participant}}{{$t('message.people')}}</span>
+             <!-- <span class="people-num">{{scope.row.participant}}{{$t('message.people')}}</span> -->
+             <el-tooltip 
+             :disabled="!scope.row.participant" 
+             placement="top" 
+             effect="light" 
+             :open-delay="350"
+             popper-class="tooltip-per"
+            >
+              <div slot="content">{{personnel}}</div>
+              <span :class="{'people-num':scope.row.participant>0}">{{scope.row.participant||'/'}}</span>
+            </el-tooltip>
              </template>
           </el-table-column>
           <!-- 操作 -->
@@ -114,19 +115,24 @@
               <el-button 
                 v-if="!isInvitation"
                 type="text" 
-                :disabled="scope.row.status == 1"
+                :disabled="scope.row.status == 1||scope.row.can_release == 0"
                 @click="deleteMeeting(scope.row)"
                 >
                 {{$t('button.cancel')}}
               </el-button>
-              <!-- <el-button type="text"  @click="detailsMeeting(scope.row)">{{$t('button.details')}}</el-button> -->
+              <el-button 
+                type="text"  
+                @click="detailsMeeting(scope.row)"
+                >
+                {{$t('button.details')}}
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
         <!-- 数据统计 -->
         <div class="repeat-statistics" >
            <div class="repeat-box">
-             <span class="repeat-box-value">{{$t('message.total')}}<i class="blue"> {{repeInfo.total}} </i>{{repeInfo.meetTotal}}</span>
+             <span class="repeat-box-value">{{$t('message.total')}}<i class="blue"> {{repeInfo.total_meetings}} </i>{{repeInfo.meetTotal}}</span>
            </div>
            <div class="repeat-box">
              <span class="repeat-box-label">{{$t('message.DateRange')}}：</span>
@@ -200,6 +206,7 @@ export default {
           // return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
         }
       },
+      personnel: ''
     }
   },
   mounted () { 
@@ -240,6 +247,9 @@ export default {
         this.dataLoading = false
         let data = res.data.meeting
         this.myMeetingInfo = data.meetings     // 列表数据
+        data.participant.map( item => {
+          this.personnel = this.personnel ?  this.personnel + ',' + item.user.nickname : item.user.nickname
+        })
         this.repeInfo = data // 列表底部数据总览
         this.total = data.total        // 总条数
         this.repeInfo.meetTotal = `${this.$t('message.Company')}，${data.is_finished}${this.$t('message.meetOver')}`
@@ -281,11 +291,10 @@ export default {
     // 会议详情
     detailsMeeting(row) {
       this.$router.push({
-        path: '/detailsMeet',
+        path: '/details' ,
         query: {
-          menu: this.$route.query.menu,
-          guid: row.guid,
-          outEventId : row.out_event_id
+          menu: 'current',
+          id: row.id
         }
       })
     }
@@ -349,6 +358,7 @@ export default {
       color: #56697D;
       border-radius: 20px;
       font-size: 12px;
+      cursor: pointer;
     }
   }
 
@@ -399,5 +409,16 @@ export default {
     }
   }
 
+}
+</style>
+<style lang="less">
+.tooltip-per{
+  max-width: 340px;
+  div:first-child{
+    font-size: 12px;
+    max-height: 80px;
+    overflow-y: auto;
+    line-height: 20px;
+  }
 }
 </style>

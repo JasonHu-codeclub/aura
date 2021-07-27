@@ -15,7 +15,7 @@
       <div class="login-content-box">
         <div class="login-content-form">
           <div class="login-content-divider">
-            <span class="divider-text">使用第三方账号登录</span>
+            <span class="divider-text">第三方账号登录</span>
           </div>
           <div class="login-content-type">
             <!-- <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('wechat')"></span> -->
