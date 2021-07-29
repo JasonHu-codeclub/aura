@@ -242,6 +242,7 @@ export default {
         start_date: this.chooseDate ? this.chooseDate[0] : '',
         end_date: this.chooseDate ? this.chooseDate[1] : '',
       }
+      this.personnel = ''
       this.dataLoading = true
       getRepeatDetailApi(params).then(res=>{
         this.dataLoading = false
@@ -282,6 +283,9 @@ export default {
             message: this.$t('tip.meetCancelled'),
             type: 'success'
           })
+          if(this.myMeetingInfo.length == 1 && this.paginationQuery.page > 1){
+            this.paginationQuery.page--
+          }
           this.getMeetingRepet()
           this.$refs.cancel.dialogVisible = false // 弹框
         }
