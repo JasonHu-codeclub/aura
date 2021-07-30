@@ -249,10 +249,10 @@ export default {
         let data = res.data.meeting
         this.myMeetingInfo = data.meetings     // 列表数据
         data.participant.map( item => {
-          this.personnel = this.personnel ?  this.personnel + ',' + item.user.nickname : item.user.nickname
+          this.personnel = this.personnel ?  this.personnel + ',' + item.name || '' : item.name || ''
         })
         this.repeInfo = data // 列表底部数据总览
-        this.total = data.total        // 总条数
+        this.total = data.total // 总条数
         this.repeInfo.meetTotal = `${this.$t('message.Company')}，${data.is_finished}${this.$t('message.meetOver')}`
         this.repeInfo.DateRange = `${data.start} 至 ${data.end}`
         this.repeInfo.categoryStr = `${this.category[data.category]}（${this.repetitionType[data.repetition_type]}）`
