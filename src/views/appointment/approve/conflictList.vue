@@ -533,7 +533,7 @@ export default {
 </style>
 <style lang="less">
 .tooltip-per{
-  max-width: 340px;
+  max-width: 348px;
   div:first-child{
     font-size: 12px;
     max-height: 80px;

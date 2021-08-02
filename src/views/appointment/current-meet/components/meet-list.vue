@@ -348,7 +348,7 @@ export default {
         v.endTime = `${v.end_date} ${v.end}`
         v.categoryStr= v.category == 2 ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）` : this.categoryList[v.category]
         v.participant_users.map( item => {
-          v.personnel = v.personnel ?  v.personnel + ',' + item.nickname : item.nickname
+          v.personnel = v.personnel ?  v.personnel + '，' + item.nickname : item.nickname
         })
       })
       this.myMeetingInfo = meetings
@@ -603,7 +603,7 @@ export default {
 </style>
 <style lang="less">
 .tooltip-per{
-  max-width: 340px;
+  max-width: 348px;
   div:first-child{
     font-size: 12px;
     max-height: 80px;
