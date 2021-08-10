@@ -3,7 +3,10 @@ import axios from 'axios'
 import { getHost } from './tool'
 import { getToken } from './auth'
 import store from '../store'
-import { Notification, message } from 'element-ui'
+import { Notification } from 'element-ui'
+import {
+  message
+} from '@/utils/resetMessage';
 
 // 创建axios实例
 const service = axios.create({
@@ -35,6 +38,7 @@ service.interceptors.response.use(
     // return response.data
     /* 常规请求 */
     const { data, meta: { code, message } } = response.data
+    
     if (code !== 'RESP_OKAY') {
       return Promise.reject('error')
     } else {
@@ -50,6 +54,7 @@ service.interceptors.response.use(
     });
     // 未经授权,回到登录页
     if (error.response.data&&error.response.data.meta.code === 'SECU_0001') {
+      
       return
       store.dispatch('user/resetToken').then(() => {
         location.reload()

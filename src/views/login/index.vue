@@ -9,8 +9,8 @@
 <template>
   <div id="login">
     <div class="login-content">
-      <h3 class="login-content-logo" >
-        <img :src="host + companyLogo" class="login-content-logo-img" alt="">
+      <h3 class="login-content-logo">
+        <img :src="host + companyLogo" class="login-content-logo-img" alt="" />
       </h3>
       <div class="login-content-box">
         <div class="login-content-form">
@@ -19,146 +19,195 @@
           </div>
           <div class="login-content-type">
             <!-- <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('wechat')"></span> -->
-            <span class="login-content-type-icon login-content-type-weixin-2" @click="handleLoginType('qiye')" ></span>
+            <span
+              class="login-content-type-icon login-content-type-weixin-2"
+              @click="handleLoginType('qiye')"
+            ></span>
           </div>
           <div class="login-content-divider">
             <span class="divider-text">使用账号密码登录</span>
           </div>
           <div class="login-form">
-              <el-form
+            <el-form
               ref="ruleForm"
               :model="ruleForm"
               :rules="rules"
               label-width="80px"
               hide-required-asterisk
             >
-                <el-form-item label="" prop="username">
-                  <el-input placeholder="请输入账号" v-model="ruleForm.username">
-                    <template slot="prepend"><svg-icon icon-class="username" slot="label" /></template>
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="" prop="password">
-                  <el-input 
-                  type="password" 
-                  show-password 
-                  placeholder="请输入密码" 
-                  v-model="ruleForm.password" 
+              <el-form-item label="" prop="username">
+                <el-input placeholder="请输入账号" v-model="ruleForm.username">
+                  <template slot="prepend"
+                    ><svg-icon icon-class="username" slot="label"
+                  /></template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="" prop="password">
+                <el-input
+                  type="password"
+                  show-password
+                  placeholder="请输入密码"
+                  v-model="ruleForm.password"
                   @keyup.enter.native="handleLogin"
-                  >
-                    <template slot="prepend"><svg-icon icon-class="password" slot="label" /></template>
-                  </el-input>
-                </el-form-item>
-                <div class="submit-btn">
-                  <el-button type="primary" @click.native.prevent="handleLogin()" :loading="loginLoading">登录</el-button>
-                </div>
-              </el-form>
+                >
+                  <template slot="prepend"
+                    ><svg-icon icon-class="password" slot="label"
+                  /></template>
+                </el-input>
+              </el-form-item>
+              <div class="submit-btn">
+                <el-button
+                  type="primary"
+                  @click.native.prevent="handleLogin()"
+                  :loading="loginLoading"
+                  >登录</el-button
+                >
+              </div>
+            </el-form>
           </div>
         </div>
       </div>
-      <div class="login-content-name">{{companyName}}</div>
+      <div class="login-content-name">{{ companyName }}</div>
     </div>
   </div>
 </template>
 <script>
-import { imgBaseUrl } from '@/utils/varible'
-import { getSystemInfoApi } from '@/api/user'
-import { mapGetters } from 'vuex'
+import { imgBaseUrl } from "@/utils/varible";
+import { getSystemInfoApi } from "@/api/user";
+import { mapGetters } from "vuex";
 export default {
   components: {},
-  data () {
+  data() {
     return {
       host: imgBaseUrl,
-      baseImg: require('../../assets/logo.png'),
-      loginLoading : false,
+      baseImg: require("../../assets/logo.png"),
+      loginLoading: false,
       ruleForm: {
-        username: '',
-        password: ''
+        username: "",
+        password: "",
       },
       rules: {
         username: [
-          { required: true, message: this.$t('tip.userNameNotEmpty'), trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t("tip.userNameNotEmpty"),
+            trigger: "blur",
+          },
         ],
         password: [
-          { required: true, message: this.$t('tip.pwdNotEmpty'), trigger: 'blur' }
-        ]
+          {
+            required: true,
+            message: this.$t("tip.pwdNotEmpty"),
+            trigger: "blur",
+          },
+        ],
       },
       redirect: undefined,
-      appid: 'ww63beae6c0cd72cf1',// 企业号
-      wxAppid: 'wx633cde8a865d394e', // 应用appid
-      agentid: '1000014',
+      appid: "ww63beae6c0cd72cf1", // 企业号
+      wxAppid: "wx633cde8a865d394e", // 应用appid
+      agentid: "1000014",
       otherQuery: {},
-    }
+    };
   },
   computed: {
-    ...mapGetters(['companyLogo', 'companyName'])
+    ...mapGetters(["companyLogo", "companyName"]),
   },
   watch: {
     $route: {
       handler: function (route) {
-        const query = route.query
+        const query = route.query;
         if (query) {
-          this.redirect = query.redirect
-          this.otherQuery = this.getOtherQuery(query)
+          this.redirect = query.redirect;
+          this.otherQuery = this.getOtherQuery(query);
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     // 登录
-    handleLogin () {
-      
-      this.$refs.ruleForm.validate(valid => {
+    handleLogin() {
+      this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          this.loginLoading = true
-          this.$store.dispatch('user/login', { username: this.ruleForm.username, pwd: this.ruleForm.password, company: '' }).then(res => {
-            this.loginLoading = false
-            if(res.meta.code=="RESP_OKAY"){
-              this.$router.replace('/')
-              // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })// 因为权限控制
-            }
-          })
-        } 
-      })
+          this.loginLoading = true;
+          this.$store
+            .dispatch("user/login", {
+              username: this.ruleForm.username,
+              pwd: this.ruleForm.password,
+              company: "",
+            })
+            .then((res) => {
+              this.loginLoading = false;
+              if (res.meta.code == "RESP_OKAY") {
+                this.$router.replace("/");
+                // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })// 因为权限控制
+              }
+            });
+        }
+      });
     },
     // 第三方登录
-    handleLoginType (type) {
-      const redirect_uri = 'https://alc01.aa-iot.com'
-      if (type === 'qiye') { // 企业微信
-        window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${this.appid}&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=STATE`
-      } else if (type === 'wechat') { // 微信登录
-        window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${this.wxAppid}&redirect_uri=${encodeURIComponent(redirect_uri)}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect`
-                                // https://open.weixin.qq.com/connect/qrconnect?appid=wxbdc5610cc59c1631&redirect_uri=https%3A%2F%2Fpassport.yhd.com%2Fwechat%2Fcallback.do&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect
-                                // https://open.weixin.qq.com/connect/qrconnect?appid=wxbdc5610cc59c1631&redirect_uri=https%3A%2F%2Fpassport.yhd.com%2Fwechat%2Fcallback.do&response_type=code&scope=snsapi_login&state=3d6be0a4035d839573b04816624a415e#wechat_redirect
-                                
+    handleLoginType(type) {
+      const redirect_uri = "https://alc01.aa-iot.com/sp-pcmeet/#/login";
+      if (type === "qiye") {
+        // 企业微信
+        window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${
+          this.appid
+        }&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(
+          redirect_uri
+        )}&state=STATE`;
+      } else if (type === "wechat") {
+        // 微信登录
+        window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${
+          this.wxAppid
+        }&redirect_uri=${encodeURIComponent(
+          redirect_uri
+        )}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect`;
+        // https://open.weixin.qq.com/connect/qrconnect?appid=wxbdc5610cc59c1631&redirect_uri=https%3A%2F%2Fpassport.yhd.com%2Fwechat%2Fcallback.do&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect
+        // https://open.weixin.qq.com/connect/qrconnect?appid=wxbdc5610cc59c1631&redirect_uri=https%3A%2F%2Fpassport.yhd.com%2Fwechat%2Fcallback.do&response_type=code&scope=snsapi_login&state=3d6be0a4035d839573b04816624a415e#wechat_redirect
       }
     },
-    getOtherQuery (query) {
+    getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== 'redirect') {
-          acc[cur] = query[cur]
+        if (cur !== "redirect") {
+          acc[cur] = query[cur];
         }
-        return acc
-      }, {})
+        return acc;
+      }, {});
     },
   },
-  mounted () {
-    
-  },
+  mounted() {},
   created() {
     /* 存在code,第三方登录 */
     if (this.otherQuery.code) {
-      this.pageLoading = false
-      this.$store.dispatch('user/otherLogin', { appid: this.appid, code: this.otherQuery.code, state: this.otherQuery.state }).then(res => {
-        if(res.meta.code=="RESP_OKAY"){
-          this.pageLoading = true
-          this.$router.replace('/')
-          // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
-        }
-      })
+      this.pageLoading = false;
+      this.$store
+        .dispatch("user/otherLogin", {
+          appid: this.appid,
+          code: this.otherQuery.code,
+          state: this.otherQuery.state,
+        })
+        .then((res) => {
+          if (res.meta.code == "RESP_OKAY") {
+            message({
+              message: res.data.meta.message,
+              type: "success",
+              duration: 3 * 1000,
+            });
+            this.pageLoading = true;
+            this.$router.replace("/");
+            // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+          } else {
+            message({
+              message: res.data.meta.message,
+              type: "error",
+              duration: 3 * 1000,
+            });
+          }
+        });
     }
-  }
-}
+  },
+};
 </script>
 <style lang='less' scoped>
 #login {
@@ -177,38 +226,38 @@ export default {
     width: 38.2%;
     max-width: 730px;
     min-width: 400px;
-    background: rgba(13, 80, 188 ,.7);
+    background: rgba(13, 80, 188, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 10px 0 32px #231f45;
-    .login-content-logo{
+    .login-content-logo {
       position: absolute;
       top: 5%;
       height: 80px;
-      color: #88B6FF;
+      color: #88b6ff;
       font-size: 18px;
       z-index: 1000;
       background-size: contain;
       background-repeat: no-repeat;
-      .login-content-logo-img{
+      .login-content-logo-img {
         height: 100%;
       }
     }
     .login-content-name {
       position: absolute;
       bottom: 5%;
-      color: #88B6FF;
+      color: #88b6ff;
       font-size: 18px;
     }
-    .login-content-box{
+    .login-content-box {
       width: 300px;
       text-align: center;
-      .login-content-form{
+      .login-content-form {
         .login-content-divider {
           position: relative;
           height: 0.5px;
-          background: #82ADF1;
+          background: #82adf1;
         }
         .divider-text {
           position: absolute;
@@ -217,11 +266,11 @@ export default {
           transform: translate(-50%, -50%);
           background: #134eb9;
           padding: 3px 12px;
-          color: #82ADF1;
+          color: #82adf1;
         }
-        .login-content-type{
+        .login-content-type {
           padding: 20px 0 38px;
-          .login-content-type-icon{
+          .login-content-type-icon {
             display: inline-block;
             width: 52px;
             height: 52px;
@@ -230,49 +279,48 @@ export default {
             background-color: #eee;
             margin-right: 10px;
           }
-          .login-content-type-weixin-1{
+          .login-content-type-weixin-1 {
             background: url("../../assets/weixin-1.png") no-repeat;
             background-size: 100% 100%;
           }
-          .login-content-type-weixin-2{
+          .login-content-type-weixin-2 {
             background: url("../../assets/weixin-2.png") no-repeat;
             background-size: 100% 100%;
           }
-          .margin-r-20{
+          .margin-r-20 {
             margin-right: 38px;
           }
         }
       }
-      
-      .login-form{
+
+      .login-form {
         margin-top: 20px;
         /deep/.el-form-item__content {
           margin: 0 !important;
         }
-        /deep/.el-button--medium{
+        /deep/.el-button--medium {
           width: 100%;
           background: #fff;
-          color: #0D50BC;
+          color: #0d50bc;
           font-weight: bold;
         }
       }
     }
   }
 }
-/deep/.el-form-item{
+/deep/.el-form-item {
   margin-bottom: 20px;
 }
-/deep/.el-input__inner{
+/deep/.el-input__inner {
   height: 40px;
 }
-/deep/.el-button--medium{
+/deep/.el-button--medium {
   padding: 12px 20px;
 }
-/deep/input:-internal-autofill-selected{
+/deep/input:-internal-autofill-selected {
   background-color: red !important;
 }
-.myinput{
+.myinput {
   background-color: red !important;
-
 }
 </style>

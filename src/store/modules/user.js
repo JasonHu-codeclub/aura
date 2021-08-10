@@ -23,7 +23,8 @@ const state = {
   systemLogo: '', // 系统信息
   systemName: '',  // 系统名称 
   companyName: '数字办公室', // 公司名称
-  companyLogo: '' // 公司logo
+  companyLogo: '', // 公司logo
+  is_auth: '' // 公司logo
 }
 
 const mutations = {
