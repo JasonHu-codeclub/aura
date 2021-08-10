@@ -315,7 +315,7 @@ export default {
     confirmMeet: '请确认是否将',
     agreeMeet: '会议审批通过！',
     refuseMeet: '会议审批拒绝！',
-    ReasonsForRefusal: '拒绝理由',
+    ReasonsForRefusal: '拒绝原因',
     modificationTips: '会议信息已被修改，请重新操作！',
     ApprovalConflict: '审批冲突会议',
     agreed: '同意后，列表中其余会议都将会被拒绝',
