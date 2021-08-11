@@ -4,12 +4,14 @@ import Cookies from 'js-cookie'
 import locale from 'element-ui/lib/locale'
 import en from './en'
 import zh from './zh'
+import tw from './tw'
 
 Vue.use(VueI18n)
 
 const messages = {
   en,
-  zh
+  zh,
+  tw
 }
 export function getLanguage() {
   const chooseLanguage = Cookies.get('language')

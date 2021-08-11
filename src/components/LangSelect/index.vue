@@ -12,6 +12,9 @@
       <el-dropdown-item :disabled="language==='en'" command="en">
         English
       </el-dropdown-item>
+      <el-dropdown-item :disabled="language==='tw'" command="tw">
+        繁體中文
+      </el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
 </template>
