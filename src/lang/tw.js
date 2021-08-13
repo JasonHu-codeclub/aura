@@ -26,7 +26,7 @@ export default {
       floor: '樓層',
       numberPeople: '容納人數',
       equipment: '設備',
-      date: '日期',
+      date: '時間',
       status: '狀態',
       name: '名稱',
       type: '發起方式',
@@ -274,6 +274,8 @@ export default {
       selectEquipment: '請選擇會議室設備服務',
       enterReason: '請輸入拒絕原因',
       inputPassword: '請輸入密碼',
+      startTime:'起始時間',
+      endTime:'結束時間'
     },
     tip: {
       userNameNotEmpty: '請輸入賬號',

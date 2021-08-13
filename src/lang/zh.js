@@ -26,7 +26,7 @@ export default {
     floor: '楼层',
     numberPeople: '容纳人数',
     equipment: '设备',
-    date: '日期',
+    date: '时间',
     status: '状态',
     name: '名称',
     type: '发起方式',
@@ -274,6 +274,9 @@ export default {
     selectEquipment: '请选择会议室设备服务',
     enterReason: '请输入拒绝原因',
     inputPassword: '请输入密码',
+    startTime:'起始时间',
+    endTime:'结束时间'
+
   },
   tip: {
     userNameNotEmpty: '请输入账号',

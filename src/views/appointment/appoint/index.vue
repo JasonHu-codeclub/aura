@@ -66,14 +66,39 @@
           <el-date-picker
             v-model="searchData.date"
             type="date"
+            style="margin-right: 10px;"
             :placeholder="$t('placeholder.date')"
             value-format="yyyy-MM-dd"
             :editable="false"
             :picker-options="searchPickerOptions"
             @change="dateChange"
             clearable
-            >></el-date-picker
+            ></el-date-picker
           >
+         <el-time-select
+          :placeholder="$t('placeholder.startTime')"
+          v-model="searchData.startTime"
+           @change="startTimeChange"
+          :picker-options="{
+            start: this.startTimesOptions.start,
+            step: '00:30',
+            end: this.startTimesOptions.end,
+          }"
+          :default-value="defaultValue"
+          style="margin-right: 10px;"
+          >
+        </el-time-select>
+        <el-time-select
+          :placeholder="$t('placeholder.endTime')"
+          v-model="searchData.endTime"
+          @change="endTimeChange" 
+          :picker-options="{
+             start: this.startTimesOptions.start,
+            step: '00:30',
+            end: this.startTimesOptions.end,
+            minTime: searchData.startTime
+          }">
+        </el-time-select>
         </div>
 
         <!-- 按钮 -->
@@ -194,7 +219,7 @@
                         scope.row.reservable
                       }}</span>
                     </div>
-                  </div>
+                  </div> 
                 </div>
               </div>
             </template>
@@ -552,6 +577,8 @@ export default {
         peopleNum: "", // 人数
         equipment: "", // 设备
         date: dayjs().format("YYYY-MM-DD"), // 选择时间
+        startTime: '',//开始时间
+        endTime: '',//结束时间
       },
       optionsFloor: [], // 大厦楼层
       peopleNumList: [], // 容纳人数
@@ -594,7 +621,6 @@ export default {
         functional_display: "",
         virtual_: "all",
       },
-
       error: {
         // 验证提示
         repeatType: { isFocus: false }, // 重复类型
@@ -610,7 +636,11 @@ export default {
       timeConfig: {}, // 可预约时间段
       appStartTimes: "", // 预约开始时间
       appEndTimes: "", // 预约结束时间
+      defaultValue:''
     };
+  },
+  created(){
+    this.defaultValue=new Date().getMinutes()=='00'?this.defaultValue=new Date().getHours()+':'+'00':new Date().getMinutes()<30?this.defaultValue=new Date().getHours()+':'+'30':this.defaultValue=(new Date().getHours()+1)+':'+'00'
   },
   computed: {
     ...mapGetters(["userInfo"]),
@@ -618,8 +648,6 @@ export default {
       let meetingArr = []; // 二维数组-记录每个会议室预定的会议
       let continuity = true; // 会议的边界
       let count = 0; // 记录一个会议室的场次
-
-      // this.meetingRooms = testData.data.meeting_rooms
       this.meetingRooms.map((res, idx) => {
         res.day = this.searchData.date;
         // 筛选出每个预约会议
@@ -670,7 +698,7 @@ export default {
         });
       });
       return this.meetingRooms;
-    },
+    }
   },
   watch: {},
   mounted() {
@@ -1071,6 +1099,8 @@ export default {
     async searchMeetingRoom(type) {
       let params = {
         date: this.searchData.date, // 日期
+        start_time:this.searchData.startTime,//开始时间
+        end_time:this.searchData.endTime,//结束时间
         mansion_id: this.searchData.floor[0], // 大厦id
         floor_id: this.searchData.floor[1], //楼层id
         reservable: this.searchData.peopleNum, // 人数
@@ -1090,6 +1120,8 @@ export default {
     async pollingSearchRoom(type) {
       let params = {
         date: this.searchData.date, // 日期
+        start_time:this.searchData.startTime,//开始时间
+        end_time:this.searchData.endTime,//结束时间
         mansion_id: this.searchData.floor[0], // 大厦id
         floor_id: this.searchData.floor[1], //楼层id
         reservable: this.searchData.peopleNum, // 人数
@@ -1123,6 +1155,8 @@ export default {
         peopleNum: "", // 人数
         equipment: "", // 设备
         date: dayjs().format("YYYY-MM-DD"), // 选择时间
+        start_time:'',//开始时间
+        end_time:''//结束时间
       };
       this.searchMeetingRoom();
     },
@@ -1131,6 +1165,22 @@ export default {
       let that = this;
       setTimeout(() => {
         that.searchData.date = value || dayjs().format("YYYY-MM-DD");
+        that.searchMeetingRoom();
+      }, 100);
+    },
+    //选择开始时间
+    startTimeChange(value){
+      let that = this;
+      setTimeout(() => {
+        that.searchData.startTime = value;
+        that.searchMeetingRoom();
+      }, 100);
+    },
+    //选择结束时间
+    endTimeChange(value){
+      let that = this;
+      setTimeout(() => {
+        that.searchData.endTime = value;
         that.searchMeetingRoom();
       }, 100);
     },

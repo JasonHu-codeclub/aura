@@ -27,7 +27,7 @@ export default {
     floor: 'Floor',
     numberPeople: 'Number',
     equipment: 'equipment',
-    date: 'date',
+    date: 'time',
     status: 'status',
     name: 'name',
     type: 'type',
@@ -270,7 +270,9 @@ export default {
     selectServe: 'Please choose tea service in meeting room',
     selectEquipment: 'Please select conference room equipment service',
     enterReason: 'Please enter the reason for rejection',
-    inputPassword: 'Please input a password'
+    inputPassword: 'Please input a password',
+    startTime:'Start time',
+    endTime:'End time'
   },
   tip: {
     userNameNotEmpty: 'Please enter the account number',
