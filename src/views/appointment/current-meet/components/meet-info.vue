@@ -38,9 +38,9 @@
                <div class="edit-box-value">{{ruleForm.is_secret ? '*' : categoryStr||'--'}}</div>
             </div>
          </div>
-         <div class="edit-sign_in" v-if="ruleForm.status == 1">
-            <span v-if="ruleForm.is_is_sign == 1" class="sign_item-in"><i class="el-icon-circle-check"></i>{{$t('tip.signIn')}}</span>
-            <span v-else class="sign_item-warn"><i class="el-icon-warning"></i>{{$t('tip.notSignIn')}}</span>
+         <div class="edit-sign_in" v-if="ruleForm.status == 1||ruleForm.status == 2||ruleForm.status == 3">
+            <span v-if="ruleForm.is_sign == 1" class="sign_item-in"><i class="el-icon-circle-check"></i>{{$t('tip.signIn')}}</span>
+            <span v-else class="sign_item-warn"><i class="el-icon-warning"></i>{{$t('tip.notSignIn')}}</span> 
          </div>
       </div>
 
@@ -69,7 +69,7 @@
                      :placeholder="$t('placeholder.theme')"
                      :class="error.title.isFocus ? 'inputError' : ''"
                      :disabled="dataType===1||ruleForm.can_update == 0"
-                     maxlength="15"
+                     maxlength="40"
                      clearable
                   ></el-input>
                </div>
@@ -640,7 +640,11 @@ export default {
          // 茶点服务
          this.ruleForm.serviceId = []
          this.ruleForm.service && this.ruleForm.service.map(item=> {
-            this.ruleForm.serviceId.push(item.id)
+            if(this.dataType===1 ){
+               this.ruleForm.serviceId.push(item.name)
+            }else{
+               this.ruleForm.serviceId.push(item.id)
+            }
          })
          // 获取服务
          this.getServiceInfo()
@@ -1798,6 +1802,10 @@ export default {
       border-radius: 4px;
       background   : #EAEDF6;
    }
-  
+   /deep/.el-input__inner{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+   }
 
 </style>
