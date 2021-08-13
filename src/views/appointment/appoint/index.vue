@@ -1501,12 +1501,12 @@ export default {
       background-color: #ffffff;
     }
     .expired {
-      background-color: #e7e9ee;
-      border-color: #e7e9ee;
+      background-color: #e3ac7d;
+      border-color: #e3ac7d;
     }
     .reserved {
-      background-color: #a5b7f4;
-      border-color: #a5b7f4;
+      background-color: #85b0ac;
+      border-color: #85b0ac;
     }
     .selected {
       background-color: #5473e8;
