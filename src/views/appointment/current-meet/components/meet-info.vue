@@ -634,9 +634,11 @@ export default {
            // 预约类型
            this.categoryStr = `${this.category[this.ruleForm.category]}（${this.repetitionType[this.ruleForm.repetition_type]}）`
          }
-
-         this.ruleForm.meeting_type_id = this.ruleForm.is_secret ? '*' : this.ruleForm.meeting_type_id 
-         
+         if(this.dataType==1){
+            this.ruleForm.meeting_type_id = this.ruleForm.is_secret ? '*' : this.ruleForm.meeting_type_name
+         }else{
+             this.ruleForm.meeting_type_id = this.ruleForm.is_secret ? '*' : this.ruleForm.meeting_type_id 
+         }
          // 茶点服务
          this.ruleForm.serviceId = []
          this.ruleForm.service && this.ruleForm.service.map(item=> {

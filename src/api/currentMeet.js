@@ -46,7 +46,6 @@ export function getServiceApi (data) {
 
 // 获取会议室设备信息（下拉搜索
 export function getRoomEquipmentApi (data) {
-  console.log(data,'data')
   return request({
     url: "/get-room-equipment/"+ data.id,
     method: "get",

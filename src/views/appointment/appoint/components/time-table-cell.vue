@@ -299,7 +299,7 @@ export default {
     &.outDate {
       pointer-events: none;
       .time-cell-active {
-        background-color: #e3ac7d;
+        background-color: #EDAA75;
         pointer-events: none;
         margin: 0;
         transform: translateX(0);
@@ -309,7 +309,7 @@ export default {
         }
       }
       .meetings {
-        background-color:#e3ac7d !important;
+        background-color:#EDAA75 !important;
       }
     }
     .time-chil {

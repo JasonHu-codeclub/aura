@@ -23,7 +23,7 @@
           ></el-cascader>
         </div>
         <!-- 容纳人数 -->
-        <div class="filter-item-box">
+        <div class="filter_item_box">
           {{ $t("labe.numberPeople") }}：
           <el-select
             v-model="searchData.peopleNum"
@@ -61,46 +61,45 @@
           </el-select>
         </div>
         <!-- 选择时间 -->
-        <div class="filter-item-box">
+        <div class="filter_item_box">
           {{ $t("labe.date") }}：
           <el-date-picker
             v-model="searchData.date"
             type="date"
-            style="margin-right: 10px;"
+            style="margin-right: 4px"
             :placeholder="$t('placeholder.date')"
             value-format="yyyy-MM-dd"
             :editable="false"
             :picker-options="searchPickerOptions"
             @change="dateChange"
             clearable
-            ></el-date-picker
+          ></el-date-picker>
+          <el-time-select
+            :placeholder="$t('placeholder.startTime')"
+            style="margin-right: 4px"
+            v-model="searchData.startTime"
+            @change="startTimeChange"
+            :picker-options="{
+              start: this.startTimesOptions.start,
+              step: '00:30',
+              end: this.startTimesOptions.end,
+            }"
+            :default-value="defaultValue"
           >
-         <el-time-select
-          :placeholder="$t('placeholder.startTime')"
-          v-model="searchData.startTime"
-           @change="startTimeChange"
-          :picker-options="{
-            start: this.startTimesOptions.start,
-            step: '00:30',
-            end: this.startTimesOptions.end,
-          }"
-          :default-value="defaultValue"
-          style="margin-right: 10px;"
+          </el-time-select>
+           <el-time-select
+            :placeholder="$t('placeholder.endTime')"
+            v-model="searchData.endTime"
+            @change="endTimeChange"
+            :picker-options="{
+              start: this.startTimesOptions.start,
+              step: '00:30',
+              end: this.startTimesOptions.end,
+              minTime: searchData.startTime,
+            }"
           >
-        </el-time-select>
-        <el-time-select
-          :placeholder="$t('placeholder.endTime')"
-          v-model="searchData.endTime"
-          @change="endTimeChange" 
-          :picker-options="{
-             start: this.startTimesOptions.start,
-            step: '00:30',
-            end: this.startTimesOptions.end,
-            minTime: searchData.startTime
-          }">
-        </el-time-select>
+          </el-time-select>
         </div>
-
         <!-- 按钮 -->
         <div class="filter-item-box">
           <!-- 查询 -->
@@ -176,21 +175,6 @@
               </div>
               <div class="floor-content">
                 <div>
-                  <!-- 会议室名字 -->
-                  <div class="floor-name">{{ scope.row.name }}</div>
-                  <!-- 支持的会议类型 -->
-                  <div
-                    class="floor-device"
-                    :class="{ padding_set: scope.row.equipment.length > 0 }"
-                  >
-                    <span
-                      v-for="(item, index) in scope.row.equipment"
-                      :key="index"
-                      class="floor-device-list"
-                    >
-                      {{ item.name }}
-                    </span>
-                  </div>
                   <!-- 会议室图片 -->
                   <div class="floor-info">
                     <div class="floor-info-img" @click="roomInfo(scope.row)">
@@ -219,7 +203,22 @@
                         scope.row.reservable
                       }}</span>
                     </div>
-                  </div> 
+                  </div>
+                  <!-- 会议室名字 -->
+                  <div class="floor-name">{{ scope.row.name }}</div>
+                  <!-- 支持的会议类型 -->
+                  <div
+                    class="floor-device"
+                    :class="{ padding_set: scope.row.equipment.length > 0 }"
+                  >
+                    <span
+                      v-for="(item, index) in scope.row.equipment"
+                      :key="index"
+                      class="floor-device-list"
+                    >
+                      {{ item.name }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </template>
@@ -577,8 +576,8 @@ export default {
         peopleNum: "", // 人数
         equipment: "", // 设备
         date: dayjs().format("YYYY-MM-DD"), // 选择时间
-        startTime: '',//开始时间
-        endTime: '',//结束时间
+        startTime: "", //开始时间
+        endTime: "", //结束时间
       },
       optionsFloor: [], // 大厦楼层
       peopleNumList: [], // 容纳人数
@@ -636,11 +635,16 @@ export default {
       timeConfig: {}, // 可预约时间段
       appStartTimes: "", // 预约开始时间
       appEndTimes: "", // 预约结束时间
-      defaultValue:''
+      defaultValue: "",
     };
   },
-  created(){
-    this.defaultValue=new Date().getMinutes()=='00'?this.defaultValue=new Date().getHours()+':'+'00':new Date().getMinutes()<30?this.defaultValue=new Date().getHours()+':'+'30':this.defaultValue=(new Date().getHours()+1)+':'+'00'
+  created() {
+    this.defaultValue =
+      new Date().getMinutes() == "00"
+        ? (this.defaultValue = new Date().getHours() + ":" + "00")
+        : new Date().getMinutes() < 30
+        ? (this.defaultValue = new Date().getHours() + ":" + "30")
+        : (this.defaultValue = new Date().getHours() + 1 + ":" + "00");
   },
   computed: {
     ...mapGetters(["userInfo"]),
@@ -698,7 +702,7 @@ export default {
         });
       });
       return this.meetingRooms;
-    }
+    },
   },
   watch: {},
   mounted() {
@@ -1011,8 +1015,6 @@ export default {
         data.repetition_type = repeType; // 当category=2时才需要传 会议重复类型 1=》每日，2=》每周，3=》每月
         data.repetition_end_date = endDate; // 当category=2时才需要传 会议重复截止时间
       }
-      // console.log(data,'data')
-      // return
       this.addLoading = true;
       this.confirmLoading = true;
       if (this.approveCount) this.approveBtnLoading = true;
@@ -1099,8 +1101,8 @@ export default {
     async searchMeetingRoom(type) {
       let params = {
         date: this.searchData.date, // 日期
-        start_time:this.searchData.startTime,//开始时间
-        end_time:this.searchData.endTime,//结束时间
+        start_time: this.searchData.startTime, //开始时间
+        end_time: this.searchData.endTime, //结束时间
         mansion_id: this.searchData.floor[0], // 大厦id
         floor_id: this.searchData.floor[1], //楼层id
         reservable: this.searchData.peopleNum, // 人数
@@ -1120,8 +1122,8 @@ export default {
     async pollingSearchRoom(type) {
       let params = {
         date: this.searchData.date, // 日期
-        start_time:this.searchData.startTime,//开始时间
-        end_time:this.searchData.endTime,//结束时间
+        start_time: this.searchData.startTime, //开始时间
+        end_time: this.searchData.endTime, //结束时间
         mansion_id: this.searchData.floor[0], // 大厦id
         floor_id: this.searchData.floor[1], //楼层id
         reservable: this.searchData.peopleNum, // 人数
@@ -1155,8 +1157,8 @@ export default {
         peopleNum: "", // 人数
         equipment: "", // 设备
         date: dayjs().format("YYYY-MM-DD"), // 选择时间
-        start_time:'',//开始时间
-        end_time:''//结束时间
+        start_time: "", //开始时间
+        end_time: "", //结束时间
       };
       this.searchMeetingRoom();
     },
@@ -1169,7 +1171,7 @@ export default {
       }, 100);
     },
     //选择开始时间
-    startTimeChange(value){
+    startTimeChange(value) {
       let that = this;
       setTimeout(() => {
         that.searchData.startTime = value;
@@ -1177,7 +1179,7 @@ export default {
       }, 100);
     },
     //选择结束时间
-    endTimeChange(value){
+    endTimeChange(value) {
       let that = this;
       setTimeout(() => {
         that.searchData.endTime = value;
@@ -1272,7 +1274,7 @@ export default {
     align-items: center;
     font-size: 14px;
     /deep/.el-input__inner {
-      width: 180px;
+      width: 170px;
     }
     /deep/.el-button {
       width: auto;
@@ -1283,7 +1285,21 @@ export default {
     }
     /deep/.el-input,
     .el-input__inner {
-      width: 180px;
+      width: 170px;
+      padding-right: 10px;
+    }
+  }
+  .filter_item_box {
+    display: flex;
+    margin: 0 20px 20px 0;
+    align-items: center;
+    font-size: 14px;
+    /deep/.el-input__inner {
+      width: 140px;
+    }
+    /deep/.el-input,
+    .el-input__inner {
+      width: 140px;
       padding-right: 10px;
     }
   }
@@ -1358,7 +1374,7 @@ export default {
 .floor-number-people {
   position: absolute;
   top: 6px;
-  right: 10px;
+  right: 40px;
   max-width: 80px;
   font-size: 12px;
   overflow: hidden;
@@ -1430,6 +1446,7 @@ export default {
       height: 50px;
       background: #eee;
       cursor: pointer;
+      border-radius: 5px;
     }
     .plus {
       position: absolute;
@@ -1501,16 +1518,16 @@ export default {
       background-color: #ffffff;
     }
     .expired {
-      background-color: #e3ac7d;
-      border-color: #e3ac7d;
+      background-color: #EDAA75;
+      border-color: #EDAA75;
     }
     .reserved {
-      background-color: #85b0ac;
-      border-color: #85b0ac;
+      background-color: #79B1AC;
+      border-color: #79B1AC;
     }
     .selected {
-      background-color: #5473e8;
-      border-color: #5473e8;
+      background-color: #5473E8;
+      border-color: #5473E8;
     }
   }
 }
