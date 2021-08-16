@@ -1519,7 +1519,7 @@ export default {
         .edit-sign_in{
            position: absolute;
            top: 30px;
-           right: 20px;
+           right: 200px;
            font-size: 16px;
            .sign_item-in{
               color: #41B172;

@@ -91,7 +91,7 @@
             v-model="searchData.endTime"
             @change="endTimeChange"
             :picker-options="{
-              start: this.startTimesOptions.start,
+              start: this.defaultValue,
               step: '00:30',
               end: this.startTimesOptions.end,
               minTime: searchData.startTime,
@@ -168,11 +168,11 @@
           >
             <template slot-scope="scope">
               <!-- 楼层 -->
-              <div class="floor-number">
+              <div class="floor-number" style="width:240px">
                 <span class="floor-number-dec">{{ scope.row.num }}F</span>
                 <i class="floor-number-icon"></i>
               </div>
-              <div class="floor-content">
+              <div class="floor-content" style="width:240px">
                 <div>
                   <!-- 会议室图片 -->
                   <div class="floor-info">
@@ -1176,6 +1176,9 @@ export default {
     },
     //选择开始时间
     startTimeChange(value) {
+      if(value>this.searchData.endTime){
+        this.searchData.endTime=''
+      }
       let that = this;
       setTimeout(() => {
         that.searchData.startTime = value;
