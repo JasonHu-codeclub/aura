@@ -653,7 +653,11 @@ export default {
          
          // 设备
          this.ruleForm.equipment && this.ruleForm.equipment.forEach((item) => {
-            this.checkListEquipment.push(item.id)
+            if(this.dataType===1 ){
+               this.checkListEquipment.push(item.name)
+            }else{
+               this.checkListEquipment.push(item.id)
+            }
          })
 
          // 内部参会人员
@@ -1038,6 +1042,7 @@ export default {
             }
          })
       })
+
 
       // 会议类型
       if(this.ruleForm.meeting_type_id){
