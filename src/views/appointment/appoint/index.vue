@@ -80,11 +80,10 @@
             v-model="searchData.startTime"
             @change="startTimeChange"
             :picker-options="{
-              start: this.startTimesOptions.start,
+              start: this.defaultValue,
               step: '00:30',
               end: this.startTimesOptions.end,
             }"
-            :default-value="defaultValue"
           >
           </el-time-select>
            <el-time-select
@@ -635,16 +634,16 @@ export default {
       timeConfig: {}, // 可预约时间段
       appStartTimes: "", // 预约开始时间
       appEndTimes: "", // 预约结束时间
-      defaultValue: "",
-    };
-  },
-  created() {
-    this.defaultValue =
-      new Date().getMinutes() == "00"
+      defaultValue: "",//设置开始起始时间
+      currentTime:new Date().getMinutes() == "00"
         ? (this.defaultValue = new Date().getHours() + ":" + "00")
         : new Date().getMinutes() < 30
         ? (this.defaultValue = new Date().getHours() + ":" + "30")
-        : (this.defaultValue = new Date().getHours() + 1 + ":" + "00");
+        : (this.defaultValue = new Date().getHours() + 1 + ":" + "00")//当前时间
+    };
+  },
+  created() {
+        this.defaultValue =this.currentTime
   },
   computed: {
     ...mapGetters(["userInfo"]),
@@ -1164,6 +1163,11 @@ export default {
     },
     // 选择日期
     dateChange(value) {
+        if(value !==dayjs().format("YYYY-MM-DD")){
+          this.defaultValue =this.startTimesOptions.start
+        }else{
+          this.defaultValue =this.currentTime
+        }
       let that = this;
       setTimeout(() => {
         that.searchData.date = value || dayjs().format("YYYY-MM-DD");
