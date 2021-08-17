@@ -42,7 +42,7 @@
                 >{{initialVal}}/<i class="details-length">{{item.meeting.length}}</i></span>
               </div> -->
                 <el-carousel 
-                height="80px"
+                height="84px"
                 trigger="click"
                 direction="vertical"
                 :loop="false"
@@ -396,20 +396,40 @@ export default {
     .initial_hide{
       display: none;
     }
+
+    
   }
   .fixed_width{
     flex: auto;
     width: 4.15%;
   }
 }
+
+/deep/.popover-list{
+      overflow-y: auto;
+      height: 100%;
+      &::-webkit-scrollbar {
+        width : 2px; 
+        height: 2px;
+      }
+      &::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background   : #cecece;
+      }
+      &::-webkit-scrollbar-track {
+        border-radius: 4px;
+        background   : #ffffff;
+      }
+    }
 .tip-list{
   font-size: 12px;
   color: #3A3B4C;
   margin-bottom: 4px;
+      padding-left: 8px;
   span.tip-list-label {
     display: inline-block;
-    width: 70px;
-    text-align: right;
+    width: 60px;
+    text-align: left;
   }
 }
 /deep/.carousel_srol_hide .el-carousel__indicators{
