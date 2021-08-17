@@ -197,9 +197,9 @@ export default {
       cancelContent: '', // 提示内容
       deleteBtnLoading: false, // 提示确认按钮loading
       repeInfo: '',
-      statusList: ['审批中', '会议中', '未开始', '已结束', '已拒绝', '已取消', '过期未审批'], // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
-      category: ['', '单次预约', '重复预约', '跨日预约'],
-      repetitionType: ['', '每日', '每周', '每月'],
+      statusList: [this.$t('statusList.approval'), this.$t('statusList.meeting'),this.$t('statusList.noStart'), this.$t('statusList.hasEnded'),this.$t('statusList.hasRefused'), this.$t('statusList.hasCancel'), this.$t('statusList.noApproval')], // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
+      category: ['', this.$t('categoryList.singleAppointment'), this.$t('categoryList.repeatAppointment'), this.$t('categoryList.crossAppointment')],
+      repetitionType: ['', this.$t('repeatTypeList.daily'), this.$t('repeatTypeList.weeks'),this.$t('repeatTypeList.month')],
       categoryStr: '', // 会议重复类型
       pickerOptions: {// 控制日期选择
         disabledDate (time) {
@@ -254,7 +254,7 @@ export default {
         this.repeInfo = data // 列表底部数据总览
         this.total = data.total // 总条数
         this.repeInfo.meetTotal = `${this.$t('message.Company')}，${data.is_finished}${this.$t('message.meetOver')}`
-        this.repeInfo.DateRange = `${data.start} 至 ${data.end}`
+        this.repeInfo.DateRange = `${data.start} ${this.$t('public.to')} ${data.end}`
         this.repeInfo.categoryStr = `${this.category[data.category]}（${this.repetitionType[data.repetition_type]}）`
         
       })

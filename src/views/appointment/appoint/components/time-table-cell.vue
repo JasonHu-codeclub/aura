@@ -32,7 +32,7 @@
         >
             <div 
             v-loading="popoverLoading"
-            element-loading-text="加载中..."
+            :element-loading-text="$t('public.loading')"
             element-loading-spinner="el-icon-loading"
             >
               <!-- <div class="popover-head">

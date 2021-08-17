@@ -5,7 +5,7 @@
  <div 
    class="app-wrap no-padding detail-wrap no-bg" 
    v-loading="formLoading"
-   element-loading-text="加载中..."
+   :element-loading-text="$t('public.loading')"
    element-loading-spinner="el-icon-loading"
    element-loading-background="rgba(0, 0, 0, 0.38)" 
  >
@@ -52,7 +52,7 @@
             <div class="edit-box-item">
                <div class="edit-box-label">{{$t('placeholder.conferenceInfor')}}：</div>
                <div class="edit-box-value">
-                  <span v-if="dataType===1 || ruleForm.can_update == 0">{{ruleForm.is_secrecy?'保密':'公开'}}</span>
+                  <span v-if="dataType===1 || ruleForm.can_update == 0">{{ruleForm.is_secrecy?$t('public.secret'):$t('public.public')}}</span>
                   <el-radio-group v-if="dataType===2 && ruleForm.can_update==1" v-model="ruleForm.is_secrecy">
                      <el-radio :label="0">{{$t('message.open')}}</el-radio>
                      <el-radio v-if="ruleForm.is_secret_group" :label="1">{{$t('message.private')}}</el-radio>
@@ -508,6 +508,7 @@ import {
 } from '@/api/currentMeet'
 import bus from '@/utils/bus'
 import dayjs from "dayjs";
+import Cookies from 'js-cookie'
 export default {
    data() {
      return {
@@ -524,8 +525,8 @@ export default {
         meetTypeList: [], // 会议类型
         serviceList: [], // 茶点服务
         equipmentList: [], // 设备信息
-        category: ['', '单次预约', '重复预约', '跨日预约'],
-        repetitionType: ['', '每日', '每周', '每月'],
+        category: ['',this.$t('categoryList.singleAppointment'),this.$t('categoryList.repeatAppointment'),this.$t('categoryList.crossAppointment')],
+        repetitionType: ['', this.$t('repeatTypeList.daily'), this.$t('repeatTypeList.weeks'), this.$t('repeatTypeList.month')],
         categoryStr: '', // 会议重复类型
         reapSessions: '',// 重复总场次
         weekDecstr: '', // 每天/每周/每月
@@ -586,10 +587,10 @@ export default {
          e = e || window.event;
          // 兼容IE8和Firefox 4之前的版本
          if (e) {
-         e.returnValue = '确定离开当前页面吗？';
+         e.returnValue = this.$t('public.leave');
          }
          // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
-         return '系统可能不会保存您所做的更改。';
+         return this.$t('public.change');
       } else {
          window.onbeforeunload = null
       }
@@ -760,7 +761,7 @@ export default {
        switch(types) {
          case 1:
            dec += parseInt(step / day) // 重复每天
-           weekDec = '（每日）'
+           weekDec = `（${this.$t('repeatTypeList.daily')}）`
           break;
          case 2:
            dec += parseInt(step / week) // 重复每周
@@ -770,17 +771,17 @@ export default {
          case 3:
            dec += parseInt(step / month) // 重复每月
            let dates = parseFloat(start_time[0].split('-')[2])
-           weekDec = `（每月${dates}号）` 
+           weekDec = `（${this.$t(repeatTypeList.month)}${dates}${this.$t('public.date')}）` 
           break;
        }
-       this.reapSessions = dec ? ` 共${dec}场会议` : ''
+       this.reapSessions = dec ? ` ${this.$t('public.total')}${dec}${this.$t('public.meetings')}` : ''
        this.meetTime = `${this.meetTime} ${weekDec}` 
     },
     // 获取周
     getWeek(dateString) {
         let dateArray = dateString.split("-");
         let dates = new Date(dateArray[0], parseInt(dateArray[1] - 1), dateArray[2]);
-        let week = "周" + "日一二三四五六".charAt(dates.getDay())
+        let week = this.$t('public.weeks') + this.$t('public.week').charAt(dates.getDay())
         return week
     },
    //  添加外部参会人弹窗
@@ -957,7 +958,7 @@ export default {
       })
       if(arr && arr.length == 0){
         this.$message({
-           message: '请勾选内部参会人员',
+           message: this.$t('tip.attendees'),
            type: 'error'
         })
         return
@@ -1012,7 +1013,7 @@ export default {
    save(types) {
       if(!this.ruleForm.title) {
         this.$message({
-           message: '标题不能为空',
+           message: this.$t('tip.title'),
            type: 'error'
         })
         return

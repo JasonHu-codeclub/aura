@@ -3,15 +3,15 @@ import VueI18n from 'vue-i18n'
 import Cookies from 'js-cookie'
 import locale from 'element-ui/lib/locale'
 import en from './en'
-import zh from './zh'
-import tw from './tw'
+import zh_CN from './zh'
+import zh_HK from './tw'
 
 Vue.use(VueI18n)
 
 const messages = {
   en,
-  zh,
-  tw
+  zh_CN,
+  zh_HK
 }
 export function getLanguage() {
   const chooseLanguage = Cookies.get('language')

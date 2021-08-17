@@ -124,14 +124,14 @@ export default {
   data() {
     var checkOldPass = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('密码不能为空'))
+        return callback(new Error(this.$t('message.emptyPassord')))
       } else {
         callback()
       }
     }
     var validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入新密码'))
+        callback(new Error(this.$t('message.enterNewPassword')))
       } else {
         if (this.ruleForm.checkPass !== '') {
           this.$refs.ruleForm.validateField('checkPass')
@@ -141,9 +141,9 @@ export default {
     }
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请再次输入密码'))
+        callback(new Error(this.$t('message.againPassword')))
       } else if (value !== this.ruleForm.pass) {
-        callback(new Error('两次输入密码不一致!'))
+        callback(new Error(this.$t('message.inconsistentPasswords')))
       } else {
         callback()
       }

@@ -250,6 +250,7 @@ import { myMeetingListApi, meetCancelApi } from "@/api/currentMeet";
 import Pagination from "@/components/Pagination";
 import dialogCancel from "./dialogCancel";
 import qs from "querystring";
+import Cookies from 'js-cookie'
 export default {
   components: { Pagination, dialogCancel }, // 分页
   data() {
@@ -264,30 +265,30 @@ export default {
       statusList: [], // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
       currentStatus: [
         // 当前会议状态
-        { key: 1, name: "会议中" },
-        { key: 0, name: "待审批" },
-        { key: 2, name: "未开始" },
+        { key: 1, name:this.$t('statusList.meeting')},
+        { key: 0, name:this.$t('statusList.pending')},
+        { key: 2, name:this.$t('statusList.noStart') },
       ],
       historyStatus: [
         // 历史会议状态
-        { key: 3, name: "已结束" },
-        { key: 6, name: "过期未审批" },
-        { key: 4, name: "已拒绝" },
-        { key: 5, name: "已取消" },
+        { key: 3, name:this.$t('statusList.hasEnded')},
+        { key: 6, name:this.$t('statusList.noApproval')},
+        { key: 4, name:this.$t('statusList.hasRefused')},
+        { key: 5, name:this.$t('statusList.hasCancel')},
       ],
       listStatus: [
         // 表格列表状态
-        { key: 0, name: "待审批" },
-        { key: 1, name: "会议中" },
-        { key: 2, name: "未开始" },
-        { key: 3, name: "已结束" },
-        { key: 4, name: "已拒绝" },
-        { key: 5, name: "已取消" },
-        { key: 6, name: "过期未审批" },
+        { key: 0, name:this.$t('statusList.pending')},
+        { key: 1, name:this.$t('statusList.meeting')},
+        { key: 2, name:this.$t('statusList.noStart') },
+        { key: 3, name:this.$t('statusList.hasEnded') },
+        { key: 4, name:this.$t('statusList.hasRefused') },
+        { key: 5, name:this.$t('statusList.hasCancel')},
+        { key: 6, name:this.$t('statusList.noApproval') },
       ],
       userList: [
-        { key: 1, name: "我发起" },
-        { key: 2, name: "被邀约" },
+        { key: 1, name:this.$t('userList.initiate') },
+        { key: 2, name:this.$t('userList.byInvitation')},
       ],
       paginationQuery: {
         page: 1, // 当前页
@@ -300,14 +301,14 @@ export default {
         },
       },
       categoryList: {
-        1: "单次预约",
-        2: "重复预约",
-        3: "跨日预约",
+        1: this.$t('categoryList.singleAppointment'),
+        2: this.$t('categoryList.repeatAppointment'),
+        3: this.$t('categoryList.crossAppointment'),
       },
       repetitionType: {
-        1: "每日",
-        2: "每周",
-        3: "每月",
+        1:this.$t('repeatTypeList.daily'),
+        2:this.$t('repeatTypeList.weeks'),
+        3:this.$t('repeatTypeList.month'),
       },
       total: 0, // 总页数
       searchBtnStatus: false, // 查询loading
@@ -330,8 +331,7 @@ export default {
     // 获取数据
     this.getMyMeetingInfo();
     // 状态查询
-    this.statusList =
-      this.dataType == 1 ? this.currentStatus : this.historyStatus;
+    this.statusList =this.dataType == 1 ? this.currentStatus : this.historyStatus;
 
     this.resizeHeight(100);
   },

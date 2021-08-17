@@ -485,6 +485,7 @@ import dayjs from "dayjs";
 import TimeTableCell from "./components/time-table-cell";
 import { imgBaseUrl } from "@/utils/varible";
 import { mapGetters } from "vuex";
+import Cookies from 'js-cookie'
 import {
   getSystemInfoApi,
   getStatusApi,
@@ -557,9 +558,9 @@ export default {
       },
       // 重复预约类型
       repeatTypeList: [
-        { name: "每日", value: 1 },
-        { name: "每周", value: 2 },
-        { name: "每月", value: 3 },
+        { name: this.$t('repeatTypeList.daily'), value: 1 },
+        { name: this.$t('repeatTypeList.weeks'), value: 2 },
+        { name:this.$t('repeatTypeList.month'), value: 3 },
       ],
       roomforms: {
         mansion: {
@@ -598,7 +599,7 @@ export default {
         label: "name",
         children: "floor",
       },
-      approveLevel: ["无需审批", "一级审批 ", "二级审批"],
+      approveLevel: [this.$t('approveLevel.noApproval'),this.$t('approveLevel.oneApproval'),this.$t('approveLevel.twoApproval')],
       currentPage4: 4,
       selectTimes: [],
       selectRowTime: {
@@ -732,7 +733,7 @@ export default {
       const result = await getMansionFloorApi();
       let data = result.data.mansion;
       if (data.length > 1) {
-        data.unshift({ id: "", name: "全部" });
+        data.unshift({ id: "", name:this.$t('public.all')});
       }
       this.optionsFloor = data;
     },
@@ -772,11 +773,11 @@ export default {
         this.conflictValidator();
       } else if (num === 2) {
         this.repeatNexdayDialog = true;
-        this.appointmentTitle = "重复预约时间设置";
+        this.appointmentTitle = this.$t('public.repeatReservation');
         this.repetPickerOptions.disabledDate = this.setEndPickerOptions; // 设置重复预约日期选择范围
       } else {
         this.repeatNexdayDialog = true;
-        this.appointmentTitle = "跨日预约时间设置";
+        this.appointmentTitle =this.$t('public.crossReservation');
         this.nextDateForm.nextStartDate = this.selectRoomData.day || "";
         this.nextDateForm.nextStartTime =
           this.selectRowTime.time.startTime || "";
@@ -973,15 +974,15 @@ export default {
         this.addLoading = false;
         this.confirmLoading = false;
         this.approveCount = result.data.count; // 冲突场次
-        this.approveMessage = "您的会议已预约完成，正在等待审批";
+        this.approveMessage = this.$t('public.waitingApproval');
         if (result.data.count) {
           this.$refs.conflict.dialogVisible = true;
-          this.approveContent = `${this.selectRoomData.name}会议室，此时间段已有${result.data.count}场申请未审批，请确定是否继续预约`;
+          this.approveContent = `${this.selectRoomData.name}${this.$t('message.room')}，${this.$t('public.timePeriod')}${result.data.count}${this.$t('public.noApproval')}，${this.$t('public.continueAppointment')}`;
         } else {
           this.addReservation();
         }
       } else {
-        this.approveMessage = "成功预定！";
+        this.approveMessage =this.$t('public.successful');
         this.addReservation();
       }
     },
@@ -1195,7 +1196,7 @@ export default {
     },
     // 分钟小时转换
     handleNum(num) {
-      let str = Number(num) / 60 > 1 ? `${Number(num) / 60}h` : `${num}分钟`;
+      let str = Number(num) / 60 > 1 ? `${Number(num) / 60}h` : `${num}${this.$t('public.minutes')}`;
       return str;
     },
     // 会议室详情
@@ -1208,7 +1209,7 @@ export default {
         this.roomforms.equipment.forEach((item) => {
           str = str ? str + "，" + item.name : item.name;
         });
-      this.roomforms.mansioDec = str || "无";
+      this.roomforms.mansioDec = str || this.$t('public.no');
     },
     handleClose() {},
     handleCloseAppointment() {

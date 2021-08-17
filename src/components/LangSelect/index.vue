@@ -6,13 +6,13 @@
       <i class="el-icon-arrow-down el-icon--right"></i>
     </span>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item :disabled="language==='zh'" command="zh">
+      <el-dropdown-item :disabled="language==='zh_CN'" command="zh_CN">
         中文
       </el-dropdown-item>
       <el-dropdown-item :disabled="language==='en'" command="en">
         English
       </el-dropdown-item>
-      <el-dropdown-item :disabled="language==='tw'" command="tw">
+      <el-dropdown-item :disabled="language==='zh_HK'" command="zh_HK">
         繁體中文
       </el-dropdown-item>
     </el-dropdown-menu>

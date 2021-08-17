@@ -96,8 +96,10 @@ export default {
       setting: '修改密碼',
       resetPwdSuccess: '密碼修改成功,請重新登錄',
       oldPassword: '請輸入舊密碼',
-      newPassword: '請輸入新的密碼',
+      enterNewPassword: '請輸入新的密碼',
       againPassword: '請再次輸入密碼',
+      inconsistentPasswords:'兩次輸入密碼不一致!',
+      emptyPassord:'密碼不能為空',
       roomInfo: '會議室信息',
       room: '會議室',
       times: '時間信息',
@@ -326,7 +328,9 @@ export default {
       confirmService: '確認後，您將需要為此會議服務',
       completed: '請確認此會議服務是否已完成',
       successful: '操作成功',
-      leave: '離開'
+      leave: '離開',
+      attendees:'請勾選內部參會人員',
+      title:'標題不能為空'
     },
     weeks: {
       Monday: '周一',
@@ -357,6 +361,74 @@ export default {
       October: '十月', 
       November: '十一月',
       December: '十二月'
+    },
+    repeatTypeList:{
+      daily:'每日',
+      weeks:'每周',
+      month:'每月'
+    },
+    pickerOptions:{
+      weeks:'最近一周',
+      lastMonth:'最近一個月',
+      lastThreeMonths:'最近三個月'
+    },
+    categoryList: {
+      singleAppointment: '單次預約',
+      repeatAppointment: '重復预约',
+      crossAppointment: '跨日預約',
+    },
+    approveLevel:{
+      noApproval:'無需審批',
+      oneApproval:'一級審批',
+      twoApproval:'二級審批'
+    },
+    statusList:{
+      pending:'待審批',
+      haveThrough:'已通過',
+      approval:'審批中',
+      agree:'同意',
+      hasRefused:'已拒絕',
+      noApproval:'過期未審批',
+      meeting:'會議中',
+      noStart:'未開始',
+      hasEnded:'已結束',
+      hasCancel:'已取消'
+    },
+    statusStr:{
+      service: '服務中',
+      confirmed: '待確認',
+      completed: '已完成',
+      cancelled: '已取消',
+      outService: '過期未服務'
+    },
+    userList: {
+      originator: '發起人',
+      participants: '參會人',
+      initiate:'我發起',
+      byInvitation:'被邀約'
+    },
+    public:{
+      all:'全部',
+      repeatReservation:'重復預約時間設置',
+      crossReservation:'跨日預約時間設置',
+      waitingApproval:'您的會議已預約完成，正在等待審批',
+      timePeriod :'此時間段已有',
+      noApproval:'場申請未審批',
+      continueAppointment:'請確定是否繼續預約',
+      successful:'成功預定!',
+      minutes:'分鐘',
+      no:'无',
+      loading:'加載中...',
+      secret:'保密',
+      public:'公開',
+      leave:'確定離開當前頁面嗎?',
+      change:'系統可能不會保存您所做的更改。',
+      date:'号',
+      total:'共',
+      meetings:'場會議',
+      weeks:'周',
+      week:'日一二三四五六',
+      to:'至'
     },
     ...twLocale
   }

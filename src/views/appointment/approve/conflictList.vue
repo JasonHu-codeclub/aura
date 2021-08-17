@@ -211,14 +211,14 @@ export default {
       },
       chooseDate: null, // 日期
       statusList: [ // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
-        {key: 0, name: '审批中'},
-        {key: 1, name: '同意'},
-        {key: 2, name: '已拒绝'},
-        {key: 3, name: '过期未审批'},
+        {key: 0, name: this.$t('statusList.approval')},
+        {key: 1, name: this.$t('statusList.agree')},
+        {key: 2, name: this.$t('statusList.hasRefused')},
+        {key: 3, name:this.$t('statusList.noApproval')},
       ],
       userList: [
-        {key: 1, name: '发起人'},
-        {key: 2, name: '参会人'}
+        {key: 1, name: this.$t('userList.originator')},
+        {key: 2, name: this.$t('userList.participants')}
       ],
       paginationQuery: { 
         page: 1, // 当前页
@@ -230,14 +230,14 @@ export default {
         }
       },
       categoryList: {
-        1: '单次预约',
-        2: '重复预约',
-        3: '跨日预约',
+        1: this.$t('categoryList.singleAppointment'),
+        2: this.$t('categoryList.repeatAppointment'),
+        3: this.$t('categoryList.crossAppointment'),
       },
       repetitionType: {
-        1: '每日',
-        2: '每周',
-        3: '每月',
+        1: this.$t('repeatTypeList.daily'),
+        2: this.$t('repeatTypeList.weeks'),
+        3: this.$t('repeatTypeList.month'),
       },
       total: 0,// 总页数
       searchBtnStatus: false,// 查询loading

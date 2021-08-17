@@ -102,14 +102,14 @@ export default {
   data(){
      var validatePass0 = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请输入原密码'));
+          callback(new Error(this.$t('message.oldPassword')));
         } else {
           callback();
         }
       };
      var validatePass = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请输入密码'));
+          callback(new Error(this.$t('message.enterNewPassword')));
         } else {
           if (this.passwordForm.newkPass !== '') {
             // let reg =/^(?![0-9]+$)[0-9]{6,20}$/
@@ -126,9 +126,9 @@ export default {
       };
       var validatePass2 = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请再次输入密码'));
+          callback(new Error(this.$t('message.againPassword')));
         } else if (value !== this.passwordForm.pass) {
-          callback(new Error('两次输入密码不一致!'));
+          callback(new Error(this.$t('message.inconsistentPasswords')));
         } else {
           callback();
         }

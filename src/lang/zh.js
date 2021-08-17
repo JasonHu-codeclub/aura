@@ -96,8 +96,10 @@ export default {
     setting: '修改密码',
     resetPwdSuccess: '密码修改成功,请重新登录',
     oldPassword: '请输入旧密码',
-    newPassword: '请输入新的密码',
+    enterNewPassword: '请输入新的密码',
     againPassword: '请再次输入密码',
+    inconsistentPasswords:'两次输入密码不一致!',
+    emptyPassord:'密码不能为空',
     roomInfo: '会议室信息',
     room: '会议室',
     times: '时间信息',
@@ -327,7 +329,9 @@ export default {
     confirmService: '确认后，您将需要为此会议服务',
     completed: '请确认此会议服务是否已完成',
     successful: '操作成功',
-    leave: '离开'
+    leave: '离开',
+    attendees:'请勾选内部参会人员',
+    title:'标题不能为空'
   },
   weeks: {
     Monday: '周一',
@@ -359,6 +363,76 @@ export default {
     November: '十一月',
     December: '十二月'
   },
+  repeatTypeList:{
+    daily:'每日',
+    weeks:'每周',
+    month:'每月'
+  },
+  pickerOptions:{
+    weeks:'最近一周',
+    lastMonth:'最近一个月',
+    lastThreeMonths:'最近三个月'
+  },
+  categoryList: {
+    singleAppointment: '单次预约',
+    repeatAppointment: '重复预约',
+    crossAppointment: '跨日预约',
+  },
+  approveLevel:{
+    noApproval:'无需审批',
+    oneApproval:'一级审批',
+    twoApproval:'二级审批'
+  },
+  statusList:{
+    pending:'待审批',
+    haveThrough:'已通过',
+    approval:'审批中',
+    agree:'同意',
+    hasRefused:'已拒绝',
+    noApproval:'过期未审批',
+    meeting:'会议中',
+    noStart:'未开始',
+    hasEnded:'已结束',
+    hasCancel:'已取消'
+  },
+  statusStr:{
+    service: '服务中',
+    confirmed: '待确认',
+    completed: '已完成',
+    cancelled: '已取消',
+    outService: '过期未服务'
+  },
+  userList: {
+    originator: '发起人',
+    participants: '参会人',
+    initiate:'我发起',
+    byInvitation:'被邀约'
+  },
+  //通用
+  public:{
+    all:'全部',
+    repeatReservation:'重复预约时间设置',
+    crossReservation:'跨日预约时间设置',
+    waitingApproval:'您的会议已预约完成，正在等待审批',
+    timePeriod :'此时间段已有',
+    noApproval:'场申请未审批',
+    continueAppointment:'请确定是否继续预约',
+    successful:'成功预定!',
+    minutes:'分钟',
+    no:'无',
+    loading:'加载中...',
+    secret:'保密',
+    public:'公开',
+    leave:'确定离开当前页面吗?',
+    change:'系统可能不会保存您所做的更改。',
+    date:'号',
+    total:'共',
+    meetings:'场会议',
+    weeks:'周',
+    week:'日一二三四五六',
+    to:'至'
+  },
+
   ...zhLocale
   
 

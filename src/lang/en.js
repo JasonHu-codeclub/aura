@@ -96,8 +96,10 @@ export default {
     againNewPwd: 'New password Again',
     resetPwdSuccess: 'Password changed successfully, please log in again',
     oldPassword: 'Please enter the old password',
-    newPassword: 'Please enter a new password',
+    enterNewPassword: 'Please enter a new password',
     againPassword: 'Please enter the password again',
+    inconsistentPasswords:'The two entered passwords are inconsistent!',
+    emptyPassord:'The password cannot be empty',
     roomInfo: 'Conference room information',
     room: 'Conference Room',
     times: 'Time information',
@@ -323,7 +325,9 @@ export default {
     confirmService: 'After confirmation, you will need to service this meeting',
     completed: 'Please confirm if this conference service has been completed',
     successful: 'Operation successful',
-    leave: 'leave'
+    leave: 'leave',
+    attendees:'Please check internal attendees',
+    title:'The title cannot be empty'
   },
   weeks: {
     Monday: 'Monday',
@@ -354,6 +358,74 @@ export default {
     October: 'October', 
     November: 'November',
     December: 'December'
+  },
+  repeatTypeList:{
+    daily:'Daily',
+    weeks:'Weeks',
+    month:'Month'
+  },
+  pickerOptions:{
+    weeks:'In the latest week',
+    lastMonth:'Last Month',
+    lastThreeMonths:'Last Three Months'
+  },
+  categoryList: {
+    singleAppointment: 'Single Appointment',
+    repeatAppointment: 'Repeat Appointment',
+    crossAppointment: 'Cross Appointment',
+  },
+  approveLevel:{
+    noApproval:'No Approval',
+    oneApproval:'One Approval',
+    twoApproval:'Two Approval'
+  },
+  statusList:{
+    pending:'Pending',
+    haveThrough:'Have Through',
+    approval:'examination and approval',
+    agree:'Agree',
+    hasRefused:'Has Refused',
+    noApproval:'Overdue without approval',
+    meeting:'Meeting',
+    noStart:'No Start',
+    hasEnded:'Has Ended',
+    hasCancel:'Has Cancel'
+  },
+  statusStr:{
+    service: 'In the service',
+    confirmed: 'To be confirmed',
+    completed: 'Has been completed',
+    cancelled: 'Has been cancelled',
+    outService: 'Expired out of service'
+  },
+  userList: {
+    originator: 'Originator',
+    participants: 'Participants',
+    initiate:'I Initiate',
+    byInvitation:'By Invitation'
+  },
+  public:{
+    all:'All',
+    repeatReservation:'Repeat reservation time setting',
+    crossReservation:'Cross-day appointment time setting',
+    waitingApproval:'Your meeting has been scheduled and is waiting for approval',
+    timePeriod :'Existing in this period',
+    noApproval:'application has not been approved',
+    continueAppointment:'Please confirm whether to continue the appointment',
+    successful:'Successful reservation!',
+    minutes:'Minutes',
+    no:'No',
+    loading:'Loading...',
+    secret:'Secret',
+    public:'Public',
+    leave:'Are you sure to leave the current page?',
+    change:'The system may not save your changes.',
+    date:'Date',
+    total:'Total',
+    meetings:'Meetings',
+    weeks:'Week',
+    week:'day one two three four five six',
+    to:'To'
   },
   ...enLocale
 

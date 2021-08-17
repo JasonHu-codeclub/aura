@@ -262,22 +262,22 @@ export default {
       chooseDate: null, // 日期
       roomList: [], // 会议室下拉
       statusList: [ // 会服状态 1:服务中 2:待确认 3:已完成 4:已取消 5:过期未服务
-        {key: 1, name: '服务中'},
-        {key: 2, name: '待确认'},
-        {key: 3, name: '已完成'},
-        {key: 4, name: '已取消'},
-        {key: 5, name: '过期未服务'},
+        {key: 1, name: this.$t('statusStr.service')},
+        {key: 2, name: this.$t('statusStr.confirmed')},
+        {key: 3, name: this.$t('statusStr.completed')},
+        {key: 4, name: this.$t('statusStr.cancelled')},
+        {key: 5, name: this.$t('statusStr.outService')},
       ],
       statusStr:{
-         1: '服务中',
-         2: '待确认',
-         3: '已完成',
-         4: '已取消',
-         5: '过期未服务'
+         1: this.$t('statusStr.service'),
+         2: this.$t('statusStr.confirmed'),
+         3: this.$t('statusStr.completed'),
+         4: this.$t('statusStr.cancelled'),
+         5: this.$t('statusStr.outService')
       },
       userList: [
-        {key: 1, name: '发起人'},
-        {key: 2, name: '参会人'}
+        {key: 1, name:this.$t('userList.originator')},
+        {key: 2, name: this.$t('userList.participants')}
       ],
       paginationQuery: { 
         page: 1, // 当前页
@@ -290,7 +290,7 @@ export default {
       // },
       pickerOptions: {
           shortcuts: [{
-            text: '最近一周',
+            text: this.$t('pickerOptions.weeks'),
             onClick(picker) {
               const end = new Date();
               const start = new Date();
@@ -298,7 +298,7 @@ export default {
               picker.$emit('pick', [start, end]);
             }
           }, {
-            text: '最近一个月',
+            text: this.$t('pickerOptions.lastMonth'),
             onClick(picker) {
               
               const start = new Date();
@@ -306,7 +306,7 @@ export default {
               picker.$emit('pick', [start, end]);
             }
           }, {
-            text: '最近三个月',
+            text: this.$t('pickerOptions.lastThreeMonths'),
             onClick(picker) {
               const end = new Date();
               const start = new Date();
@@ -316,14 +316,14 @@ export default {
           }]
         },
       categoryList: {
-        1: '单次预约',
-        2: '重复预约',
-        3: '跨日预约',
+        1: this.$t('categoryList.singleAppointment'),
+        2: this.$t('categoryList.repeatAppointment'),
+        3: this.$t('categoryList.crossAppointment'),
       },
       repetitionType: {
-        1: '每日',
-        2: '每周',
-        3: '每月',
+        1: this.$t('repeatTypeList.daily'),
+        2: this.$t('repeatTypeList.weeks'),
+        3: this.$t('repeatTypeList.month'),
       },
       total: 0,// 总页数
       searchBtnStatus: false,// 查询loading
@@ -370,7 +370,7 @@ export default {
       const result = await getMansionFloorApi()
         let data = result.data.mansion
         if(data.length > 1){
-          data.unshift({id: '', name: '全部'})
+          data.unshift({id: '', name: this.$t('public.all')})
         }
         this.optionsFloor = data
     },
