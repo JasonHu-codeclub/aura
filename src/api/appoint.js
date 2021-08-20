@@ -261,4 +261,13 @@ export function getStatisticsApi (data) {
   })
 }
 
+// 会议日历
+export function getCalendarApi (data) {
+  return request({
+    url: "/meeting-statistics/monthly-calendar",
+    method: "get",
+    params: data
+  })
+}
+
 
