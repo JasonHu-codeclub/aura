@@ -25,12 +25,13 @@ export function getLanguage() {
       return locale
     }
   }
-  return 'en'
+  return 'zh_CN'
 }
+console.log(getLanguage(),'getLanguage()')
 const i18n = new VueI18n({
   // set locale
   // options: en | zh | es
-  locale: getLanguage(),
+  locale: getLanguage()||'zh_CN',
   // set locale messages
   messages
 })

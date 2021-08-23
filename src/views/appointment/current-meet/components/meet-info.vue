@@ -246,7 +246,7 @@
                   :autosize="{ minRows: 4, maxRows: 4}"
                   :placeholder="$t('message.EnterComments')"
                   :disabled="dataType===1 || ruleForm.can_update == 0"
-                  maxlength="50"
+                  maxlength="150"
                   show-word-limit
                ></el-input>
             </div>
