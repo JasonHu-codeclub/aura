@@ -75,6 +75,7 @@
 import { imgBaseUrl } from "@/utils/varible";
 import { getSystemInfoApi } from "@/api/user";
 import { mapGetters } from "vuex";
+import { getHost } from '@/utils/tool'
 export default {
   components: {},
   data() {
@@ -148,7 +149,7 @@ export default {
     },
     // 第三方登录
     handleLoginType(type) {
-      const redirect_uri = "https://alc01.aa-iot.com/sp-pcmeet/#/login";
+      const redirect_uri = getHost()+"/sp-pcmeet/#/login";
       if (type === "qiye") {
         // 企业微信
         window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${
