@@ -9,13 +9,18 @@
 <template>
   <div id="login">
     <div class="login-content">
+      <div style="display: flex;justify-content: flex-end;position: absolute;top: 5%;right:5%">
+      <div @click="chooseLang('zh_CN')" class="zh_CN"></div>
+      <div style="margin: 0 10px;"  @click="chooseLang('en')" class="en"></div>
+      <div @click="chooseLang('zh_HK')" class="zh_HK"></div>
+    </div>
       <h3 class="login-content-logo">
         <img :src="host + companyLogo" class="login-content-logo-img" alt="" />
       </h3>
       <div class="login-content-box">
         <div class="login-content-form">
           <div class="login-content-divider">
-            <span class="divider-text">第三方账号登录</span>
+            <span class="divider-text">{{$t('thirdPartyAccount')}}</span>
           </div>
           <div class="login-content-type">
             <!-- <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('wechat')"></span> -->
@@ -25,7 +30,7 @@
             ></span>
           </div>
           <div class="login-content-divider">
-            <span class="divider-text">使用账号密码登录</span>
+            <span class="divider-text">{{$t('accountLogin')}}</span>
           </div>
           <div class="login-form">
             <el-form
@@ -36,7 +41,7 @@
               hide-required-asterisk
             >
               <el-form-item label="" prop="username">
-                <el-input placeholder="请输入账号" v-model="ruleForm.username">
+                <el-input :placeholder="$t('tip.userNameNotEmpty')" v-model="ruleForm.username">
                   <template slot="prepend"
                     ><svg-icon icon-class="username" slot="label"
                   /></template>
@@ -46,7 +51,7 @@
                 <el-input
                   type="password"
                   show-password
-                  placeholder="请输入密码"
+                  :placeholder="$t('tip.pwdNotEmpty')"
                   v-model="ruleForm.password"
                   @keyup.enter.native="handleLogin"
                 >
@@ -60,7 +65,7 @@
                   type="primary"
                   @click.native.prevent="handleLogin()"
                   :loading="loginLoading"
-                  >登录</el-button
+                  >{{$t('login')}}</el-button
                 >
               </div>
             </el-form>
@@ -176,6 +181,10 @@ export default {
         return acc;
       }, {});
     },
+    chooseLang(lang){
+      this.$i18n.locale = lang
+      this.$store.dispatch('app/setLanguage', lang)
+    }
   },
   mounted() {},
   created() {
@@ -232,6 +241,31 @@ export default {
     align-items: center;
     justify-content: center;
     box-shadow: 10px 0 32px #231f45;
+     .zh_CN,.en,.zh_HK{
+    height: 20px;
+    width: 20px;
+  }
+  .zh_CN{
+    background-image: url("../../assets/CN.png");
+    background-size: 100%;
+  }
+  .zh_CN:hover{
+    background-image: url("../../assets/zh_CN.png");
+  }
+  .en{
+    background-image: url("../../assets/EN.png");
+    background-size: 100%;
+  }
+  .en:hover{
+    background-image: url("../../assets/zh_EN.png");
+  }
+  .zh_HK{
+    background-image: url("../../assets/TW.png");
+    background-size: 100%;
+  }
+  .zh_HK:hover{
+    background-image: url("../../assets/zh_TW.png");
+  }
     .login-content-logo {
       position: absolute;
       top: 5%;
@@ -266,7 +300,7 @@ export default {
           top: 50%;
           transform: translate(-50%, -50%);
           background: #134eb9;
-          padding: 3px 12px;
+          padding: 3px 8px;
           color: #82adf1;
         }
         .login-content-type {

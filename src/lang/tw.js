@@ -1,5 +1,8 @@
 import twLocale from "element-ui/lib/locale/lang/zh-TW"
 export default {
+  thirdPartyAccount:'第三方賬號登錄',
+  accountLogin:'使用賬號密碼登錄',
+  login:'登錄',
     route: {
       home: '會議預約',
       current: '當前會議',

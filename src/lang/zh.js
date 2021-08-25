@@ -1,5 +1,8 @@
 import zhLocale from "element-ui/lib/locale/lang/zh-CN"
 export default {
+  thirdPartyAccount:'第三方账号登录',
+  accountLogin:'使用账号密码登录',
+  login:'登录',
   route: {
     home: '会议预约',
     current: '当前会议',
