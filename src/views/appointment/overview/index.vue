@@ -95,6 +95,9 @@ import FullCalendar from "@fullcalendar/vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+
+import tippy from 'tippy.js'
+import 'tippy.js/dist/tippy.css'
 const lineChartData = {
   weeks: {
     title: [],
@@ -131,8 +134,9 @@ export default {
           timeGridPlugin,
           interactionPlugin, // needed for dateClick
         ],
-        locale:Cookies.get('language')=='en'? '':'zh-cn',
         aspectRatio:2,  //宽高比例
+        eventLimit: 3,   //每日事件展示上限
+        eventLimitText: '更多', 
         initialView: "dayGridMonth", // 设置默认显示月，可选周、日
         editable: false, //是否允许拖拽事件
         selectable: true,
@@ -142,6 +146,8 @@ export default {
         weekends: true,
         datesSet: this.handleDatesSet,
         events: [],
+        eventMouseEnter:this.eventMouseEnter,
+        locale:Cookies.get('language')=='en'? '':'zh-cn',
       },
       dataList:[],
       start: "",
@@ -192,7 +198,7 @@ export default {
       let params = { start:start,end:end };
       getCalendarApi(params).then((res)=>{
         if (res.meta.code == "RESP_OKAY") {
-          that.dataList=res.data['monthly-data'][0]
+          that.dataList=res.data['monthly-data']
           that.getReservationList(that.dataList)
         }
       })
@@ -272,6 +278,12 @@ export default {
       this.start = this.timeFormat(info.start);
       this.end = this.timeFormat(info.end);
     },
+     eventMouseEnter :mouseEnterInfo => {
+      tippy(mouseEnterInfo.el, {
+        content: mouseEnterInfo.event.title,
+        placement: "top-start",
+      });
+  }
   },
   created() {
   },
@@ -408,6 +420,20 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+/deep/.fc .fc-popover{
+  width: 250px;
+}
+/deep/.fc .fc-daygrid-event-harness {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 3px 0 3px 0;
+}
+/deep/.fc-daygrid-event span{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .dots{
   display: inline-block;margin: 0 4px;
   box-sizing: content-box;
@@ -418,15 +444,7 @@ export default {
   border-radius: 4px;
   border-radius: calc(var(--fc-daygrid-event-dot-width, 8px) / 2)
 }
-/deep/.fc .fc-daygrid-event-harness {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-bottom: 6px;
-}
-/deep/.fc-daygrid-event span{
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.colors{
+  color: red;
 }
 </style>
