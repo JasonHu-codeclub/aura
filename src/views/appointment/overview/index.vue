@@ -245,7 +245,7 @@ export default {
       let newArr = [];
       arrayData.forEach((item) => {
         newArr.push({
-          start: item.start,
+          start:item.category==3 ? item.date + " 00:00":item.start,
           end: item.end,
           id: item.id,
           title:item.category==3?`${this.getTitle(item.start,'')} ${item.title} ${this.getTitle('', item.end)}`: `${this.getTitle(item.start, item.end)} ${item.title}`,
