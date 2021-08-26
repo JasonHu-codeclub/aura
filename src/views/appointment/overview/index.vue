@@ -159,7 +159,7 @@ export default {
     },
     creadHtml(data) {
       let htmlStr = "";
-      let dates = dayjs(data.date).format("YYYY-MM-DD");
+      let dates = dayjs(data.date).format("YYYY.MM.DD");
       if (data) {
         data.map(res => {
           htmlStr += `<div class="popover-list">
