@@ -393,7 +393,7 @@ export default {
     left: 0;
     right: 0;
     background: #fff;
-    padding: 16px 16px 0;
+    padding: 16px 16px 40px;
   }
 }
 /deep/.el-radio-button--medium .el-radio-button__inner {
