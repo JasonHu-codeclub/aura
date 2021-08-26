@@ -90,7 +90,7 @@
             show-overflow-tooltip
             >
             <template slot-scope="scope">
-              <span >{{scope.row.satrtTime}}<br>{{scope.row.endTime}}</span>
+              <span >{{scope.row.start}}<br>{{scope.row.end}}</span>
             </template>
           </el-table-column>
           <!-- 会议室 -->
