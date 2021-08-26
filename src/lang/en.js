@@ -197,7 +197,7 @@ export default {
     operation: 'Action',
     serial: 'Serial',
     sender: 'Host',
-    senderMan: 'sender',
+    senderMan: 'Sender',
     telephoneInfo: 'Telephone Information',
     LocalMeetings: 'Local meetings',
     Teleconferencing: 'Teleconferencing',

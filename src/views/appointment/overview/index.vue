@@ -1,6 +1,4 @@
-/*
-数据概览
-*/ 
+/* 数据概览 */
 <template>
   <div class="app-wrap overview">
     <div class="overview-top">
@@ -8,54 +6,36 @@
         <div class="overview-top-statis">{{ $t("message.statistics") }}</div>
         <el-radio-group v-model="tabPosition">
           <el-radio-button :label="1">{{ $t("message.week") }}</el-radio-button>
-          <el-radio-button :label="2">{{
-            $t("message.month")
-          }}</el-radio-button>
+          <el-radio-button :label="2">{{ $t("message.month") }}</el-radio-button>
           <el-radio-button :label="3">{{ $t("message.year") }}</el-radio-button>
         </el-radio-group>
       </div>
       <div class="overview-top-right">
         <div class="overview-top-rigth_item">
           <div class="top-rigth_item-dec">
-            <span class="top-rigth_item-label">{{
-              $t("message.CumulativeDuration")
-            }}</span>
-            <span class="top-rigth_item-value">{{
-              statisticsData.total_time
-            }}</span>
+            <span class="top-rigth_item-label">{{ $t("message.CumulativeDuration") }}</span>
+            <span class="top-rigth_item-value">{{ statisticsData.total_time }}</span>
           </div>
           <div class="top-rigth_item-icon icon-dur"></div>
         </div>
         <div class="overview-top-rigth_item">
           <div class="top-rigth_item-dec">
-            <span class="top-rigth_item-label">{{
-              $t("message.CumulativeNumber")
-            }}</span>
-            <span class="top-rigth_item-value">{{
-              statisticsData.total_count
-            }}</span>
+            <span class="top-rigth_item-label">{{ $t("message.CumulativeNumber") }}</span>
+            <span class="top-rigth_item-value">{{ statisticsData.total_count }}</span>
           </div>
           <div class="top-rigth_item-icon icon-num"></div>
         </div>
         <div class="overview-top-rigth_item">
           <div class="top-rigth_item-dec">
-            <span class="top-rigth_item-label">{{
-              $t("message.meeting")
-            }}</span>
-            <span class="top-rigth_item-value">{{
-              statisticsData.my_count
-            }}</span>
+            <span class="top-rigth_item-label">{{ $t("message.meeting") }}</span>
+            <span class="top-rigth_item-value">{{ statisticsData.my_count }}</span>
           </div>
           <div class="top-rigth_item-icon icon-meet"></div>
         </div>
         <div class="overview-top-rigth_item">
           <div class="top-rigth_item-dec">
-            <span class="top-rigth_item-label">{{
-              $t("message.invited")
-            }}</span>
-            <span class="top-rigth_item-value">{{
-              statisticsData.other_count
-            }}</span>
+            <span class="top-rigth_item-label">{{ $t("message.invited") }}</span>
+            <span class="top-rigth_item-value">{{ statisticsData.other_count }}</span>
           </div>
           <div class="top-rigth_item-icon icon-invite"></div>
         </div>
@@ -66,15 +46,11 @@
     </div>
     <div class="overview-calendar">
       <div class="demo-app-main">
-        <FullCalendar
-          class="demo-app-calendar"
-          ref="fullCalendar"
-          :options="calendarOptions"
-        >
+        <FullCalendar class="demo-app-calendar" ref="fullCalendar" :options="calendarOptions">
           <template v-slot:eventContent="arg">
             <div class="dots"></div>
             <!-- <i style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{ arg.event.title }}</i> -->
-             <i>{{ arg.event.title }}</i>
+            <i>{{ arg.event.title }}</i>
           </template>
         </FullCalendar>
       </div>
@@ -83,37 +59,38 @@
 </template>
 
 <script>
-import { getStatisticsApi ,getCalendarApi} from "@/api/appoint";
+import { getStatisticsApi, getCalendarApi } from "@/api/appoint";
 import LineChart from "@/components/LineChart";
 import BarChart from "@/components/BarChart";
 import PieChart from "@/components/PieChart";
 import zh from "@/lang/zh";
 import _ from "lodash";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
+import dayjs from "dayjs";
 //引入日历组件
 import FullCalendar from "@fullcalendar/vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
-import tippy from 'tippy.js'
-import 'tippy.js/dist/tippy.css'
+import tippy from "tippy.js";
+import "tippy.js/dist/tippy.css";
 const lineChartData = {
   weeks: {
     title: [],
     duration: ["", "", "", "", "", "", ""],
-    frequency: ["", "", "", "", "", "", ""],
+    frequency: ["", "", "", "", "", "", ""]
   },
   months: {
     title: [],
     duration: [],
-    frequency: [],
+    frequency: []
   },
   years: {
     title: [],
     duration: [],
-    frequency: [],
-  },
+    frequency: []
+  }
 };
 export default {
   components: { LineChart, BarChart, PieChart, FullCalendar },
@@ -127,16 +104,16 @@ export default {
         headerToolbar: {
           left: "",
           center: "prevYear,prev,title,next,nextYear",
-          right: "",
+          right: ""
         },
         plugins: [
           dayGridPlugin,
           timeGridPlugin,
-          interactionPlugin, // needed for dateClick
+          interactionPlugin // needed for dateClick
         ],
-        aspectRatio:2,  //宽高比例
-        eventLimit: 3,   //每日事件展示上限
-        eventLimitText: '更多', 
+        aspectRatio: 2, //宽高比例
+        eventLimit: 3, //每日事件展示上限
+        eventLimitText: "更多",
         initialView: "dayGridMonth", // 设置默认显示月，可选周、日
         editable: false, //是否允许拖拽事件
         selectable: true,
@@ -146,34 +123,65 @@ export default {
         weekends: true,
         datesSet: this.handleDatesSet,
         events: [],
-        eventMouseEnter:this.eventMouseEnter,
-        locale:Cookies.get('language')=='en'? '':'zh-cn',
+        eventMouseEnter: this.eventMouseEnter,
+        locale: Cookies.get("language") == "en" ? "" : "zh-cn",
+        // moreLinkDidMount: this.eventClickHandle
+        moreLinkClick: this.eventClickHandle
       },
-      dataList:[],
+      dataList: [],
       start: "",
-      end: "",
+      end: ""
     };
   },
   watch: {
     tabPosition(news, old) {
       this.getStatistics(news, "change");
     },
-    start(news,old){
-      this.dataList=[]
-      this.getCalendar(news,this.end)
+    start(news, old) {
+      this.dataList = [];
+      this.getCalendar(news, this.end);
     }
   },
   mounted() {
     // 注销onresizes事件
     window.onresize = null;
     this.getStatistics();
-    this.calendarApi = this.$refs.fullCalendar.getApi();// 获取当前日历视图信息
+    this.calendarApi = this.$refs.fullCalendar.getApi(); // 获取当前日历视图信息
   },
   methods: {
+    eventClickHandle(arg) {
+      console.log(arg);
+      let that = this;
+      setTimeout(function() {
+        let doc = document.getElementsByClassName("fc-popover")[0];
+        doc.innerHTML = that.creadHtml(arg.allSegs);
+      }, 5);
+    },
+    creadHtml(data) {
+      let htmlStr = "";
+      let dates = dayjs(data.date).format("YYYY-MM-DD");
+      if (data) {
+        data.map(res => {
+          htmlStr += `<div class="popover-list">
+             <div class="popover-list-title">
+               <span class="title-date">${res.event._def.extendedProps.dates}</span>
+               <span class="title-text">${res.event._def.extendedProps.titleDec}</span>
+             </div>
+             <div class="popover-list-room">${res.event._def.extendedProps.rooName}</div>
+          </div>`;
+        });
+      }
+      let box = `<div class="popover-box">
+          <div class="popover-date">${dates}</div>
+          <div class="popover-title">会议行程 (${data.length})</div>
+          <div class="popover-content">${htmlStr}</div>
+        </div>`;
+      return box;
+    },
     // 获取数据
     getStatistics(types = 1, nav) {
       let params = { type: types ? this.getType[types] : 1 };
-      getStatisticsApi(params).then((res) => {
+      getStatisticsApi(params).then(res => {
         if (res.meta.code == "RESP_OKAY") {
           this.statisticsData = res.data;
           let typeStr = "weeks";
@@ -193,15 +201,15 @@ export default {
       });
     },
     //获取会议日历数据
-    getCalendar(start,end){
-      var that =this
-      let params = { start:start,end:end };
-      getCalendarApi(params).then((res)=>{
+    getCalendar(start, end) {
+      var that = this;
+      let params = { start: start, end: end };
+      getCalendarApi(params).then(res => {
         if (res.meta.code == "RESP_OKAY") {
-          that.dataList=res.data['monthly-data']
-          that.getReservationList(that.dataList)
+          that.dataList = res.data["monthly-data"];
+          that.getReservationList(that.dataList);
         }
-      })
+      });
     },
     // 重组数据
     resetData(types, data, nav) {
@@ -232,9 +240,9 @@ export default {
     handelArr(arr) {
       let obj = {
         arr_hours: [], // 总小时数
-        arr_count: [], // 总场数
+        arr_count: [] // 总场数
       };
-      arr.map((res) => {
+      arr.map(res => {
         obj.arr_hours.push(res.total_hours);
         obj.arr_count.push(res.total_count);
       });
@@ -243,50 +251,57 @@ export default {
     //数据赋值然后渲染至日历上
     getReservationList(arrayData) {
       let newArr = [];
-      arrayData.forEach((item) => {
+      arrayData.forEach(item => {
         newArr.push({
-          start:item.category==3 ? item.date + " 00:00":item.start,
+          start: item.category == 3 ? item.date + " 00:00" : item.start,
           end: item.end,
           id: item.id,
-          title:item.category==3?`${this.getTitle(item.start,'')} ${item.title} ${this.getTitle('', item.end)}`: `${this.getTitle(item.start, item.end)} ${item.title}`,
+          rooName: item.meeting_room_name,
+          titleDec: item.title,
+          dates:
+            item.category == 3
+              ? `${this.getTitle(item.start, "")} ${this.getTitle("", item.end)}`
+              : this.getTitle(item.start, item.end),
+          title:
+            item.category == 3
+              ? `${this.getTitle(item.start, "")} ${item.title} ${this.getTitle("", item.end)}`
+              : `${this.getTitle(item.start, item.end)} ${item.title}`
         });
       });
       this.calendarOptions.events = newArr;
     },
     // 获取会议事件title
     getTitle(startDate, endDate) {
-      if(startDate&&endDate){
+      if (startDate && endDate) {
         let start = startDate.substring(11, 16);
         let end = endDate.substring(11, 16);
         return `${start}~${end}`;
-      }else{
+      } else {
         let start = startDate.substring(11, 16);
         let end = endDate.substring(11, 16);
-      return `${start} ${end}`;
+        return `${start} ${end}`;
       }
-      
     },
     //格式化时间
     timeFormat(time) {
       let year = time.getFullYear();
-      let month =time.getMonth() + 1 > 9? time.getMonth() + 1: "0" + (time.getMonth() + 1);
+      let month = time.getMonth() + 1 > 9 ? time.getMonth() + 1 : "0" + (time.getMonth() + 1);
       let day = time.getDate() >= 10 ? time.getDate() : "0" + time.getDate();
       return year + "-" + month + "-" + day;
     },
     //选择prevYear,prev,next,nextYear事件
-    handleDatesSet(info){
+    handleDatesSet(info) {
       this.start = this.timeFormat(info.start);
       this.end = this.timeFormat(info.end);
     },
-     eventMouseEnter :mouseEnterInfo => {
+    eventMouseEnter: mouseEnterInfo => {
       tippy(mouseEnterInfo.el, {
         content: mouseEnterInfo.event.title,
-        placement: "top-start",
+        placement: "top-start"
       });
-  }
+    }
   },
-  created() {
-  },
+  created() {}
 };
 </script>
 
@@ -412,39 +427,116 @@ export default {
   background-color: #ffffff;
 }
 /deep/.fc-popover-body {
-    height: 150px;
-    overflow: scroll;
+  height: 150px;
+  overflow: scroll;
 }
-/deep/.fc-event-main{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-/deep/.fc .fc-popover{
-  width: 250px;
-}
-/deep/.fc .fc-daygrid-event-harness {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding: 3px 0 3px 0;
-}
-/deep/.fc-daygrid-event span{
+/deep/.fc-event-main {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.dots{
-  display: inline-block;margin: 0 4px;
+/deep/.fc .fc-popover {
+  width: 266px;
+}
+/deep/.fc .fc-daygrid-event-harness {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 3px 0 3px 0;
+}
+/deep/.fc-daygrid-event span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dots {
+  display: inline-block;
+  margin: 0 4px;
   box-sizing: content-box;
   width: 0;
   height: 0;
   border: 4px solid #3788d8;
-  border: calc(var(--fc-daygrid-event-dot-width, 8px) / 2) solid var(--fc-event-border-color, #3788d8);
+  border: calc(var(--fc-daygrid-event-dot-width, 8px) / 2) solid
+    var(--fc-event-border-color, #3788d8);
   border-radius: 4px;
-  border-radius: calc(var(--fc-daygrid-event-dot-width, 8px) / 2)
+  border-radius: calc(var(--fc-daygrid-event-dot-width, 8px) / 2);
 }
-.colors{
+.colors {
   color: red;
+}
+
+/deep/.popover-box {
+  position: relative;
+  height: 200px;
+  .popover-date {
+    background-color: #f1f1f1;
+    color: #32353b;
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+  .popover-title {
+    background-color: #3788d8;
+    color: #fff;
+    padding: 4px 4px;
+    font-size: 12px;
+    margin: 8px 11px;
+  }
+  .popover-list-room {
+    color: #333;
+    font-weight: bold;
+    margin-top: 2px;
+  }
+  .popover-content {
+    position: absolute;
+    top: 62px;
+    width: 98%;
+    font-size: 12px;
+    background: #fff;
+    overflow-y: auto;
+    bottom: 5px;
+    margin-right: 4px;
+    .popover-list {
+      position: relative;
+      padding: 0 6px 8px 30px;
+      &:before {
+        position: absolute;
+        top: 2px;
+        left: 16px;
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #3788d8;
+      }
+      .title-date {
+        color: #585858;
+      }
+      .title-text {
+        color: #000000;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+/deep/.fc-popover-header,
+/deep/.fc-popover-body {
+  display: none;
+}
+
+/*-------滚动条整体样式----*/
+/deep/.popover-content::-webkit-scrollbar {
+  width: 3px;
+  height: 8px;
+}
+/*滚动条里面小方块样式*/
+/deep/.popover-content::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  background: #dcdfe6;
+}
+/*滚动条里面轨道样式*/
+/deep/.popover-content::-webkit-scrollbar-track {
+  border-radius: 0;
+  background: #fff;
 }
 </style>
