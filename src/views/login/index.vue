@@ -1,26 +1,21 @@
-/*
- * Created: 2020-07-09 08:15:26
- * Author : Jan
- * Last Modified: 2021-03-24 11:34:13
- * Modified By: Jan
- * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
- */
+/* * Created: 2020-07-09 08:15:26 * Author : Jan * Last Modified: 2021-03-24 11:34:13 * Modified By:
+Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved. */
 
 <template>
   <div id="login">
     <div class="login-content">
       <div style="display: flex;justify-content: flex-end;position: absolute;top: 5%;right:5%">
-      <div @click="chooseLang('zh_CN')" class="zh_CN"></div>
-      <div style="margin: 0 10px;"  @click="chooseLang('en')" class="en"></div>
-      <div @click="chooseLang('zh_HK')" class="zh_HK"></div>
-    </div>
+        <div @click="chooseLang('zh_CN')" class="zh_CN"></div>
+        <div style="margin: 0 10px;" @click="chooseLang('en')" class="en"></div>
+        <div @click="chooseLang('zh_HK')" class="zh_HK"></div>
+      </div>
       <h3 class="login-content-logo">
         <img :src="host + companyLogo" class="login-content-logo-img" alt="" />
       </h3>
       <div class="login-content-box">
         <div class="login-content-form">
           <div class="login-content-divider">
-            <span class="divider-text">{{$t('thirdPartyAccount')}}</span>
+            <span class="divider-text">{{ $t("thirdPartyAccount") }}</span>
           </div>
           <div class="login-content-type">
             <!-- <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('wechat')"></span> -->
@@ -30,7 +25,7 @@
             ></span>
           </div>
           <div class="login-content-divider">
-            <span class="divider-text">{{$t('accountLogin')}}</span>
+            <span class="divider-text">{{ $t("accountLogin") }}</span>
           </div>
           <div class="login-form">
             <el-form
@@ -42,9 +37,7 @@
             >
               <el-form-item label="" prop="username">
                 <el-input :placeholder="$t('tip.userNameNotEmpty')" v-model="ruleForm.username">
-                  <template slot="prepend"
-                    ><svg-icon icon-class="username" slot="label"
-                  /></template>
+                  <template slot="prepend"><svg-icon icon-class="username" slot="label"/></template>
                 </el-input>
               </el-form-item>
               <el-form-item label="" prop="password">
@@ -55,9 +48,7 @@
                   v-model="ruleForm.password"
                   @keyup.enter.native="handleLogin"
                 >
-                  <template slot="prepend"
-                    ><svg-icon icon-class="password" slot="label"
-                  /></template>
+                  <template slot="prepend"><svg-icon icon-class="password" slot="label"/></template>
                 </el-input>
               </el-form-item>
               <div class="submit-btn">
@@ -65,7 +56,7 @@
                   type="primary"
                   @click.native.prevent="handleLogin()"
                   :loading="loginLoading"
-                  >{{$t('login')}}</el-button
+                  >{{ $t("login") }}</el-button
                 >
               </div>
             </el-form>
@@ -80,7 +71,7 @@
 import { imgBaseUrl } from "@/utils/varible";
 import { getSystemInfoApi } from "@/api/user";
 import { mapGetters } from "vuex";
-import { getHost } from '@/utils/tool'
+import { getHost } from "@/utils/tool";
 export default {
   components: {},
   data() {
@@ -90,59 +81,61 @@ export default {
       loginLoading: false,
       ruleForm: {
         username: "",
-        password: "",
+        password: ""
       },
       rules: {
         username: [
           {
             required: true,
             message: this.$t("tip.userNameNotEmpty"),
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         password: [
           {
             required: true,
             message: this.$t("tip.pwdNotEmpty"),
-            trigger: "blur",
-          },
-        ],
+            trigger: "blur"
+          }
+        ]
       },
       redirect: undefined,
       appid: "ww63beae6c0cd72cf1", // 企业号
-      wxAppid: "wx633cde8a865d394e", // 应用appid
       agentid: "1000014",
-      otherQuery: {},
+      // appid: "wwf2765f97989edf49", // 企业号
+      // agentid: "1000006",
+      wxAppid: "wx633cde8a865d394e", // 微信应用appid
+      otherQuery: {}
     };
   },
   computed: {
-    ...mapGetters(["companyLogo", "companyName"]),
+    ...mapGetters(["companyLogo", "companyName"])
   },
   watch: {
     $route: {
-      handler: function (route) {
+      handler: function(route) {
         const query = route.query;
         if (query) {
           this.redirect = query.redirect;
           this.otherQuery = this.getOtherQuery(query);
         }
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     // 登录
     handleLogin() {
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.loginLoading = true;
           this.$store
             .dispatch("user/login", {
               username: this.ruleForm.username,
               pwd: this.ruleForm.password,
-              company: "",
+              company: ""
             })
-            .then((res) => {
+            .then(res => {
               this.loginLoading = false;
               if (res.meta.code == "RESP_OKAY") {
                 this.$router.replace("/");
@@ -154,14 +147,12 @@ export default {
     },
     // 第三方登录
     handleLoginType(type) {
-      const redirect_uri = getHost()+"/sp-pcmeet/#/login";
+      const redirect_uri = getHost() + "/sp-pcmeet/#/login";
       if (type === "qiye") {
         // 企业微信
         window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${
           this.appid
-        }&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(
-          redirect_uri
-        )}&state=STATE`;
+        }&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=STATE`;
       } else if (type === "wechat") {
         // 微信登录
         window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${
@@ -181,14 +172,22 @@ export default {
         return acc;
       }, {});
     },
-    chooseLang(lang){
-      this.$i18n.locale = lang
-      this.$store.dispatch('app/setLanguage', lang)
+    chooseLang(lang) {
+      this.$i18n.locale = lang;
+      this.$store.dispatch("app/setLanguage", lang);
       // 重新刷新页面
-      window.location.reload()
+      window.location.reload();
     }
   },
-  mounted() {},
+  mounted() {
+    let _this = this;
+    document.onkeydown = function(e) {
+      if (e.keyCode === 13) {
+        _this.handleLogin(); //这里调用按钮登陆的事件
+        console.log("handleLogin");
+      }
+    };
+  },
   created() {
     /* 存在code,第三方登录 */
     if (this.otherQuery.code) {
@@ -197,14 +196,14 @@ export default {
         .dispatch("user/otherLogin", {
           appid: this.appid,
           code: this.otherQuery.code,
-          state: this.otherQuery.state,
+          state: this.otherQuery.state
         })
-        .then((res) => {
+        .then(res => {
           if (res.meta.code == "RESP_OKAY") {
             message({
               message: res.data.meta.message,
               type: "success",
-              duration: 3 * 1000,
+              duration: 3 * 1000
             });
             this.pageLoading = true;
             this.$router.replace("/");
@@ -213,15 +212,15 @@ export default {
             message({
               message: res.data.meta.message,
               type: "error",
-              duration: 3 * 1000,
+              duration: 3 * 1000
             });
           }
         });
     }
-  },
+  }
 };
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 #login {
   position: relative;
   height: 100%;
@@ -243,31 +242,33 @@ export default {
     align-items: center;
     justify-content: center;
     box-shadow: 10px 0 32px #231f45;
-     .zh_CN,.en,.zh_HK{
-    height: 20px;
-    width: 20px;
-  }
-  .zh_CN{
-    background-image: url("../../assets/CN.png");
-    background-size: 100%;
-  }
-  .zh_CN:hover{
-    background-image: url("../../assets/zh_CN.png");
-  }
-  .en{
-    background-image: url("../../assets/EN.png");
-    background-size: 100%;
-  }
-  .en:hover{
-    background-image: url("../../assets/zh_EN.png");
-  }
-  .zh_HK{
-    background-image: url("../../assets/TW.png");
-    background-size: 100%;
-  }
-  .zh_HK:hover{
-    background-image: url("../../assets/zh_TW.png");
-  }
+    .zh_CN,
+    .en,
+    .zh_HK {
+      height: 20px;
+      width: 20px;
+    }
+    .zh_CN {
+      background-image: url("../../assets/CN.png");
+      background-size: 100%;
+    }
+    .zh_CN:hover {
+      background-image: url("../../assets/zh_CN.png");
+    }
+    .en {
+      background-image: url("../../assets/EN.png");
+      background-size: 100%;
+    }
+    .en:hover {
+      background-image: url("../../assets/zh_EN.png");
+    }
+    .zh_HK {
+      background-image: url("../../assets/TW.png");
+      background-size: 100%;
+    }
+    .zh_HK:hover {
+      background-image: url("../../assets/zh_TW.png");
+    }
     .login-content-logo {
       position: absolute;
       top: 9%;

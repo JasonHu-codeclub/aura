@@ -149,6 +149,7 @@ export default {
   methods: {
     // 点击更多
     eventClickHandle(arg) {
+      console.log(arg, "arg");
       let that = this;
       setTimeout(function() {
         let doc = document.getElementsByClassName("fc-popover")[0];
@@ -252,22 +253,20 @@ export default {
       let newArr = [];
       arrayData.forEach(item => {
         newArr.push({
-          start: item.category == 3 ? item.date + " 00:00" : item.start,
+          start: item.is_cross_day ? item.date + " 00:00" : item.start,
           end: item.end,
           id: item.id,
           rooName: item.meeting_room_name,
           titleDec: item.title,
-          dates:
-            item.category == 3 || item.is_cross_day
-              ? `${this.getNextTime(item.start, item.start_time)} - ${this.getNextTime(
-                  item.end,
-                  item.end_time
-                )}`
-              : this.getTitle(item.start, item.end),
-          title:
-            item.category == 3
-              ? `${this.getTitle(item.start, "")} ${item.title} ${this.getTitle("", item.end)}`
-              : `${this.getTitle(item.start, item.end)} ${item.title}`
+          dates: item.is_cross_day
+            ? `${this.getNextTime(item.start, item.start_time)} - ${this.getNextTime(
+                item.end,
+                item.end_time
+              )}`
+            : this.getTitle(item.start, item.end),
+          title: item.is_cross_day
+            ? `${this.getTitle(item.start, "")} ${item.title} ${this.getTitle("", item.end)}`
+            : `${this.getTitle(item.start, item.end)} ${item.title}`
         });
       });
       this.calendarOptions.events = newArr;

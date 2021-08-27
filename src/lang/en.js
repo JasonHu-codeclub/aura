@@ -10,7 +10,7 @@ export default {
     invited: 'Invited',
     history: 'Meeting history',
     Approve: 'Approve',
-    service: 'service',
+    service: 'Service',
     overview: 'Usage Summary',
     information: 'information',
     editMeet: 'Edit Meeting',
