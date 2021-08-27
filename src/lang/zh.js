@@ -245,7 +245,8 @@ export default {
     loginThird: '使用第三方账号登录',
     LeaveConfirm: '确定离开当前页面吗？',
     changesConfirm: '系统可能不会保存您所做的更改。',
-    LeaveCurrentPage: '您正在编辑信息中，离开前是否保存内容'
+    LeaveCurrentPage: '您正在编辑信息中，离开前是否保存内容',
+    meetingSchedule: '会议行程'
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',

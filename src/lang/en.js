@@ -244,7 +244,8 @@ export default {
     loginThird: 'Login with a third party account',
     LeaveConfirm: 'Are you sure to leave the current page?',
     changesConfirm: 'Your changes may not be saved.',
-    LeaveCurrentPage: 'You are editing information. Do you want to save the content before leaving'
+    LeaveCurrentPage: 'You are editing information. Do you want to save the content before leaving',
+    meetingSchedule: 'Meeting Schedule'
   },
   placeholder: {
     MeetingFloor: 'Floor',

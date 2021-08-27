@@ -147,14 +147,15 @@ export default {
     this.calendarApi = this.$refs.fullCalendar.getApi(); // 获取当前日历视图信息
   },
   methods: {
+    // 点击更多
     eventClickHandle(arg) {
-      console.log(arg);
       let that = this;
       setTimeout(function() {
         let doc = document.getElementsByClassName("fc-popover")[0];
         doc.innerHTML = that.creadHtml(arg.allSegs);
       }, 5);
     },
+    // 弹窗更多列表内容
     creadHtml(data) {
       let htmlStr = "";
       let dates = dayjs(data.date).format("YYYY.MM.DD");
@@ -171,7 +172,7 @@ export default {
       }
       let box = `<div class="popover-box">
           <div class="popover-date">${dates}</div>
-          <div class="popover-title">会议行程 (${data.length})</div>
+          <div class="popover-title">${this.$t("message.meetingSchedule")} (${data.length})</div>
           <div class="popover-content">${htmlStr}</div>
         </div>`;
       return box;
@@ -257,7 +258,7 @@ export default {
           rooName: item.meeting_room_name,
           titleDec: item.title,
           dates:
-            item.category == 3
+            item.category == 3 || item.is_cross_day
               ? `${this.getNextTime(item.start, item.start_time)} - ${this.getNextTime(
                   item.end,
                   item.end_time

@@ -1,6 +1,4 @@
-/**
-  预约会议页面
- */
+/** 预约会议页面 */
 
 <template>
   <div class="app-wrap res-wrap">
@@ -83,10 +81,11 @@
               start: this.defaultValue,
               step: '00:30',
               end: this.startTimesOptions.end,
+              maxTime: searchData.endTime
             }"
           >
           </el-time-select>
-           <el-time-select
+          <el-time-select
             :placeholder="$t('placeholder.endTime')"
             v-model="searchData.endTime"
             @change="endTimeChange"
@@ -94,7 +93,7 @@
               start: this.defaultValue,
               step: '00:30',
               end: this.startTimesOptions.end,
-              minTime: searchData.startTime,
+              minTime: searchData.startTime
             }"
           >
           </el-time-select>
@@ -191,16 +190,12 @@
                       </div>
                       <div class="floor-info-address">
                         <i class="address-icon"></i>
-                        <span class="address-text overhidden">{{
-                          scope.row.mansion.name
-                        }}</span>
+                        <span class="address-text overhidden">{{ scope.row.mansion.name }}</span>
                       </div>
                     </div>
                     <div class="floor-number-people overhid">
                       <i class="floor-people-icon"></i>
-                      <span class="floor-people-dec">{{
-                        scope.row.reservable
-                      }}</span>
+                      <span class="floor-people-dec">{{ scope.row.reservable }}</span>
                     </div>
                   </div>
                   <!-- 会议室名字 -->
@@ -244,10 +239,7 @@
               </div>
             </template>
             <template slot-scope="scope">
-              <time-table-cell
-                :recordSelectTime="recordSelectTime"
-                :scope="scope"
-              />
+              <time-table-cell :recordSelectTime="recordSelectTime" :scope="scope" />
             </template>
           </el-table-column>
         </el-table>
@@ -283,23 +275,15 @@
             >
           </div>
           <div class="room-list">
-            <span class="room-list-labe letter-spacing"
-              >{{ $t("labe.approvalLevel") }}：</span
-            >
-            <span class="room-list-value">{{
-              approveLevel[roomforms.approve_level]
-            }}</span>
+            <span class="room-list-labe letter-spacing">{{ $t("labe.approvalLevel") }}：</span>
+            <span class="room-list-value">{{ approveLevel[roomforms.approve_level] }}</span>
           </div>
           <div class="room-list">
-            <span class="room-list-labe letter-spacing"
-              >{{ $t("labe.numberPeople") }}：</span
-            >
+            <span class="room-list-labe letter-spacing">{{ $t("labe.numberPeople") }}：</span>
             <span class="room-list-value">{{ roomforms.reservable }}</span>
           </div>
           <div class="room-list">
-            <span class="room-list-labe"
-              >{{ $t("labe.equipmentOfroom") }}：</span
-            >
+            <span class="room-list-labe">{{ $t("labe.equipmentOfroom") }}：</span>
             <span class="room-list-value">{{ roomforms.mansioDec }}</span>
           </div>
         </div>
@@ -323,10 +307,7 @@
       <div class="appointment-box">
         <div class="appointment-repeat" v-if="reservationType == 2">
           <div class="appointment-box-item">
-            <span
-              ><i class="appo-labe-Symbol">*</i
-              >{{ $t("labe.repeatType") }}：</span
-            >
+            <span><i class="appo-labe-Symbol">*</i>{{ $t("labe.repeatType") }}：</span>
             <el-select
               v-model="repeatForm.repeatType"
               class="edit-box-input"
@@ -345,10 +326,7 @@
             }}</span>
           </div>
           <div class="appointment-box-item">
-            <span
-              ><i class="appo-labe-Symbol">*</i
-              >{{ $t("labe.repeatTime") }}：</span
-            >
+            <span><i class="appo-labe-Symbol">*</i>{{ $t("labe.repeatTime") }}：</span>
             <el-date-picker
               v-model="repeatForm.repeatDate"
               type="date"
@@ -370,8 +348,7 @@
         <div class="appointment-next" v-if="reservationType == 3">
           <div class="appointment-box-item">
             <span class="appointment-next-labe"
-              ><i class="appo-labe-Symbol">*</i
-              >{{ $t("message.startTime") }}：</span
+              ><i class="appo-labe-Symbol">*</i>{{ $t("message.startTime") }}：</span
             >
             <!-- 开始日期 -->
             <el-date-picker
@@ -381,9 +358,7 @@
               value-format="yyyy-MM-dd"
               :picker-options="pickerOptions"
               :placeholder="$t('message.dates')"
-              @change="
-                selectNextStartDate(nextDateForm.nextStartDate, 'nextStartDate')
-              "
+              @change="selectNextStartDate(nextDateForm.nextStartDate, 'nextStartDate')"
               >></el-date-picker
             >
             <!-- 开始时间 -->
@@ -392,26 +367,19 @@
               :placeholder="$t('message.startTime')"
               v-model="nextDateForm.nextStartTime"
               :picker-options="startTimesOptions"
-              @change="
-                selectNextTimes(nextDateForm.nextStartTime, 'nextStartTime')
-              "
+              @change="selectNextTimes(nextDateForm.nextStartTime, 'nextStartTime')"
             >
             </el-time-select>
-            <span
-              class="appointment-err start-date"
-              v-if="error.nextStartDate.isFocus"
-              >{{ $t("message.selsectDate") }}</span
-            >
-            <span
-              class="appointment-err start-time"
-              v-if="error.nextStartTime.isFocus"
-              >{{ $t("message.selectStartTime") }}</span
-            >
+            <span class="appointment-err start-date" v-if="error.nextStartDate.isFocus">{{
+              $t("message.selsectDate")
+            }}</span>
+            <span class="appointment-err start-time" v-if="error.nextStartTime.isFocus">{{
+              $t("message.selectStartTime")
+            }}</span>
           </div>
           <div class="appointment-box-item">
             <span class="appointment-next-labe"
-              ><i class="appo-labe-Symbol">*</i
-              >{{ $t("message.endTime") }}：</span
+              ><i class="appo-labe-Symbol">*</i>{{ $t("message.endTime") }}：</span
             >
             <!-- 结束日期 -->
             <el-date-picker
@@ -421,9 +389,7 @@
               value-format="yyyy-MM-dd"
               :picker-options="endPickerOptions"
               :placeholder="$t('message.dates')"
-              @change="
-                selectNextEndDate(nextDateForm.nextEndDate, 'nextEndDate')
-              "
+              @change="selectNextEndDate(nextDateForm.nextEndDate, 'nextEndDate')"
               clearable
               >></el-date-picker
             >
@@ -433,22 +399,16 @@
               :placeholder="$t('message.endTime')"
               v-model="nextDateForm.nextEndTime"
               :picker-options="endTimesOptions"
-              @change="
-                selectNextEndTime(nextDateForm.nextEndTime, 'nextEndTime')
-              "
+              @change="selectNextEndTime(nextDateForm.nextEndTime, 'nextEndTime')"
               clearable
             >
             </el-time-select>
-            <span
-              class="appointment-err end-date"
-              v-if="error.nextEndDate.isFocus"
-              >{{ $t("message.selsectDate") }}</span
-            >
-            <span
-              class="appointment-err end-time"
-              v-if="error.nextEndTime.isFocus"
-              >{{ $t("message.selectEndTime") }}</span
-            >
+            <span class="appointment-err end-date" v-if="error.nextEndDate.isFocus">{{
+              $t("message.selsectDate")
+            }}</span>
+            <span class="appointment-err end-time" v-if="error.nextEndTime.isFocus">{{
+              $t("message.selectEndTime")
+            }}</span>
           </div>
         </div>
       </div>
@@ -456,15 +416,10 @@
         <div class="appointment-next-tips" v-if="reservationType == 3">
           {{ $t("message.nextTips") }}
         </div>
-        <el-button @click="repeatNexdayDialog = false">{{
-          $t("button.cancel")
+        <el-button @click="repeatNexdayDialog = false">{{ $t("button.cancel") }}</el-button>
+        <el-button type="primary" :loading="confirmLoading" @click="confirmReservation">{{
+          $t("button.confirm")
         }}</el-button>
-        <el-button
-          type="primary"
-          :loading="confirmLoading"
-          @click="confirmReservation"
-          >{{ $t("button.confirm") }}</el-button
-        >
       </div>
     </el-dialog>
 
@@ -485,7 +440,7 @@ import dayjs from "dayjs";
 import TimeTableCell from "./components/time-table-cell";
 import { imgBaseUrl } from "@/utils/varible";
 import { mapGetters } from "vuex";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 import {
   getSystemInfoApi,
   getStatusApi,
@@ -495,12 +450,12 @@ import {
   getMansionFloorApi,
   getReservableApi,
   appointmentApi,
-  conflictValidatorApi,
+  conflictValidatorApi
 } from "@api/appoint";
 export default {
   components: {
     TimeTableCell,
-    dialogCancel,
+    dialogCancel
   },
   data() {
     return {
@@ -516,30 +471,30 @@ export default {
       repeatForm: {
         // 重复预约
         repeatType: "", // 重复类型
-        repeatDate: "", // 重复截止日
+        repeatDate: "" // 重复截止日
       },
       nextDateForm: {
         // 跨日预约
         nextStartDate: "",
         nextEndDate: "",
         nextStartTime: "", // 开始时间
-        nextEndTime: "", // 结束时间
+        nextEndTime: "" // 结束时间
       },
       // 重复预约日期范围控制
       repetPickerOptions: {
-        disabledDate: this.disabledDateRepet,
+        disabledDate: this.disabledDateRepet
       },
       // 顶部查询日期范围控制
       searchPickerOptions: {
-        disabledDate: this.disabledDateRepet,
+        disabledDate: this.disabledDateRepet
       },
       // 跨日预约开始日期范围控制
       pickerOptions: {
-        disabledDate: this.disabledDateRepet,
+        disabledDate: this.disabledDateRepet
       },
       // 跨日预约结束日期范围控制
       endPickerOptions: {
-        disabledDate: this.disabledDateRepet,
+        disabledDate: this.disabledDateRepet
       },
       startTimesOptions: {
         // 会议时间 开始时间配置
@@ -547,26 +502,26 @@ export default {
         step: "00:30",
         end: "19:30:00",
         minTime: "",
-        maxTime: "",
+        maxTime: ""
       },
       endTimesOptions: {
         // 会议时间 结束时间配置
         start: "08:30",
         step: "00:30",
         end: "20:00:00",
-        minTime: "",
+        minTime: ""
       },
       // 重复预约类型
       repeatTypeList: [
-        { name: this.$t('repeatTypeList.daily'), value: 1 },
-        { name: this.$t('repeatTypeList.weeks'), value: 2 },
-        { name:this.$t('repeatTypeList.month'), value: 3 },
+        { name: this.$t("repeatTypeList.daily"), value: 1 },
+        { name: this.$t("repeatTypeList.weeks"), value: 2 },
+        { name: this.$t("repeatTypeList.month"), value: 3 }
       ],
       roomforms: {
         mansion: {
-          name: "",
+          name: ""
         },
-        mansioDec: "",
+        mansioDec: ""
       }, // 会议室信息
       Host: imgBaseUrl,
       tableLoading: false,
@@ -577,7 +532,7 @@ export default {
         equipment: "", // 设备
         date: dayjs().format("YYYY-MM-DD"), // 选择时间
         startTime: "", //开始时间
-        endTime: "", //结束时间
+        endTime: "" //结束时间
       },
       optionsFloor: [], // 大厦楼层
       peopleNumList: [], // 容纳人数
@@ -597,14 +552,18 @@ export default {
         // 楼层级联配置
         value: "id",
         label: "name",
-        children: "floor",
+        children: "floor"
       },
-      approveLevel: [this.$t('approveLevel.noApproval'),this.$t('approveLevel.oneApproval'),this.$t('approveLevel.twoApproval')],
+      approveLevel: [
+        this.$t("approveLevel.noApproval"),
+        this.$t("approveLevel.oneApproval"),
+        this.$t("approveLevel.twoApproval")
+      ],
       currentPage4: 4,
       selectTimes: [],
       selectRowTime: {
         id: null,
-        time: {},
+        time: {}
       },
       selectRoomData: {}, // 选择会议室进行预约,
       searchBtnStatus: false, // 搜索按钮状态
@@ -618,7 +577,7 @@ export default {
         day: "",
         meeting_room_schedule: "",
         functional_display: "",
-        virtual_: "all",
+        virtual_: "all"
       },
       error: {
         // 验证提示
@@ -627,7 +586,7 @@ export default {
         nextStartDate: { isFocus: false }, // 跨日开始日期
         nextStartTime: { isFocus: false }, // 跨日开始时间
         nextEndDate: { isFocus: false }, // 跨日结束日期
-        nextEndTime: { isFocus: false }, // 跨日结束时间
+        nextEndTime: { isFocus: false } // 跨日结束时间
       },
       isPass: false,
       addLoading: false,
@@ -635,16 +594,17 @@ export default {
       timeConfig: {}, // 可预约时间段
       appStartTimes: "", // 预约开始时间
       appEndTimes: "", // 预约结束时间
-      defaultValue: "",//设置开始起始时间
-      currentTime:new Date().getMinutes() == "00"
-        ? (this.defaultValue = new Date().getHours() + ":" + "00")
-        : new Date().getMinutes() < 30
-        ? (this.defaultValue = new Date().getHours() + ":" + "30")
-        : (this.defaultValue = new Date().getHours() + 1 + ":" + "00")//当前时间
+      defaultValue: "", //设置开始起始时间
+      currentTime:
+        new Date().getMinutes() == "00"
+          ? (this.defaultValue = new Date().getHours() + ":" + "00")
+          : new Date().getMinutes() < 30
+          ? (this.defaultValue = new Date().getHours() + ":" + "30")
+          : (this.defaultValue = new Date().getHours() + 1 + ":" + "00") //当前时间
     };
   },
   created() {
-        this.defaultValue =this.currentTime
+    this.defaultValue = this.currentTime;
   },
   computed: {
     ...mapGetters(["userInfo"]),
@@ -661,10 +621,7 @@ export default {
             chils.push(idx);
             chils.push(value.meeting[0]["id"]);
             chils.push(index);
-            if (
-              meetingArr[count] &&
-              meetingArr[count][1] === value.meeting[0]["id"]
-            ) {
+            if (meetingArr[count] && meetingArr[count][1] === value.meeting[0]["id"]) {
               meetingArr[count].push(index);
             } else {
               if (meetingArr.length > 0) {
@@ -677,7 +634,7 @@ export default {
           }
         });
 
-        meetingArr.map((val) => {
+        meetingArr.map(val => {
           if (val.length > 4) {
             val.splice(3, val.length - 3, val[val.length - 1]);
           }
@@ -689,7 +646,7 @@ export default {
        */
       // 给每场会议标注开始和结束位置
       this.meetingRooms.map((v, i) => {
-        meetingArr.map((m) => {
+        meetingArr.map(m => {
           if (i === m[0]) {
             v.message[m[2]].start = true;
             if (m.length === 4) {
@@ -702,7 +659,7 @@ export default {
         });
       });
       return this.meetingRooms;
-    },
+    }
   },
   watch: {},
   mounted() {
@@ -715,7 +672,7 @@ export default {
     // 获取设备列表
     this.getEquipmentList();
     const that = this;
-    const fn = function () {
+    const fn = function() {
       that.pollingSearchRoom();
     };
     fn();
@@ -733,7 +690,7 @@ export default {
       const result = await getMansionFloorApi();
       let data = result.data.mansion;
       if (data.length > 1) {
-        data.unshift({ id: "", name:this.$t('public.all')});
+        data.unshift({ id: "", name: this.$t("public.all") });
       }
       this.optionsFloor = data;
     },
@@ -746,10 +703,7 @@ export default {
     clickTableCell(row, column, cell, event) {},
     // 记录选择的时间
     recordSelectTime(obj, scope) {
-      if (
-        this.selectRowTime.id !== "" &&
-        this.selectRowTime.id !== scope.row.id
-      ) {
+      if (this.selectRowTime.id !== "" && this.selectRowTime.id !== scope.row.id) {
         this.selectRowTime.time.startIndex = null;
         this.selectRowTime.time.endIndex = null;
         // TODO 清空其他行时间
@@ -765,7 +719,7 @@ export default {
       if (!this.selectRoomData.day || !this.selectRowTime.time.startTime) {
         this.$message({
           message: this.$t("message.selectTime"),
-          type: "warning",
+          type: "warning"
         });
         return;
       }
@@ -773,14 +727,13 @@ export default {
         this.conflictValidator();
       } else if (num === 2) {
         this.repeatNexdayDialog = true;
-        this.appointmentTitle = this.$t('public.repeatReservation');
+        this.appointmentTitle = this.$t("public.repeatReservation");
         this.repetPickerOptions.disabledDate = this.setEndPickerOptions; // 设置重复预约日期选择范围
       } else {
         this.repeatNexdayDialog = true;
-        this.appointmentTitle =this.$t('public.crossReservation');
+        this.appointmentTitle = this.$t("public.crossReservation");
         this.nextDateForm.nextStartDate = this.selectRoomData.day || "";
-        this.nextDateForm.nextStartTime =
-          this.selectRowTime.time.startTime || "";
+        this.nextDateForm.nextStartTime = this.selectRowTime.time.startTime || "";
         this.nextDateForm.nextEndDate = this.selectRoomData.day || "";
         this.nextDateForm.nextEndTime = this.selectRowTime.time.endTime || "";
         this.pickerOptions.disabledDate = this.setEndPickerOptions; // 设置跨日开始日期选择范围
@@ -803,8 +756,7 @@ export default {
       let nextStartDate = dayjs(this.searchData.date).valueOf();
       let startDate = Date.now();
       return (
-        time.getTime() > startDate + 24 * 60 * 60 * 1000 * 179 ||
-        time.getTime() < nextStartDate
+        time.getTime() > startDate + 24 * 60 * 60 * 1000 * 179 || time.getTime() < nextStartDate
       );
     },
     // 跨日开始时间
@@ -831,10 +783,7 @@ export default {
       if (startDay == endDay) {
         // 开始结束日期是否相同
         this.endTimesOptions.minTime = this.nextDateForm.nextStartTime;
-        if (
-          startHour > endHour ||
-          (startHour === endHour && startMinute >= endMinute)
-        ) {
+        if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
           // 当前开始结束小时分钟判断
           this.nextDateForm.nextEndTime = "";
         }
@@ -869,9 +818,7 @@ export default {
         this.startTimesOptions.minTime = `${hour}${min}`; ///`${hour}${min}`
         // 限制结束时间选择范围
         let selectTime = this.nextDateForm.nextStartTime; // 获取开始时间（时分）
-        this.endTimesOptions.minTime = selectTime
-          ? selectTime
-          : this.startTimesOptions.minTime;
+        this.endTimesOptions.minTime = selectTime ? selectTime : this.startTimesOptions.minTime;
       } else {
         this.startTimesOptions.minTime = "";
         this.endTimesOptions.minTime = "";
@@ -888,7 +835,7 @@ export default {
     },
     // 获取时间规则
     getTimeConfig() {
-      getTimeConfigApi().then((res) => {
+      getTimeConfigApi().then(res => {
         this.timeConfig = res.data.time_rule;
         let start = this.timeConfig.start;
         let end = this.timeConfig.end; //this.timeConfig.end.split(':')[0]=='00' ? '24:00' : this.timeConfig.end
@@ -948,9 +895,9 @@ export default {
       }
       if (this.reservationType === 3) {
         // 跨日预约
-        this.appStartTimes = `${
-          this.nextDateForm.nextStartDate
-        } ${this.timesHandle(this.nextDateForm.nextStartTime)}`;
+        this.appStartTimes = `${this.nextDateForm.nextStartDate} ${this.timesHandle(
+          this.nextDateForm.nextStartTime
+        )}`;
         this.appEndTimes = `${this.nextDateForm.nextEndDate} ${this.timesHandle(
           this.nextDateForm.nextEndTime
         )}`;
@@ -961,7 +908,7 @@ export default {
         meeting_room_id: this.selectRoomData.id, // number	会议室
         category: this.reservationType, // number	预约类型 1单次预约 2重复预约 3跨日预约
         repetition_type: repeType || null, // number	重复类型 1=》每日，2=》每周，3=》每月
-        repetition_end_date: endDate || null, // date	重复会议截止日期
+        repetition_end_date: endDate || null // date	重复会议截止日期
       };
       this.confirmLoading = true;
       // return
@@ -974,15 +921,19 @@ export default {
         this.addLoading = false;
         this.confirmLoading = false;
         this.approveCount = result.data.count; // 冲突场次
-        this.approveMessage = this.$t('public.waitingApproval');
+        this.approveMessage = this.$t("public.waitingApproval");
         if (result.data.count) {
           this.$refs.conflict.dialogVisible = true;
-          this.approveContent = `${this.selectRoomData.name}${this.$t('message.room')}，${this.$t('public.timePeriod')}${result.data.count}${this.$t('public.noApproval')}，${this.$t('public.continueAppointment')}`;
+          this.approveContent = `${this.selectRoomData.name}${this.$t("message.room")}，${this.$t(
+            "public.timePeriod"
+          )}${result.data.count}${this.$t("public.noApproval")}，${this.$t(
+            "public.continueAppointment"
+          )}`;
         } else {
           this.addReservation();
         }
       } else {
-        this.approveMessage =this.$t('public.successful');
+        this.approveMessage = this.$t("public.successful");
         this.addReservation();
       }
     },
@@ -1009,7 +960,7 @@ export default {
         start: this.appStartTimes, // string	会议预约开始时间
         end: this.appEndTimes, // string	会议预约结束时间（category=2时结束时间只传当天截止））
         is_conflict: this.approveCount ? 1 : 0, // number	是否冲突 0否 1是
-        conflict_count: this.approveCount, // number 默认0，有冲突数量加进来
+        conflict_count: this.approveCount // number 默认0，有冲突数量加进来
       };
       if (repeType && endDate) {
         data.repetition_type = repeType; // 当category=2时才需要传 会议重复类型 1=》每日，2=》每周，3=》每月
@@ -1020,14 +971,14 @@ export default {
       if (this.approveCount) this.approveBtnLoading = true;
       // 确定预约
       appointmentApi(data)
-        .then((res) => {
+        .then(res => {
           this.addLoading = false;
           this.confirmLoading = false;
           this.approveBtnLoading = false;
           if (res.meta.code == "RESP_OKAY") {
             this.$message({
               message: this.approveMessage,
-              type: "success",
+              type: "success"
             });
             // 更新会议列表
             this.searchMeetingRoom();
@@ -1042,7 +993,7 @@ export default {
       this.selectRowTime.time.endIndex = null;
       this.selectRowTime = {
         id: null,
-        time: {},
+        time: {}
       };
       this.selectRoomData = {};
       this.repeatNexdayDialog = false; // 重复跨日弹窗
@@ -1057,44 +1008,41 @@ export default {
       const result = await getReservableApi();
       this.peopleNumList = [
         { name: this.$t("message.all"), guid: null },
-        ...result.data.reservable,
+        ...result.data.reservable
       ];
     },
     // 获取状态数据
     async getStatusData() {
       const result = await getStatusApi();
       if (result.ret === "0") {
-        const i18nStatus = result.data.map((element) => {
+        const i18nStatus = result.data.map(element => {
           if (element.guid === 0) {
             // 空闲中
             return {
               guid: element.guid,
-              name: this.$t("message.inAvailable"),
+              name: this.$t("message.inAvailable")
             };
           } else if (element.guid === 1) {
             // 准备中
             return {
               guid: element.guid,
-              name: this.$t("message.inPreparing"),
+              name: this.$t("message.inPreparing")
             };
           } else if (element.guid === 2) {
             // 使用中
             return {
               guid: element.guid,
-              name: this.$t("message.inUse"),
+              name: this.$t("message.inUse")
             };
           } else if (element.guid === 3) {
             // 维护中
             return {
               guid: element.guid,
-              name: this.$t("message.inMaintenance"),
+              name: this.$t("message.inMaintenance")
             };
           }
         });
-        this.status = [
-          { name: this.$t("message.all"), guid: null },
-          ...i18nStatus,
-        ];
+        this.status = [{ name: this.$t("message.all"), guid: null }, ...i18nStatus];
       }
     },
     // 搜索会议室
@@ -1106,7 +1054,7 @@ export default {
         mansion_id: this.searchData.floor[0], // 大厦id
         floor_id: this.searchData.floor[1], //楼层id
         reservable: this.searchData.peopleNum, // 人数
-        equipment: this.searchData.equipment, // 设备id
+        equipment: this.searchData.equipment // 设备id
       };
       this.tableLoading = true;
       this.searchBtnStatus = true;
@@ -1127,7 +1075,7 @@ export default {
         mansion_id: this.searchData.floor[0], // 大厦id
         floor_id: this.searchData.floor[1], //楼层id
         reservable: this.searchData.peopleNum, // 人数
-        equipment: this.searchData.equipment, // 设备id
+        equipment: this.searchData.equipment // 设备id
       };
       this.tableLoading = true;
       const result = await getAppointmentApi(params);
@@ -1158,17 +1106,17 @@ export default {
         equipment: "", // 设备
         date: dayjs().format("YYYY-MM-DD"), // 选择时间
         start_time: "", //开始时间
-        end_time: "", //结束时间
+        end_time: "" //结束时间
       };
       this.searchMeetingRoom();
     },
     // 选择日期
     dateChange(value) {
-        if(value !==dayjs().format("YYYY-MM-DD")){
-          this.defaultValue =this.startTimesOptions.start
-        }else{
-          this.defaultValue =this.currentTime
-        }
+      if (value !== dayjs().format("YYYY-MM-DD")) {
+        this.defaultValue = this.startTimesOptions.start;
+      } else {
+        this.defaultValue = this.currentTime;
+      }
       let that = this;
       setTimeout(() => {
         that.searchData.date = value || dayjs().format("YYYY-MM-DD");
@@ -1177,8 +1125,8 @@ export default {
     },
     //选择开始时间
     startTimeChange(value) {
-      if(value>this.searchData.endTime){
-        this.searchData.endTime=''
+      if (value > this.searchData.endTime) {
+        this.searchData.endTime = "";
       }
       let that = this;
       setTimeout(() => {
@@ -1196,7 +1144,8 @@ export default {
     },
     // 分钟小时转换
     handleNum(num) {
-      let str = Number(num) / 60 > 1 ? `${Number(num) / 60}h` : `${num}${this.$t('public.minutes')}`;
+      let str =
+        Number(num) / 60 > 1 ? `${Number(num) / 60}h` : `${num}${this.$t("public.minutes")}`;
       return str;
     },
     // 会议室详情
@@ -1206,24 +1155,24 @@ export default {
       this.roomforms.image = this.Host + this.roomforms.image;
       let str = "";
       this.roomforms.equipment &&
-        this.roomforms.equipment.forEach((item) => {
+        this.roomforms.equipment.forEach(item => {
           str = str ? str + "，" + item.name : item.name;
         });
-      this.roomforms.mansioDec = str || this.$t('public.no');
+      this.roomforms.mansioDec = str || this.$t("public.no");
     },
     handleClose() {},
     handleCloseAppointment() {
       this.repeatForm = {
         // 重复预约
         repeatType: "", // 重复类型
-        repeatDate: "", // 重复截止日
+        repeatDate: "" // 重复截止日
       };
       this.nextDateForm = {
         // 跨日预约
         nextStartDate: "",
         nextEndDate: "",
         nextStartTime: "", // 开始时间
-        nextEndTime: "", // 结束时间
+        nextEndTime: "" // 结束时间
       };
       this.error = {
         // 验证提示
@@ -1232,7 +1181,7 @@ export default {
         nextStartDate: { isFocus: false }, // 跨日开始日期
         nextStartTime: { isFocus: false }, // 跨日开始时间
         nextEndDate: { isFocus: false }, // 跨日结束日期
-        nextEndTime: { isFocus: false }, // 跨日结束时间
+        nextEndTime: { isFocus: false } // 跨日结束时间
       };
       this.confirmLoading = false;
     },
@@ -1243,14 +1192,14 @@ export default {
         time.getTime() > startDate + 24 * 60 * 60 * 1000 * 179 ||
         time.getTime() < startDate - 24 * 60 * 60 * 1000
       );
-    },
+    }
   },
   beforeDestroy() {
     // 销毁定时器
     clearInterval(this.timer);
     // 注销onresizes事件
     window.onresize = null;
-  },
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -1526,16 +1475,16 @@ export default {
       background-color: #ffffff;
     }
     .expired {
-      background-color: #EDAA75;
-      border-color: #EDAA75;
+      background-color: #edaa75;
+      border-color: #edaa75;
     }
     .reserved {
-      background-color: #79B1AC;
-      border-color: #79B1AC;
+      background-color: #79b1ac;
+      border-color: #79b1ac;
     }
     .selected {
-      background-color: #5473E8;
-      border-color: #5473E8;
+      background-color: #5473e8;
+      border-color: #5473e8;
     }
   }
 }
