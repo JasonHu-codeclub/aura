@@ -184,6 +184,8 @@ export default {
     chooseLang(lang){
       this.$i18n.locale = lang
       this.$store.dispatch('app/setLanguage', lang)
+      // 重新刷新页面
+      window.location.reload()
     }
   },
   mounted() {},
@@ -268,7 +270,7 @@ export default {
   }
     .login-content-logo {
       position: absolute;
-      top: 5%;
+      top: 9%;
       height: 80px;
       color: #88b6ff;
       font-size: 18px;
