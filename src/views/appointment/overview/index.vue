@@ -1,6 +1,6 @@
 /* 数据概览 */
 <template>
-  <div class="app-wrap overview">
+  <div class="app-wrap overview no-padding no-bg">
     <div class="overview-top">
       <div class="overview-top-left">
         <div class="overview-top-statis">{{ $t("message.statistics") }}</div>
@@ -60,9 +60,7 @@
 
 <script>
 import { getStatisticsApi, getCalendarApi } from "@/api/appoint";
-import LineChart from "@/components/LineChart";
 import BarChart from "@/components/BarChart";
-import PieChart from "@/components/PieChart";
 import zh from "@/lang/zh";
 import _ from "lodash";
 import Cookies from "js-cookie";
@@ -93,7 +91,7 @@ const lineChartData = {
   }
 };
 export default {
-  components: { LineChart, BarChart, PieChart, FullCalendar },
+  components: { BarChart, FullCalendar },
   data() {
     return {
       tabPosition: "1",
@@ -260,7 +258,10 @@ export default {
           titleDec: item.title,
           dates:
             item.category == 3
-              ? `${this.getTitle(item.start, "")} ${this.getTitle("", item.end)}`
+              ? `${this.getNextTime(item.start, item.start_time)} - ${this.getNextTime(
+                  item.end,
+                  item.end_time
+                )}`
               : this.getTitle(item.start, item.end),
           title:
             item.category == 3
@@ -281,6 +282,13 @@ export default {
         let end = endDate.substring(11, 16);
         return `${start} ${end}`;
       }
+    },
+    // 跨日预约时间
+    getNextTime(dates, times) {
+      let md = dates.substring(5, 11);
+      let strMd = md.replace(/-/, "/");
+      let startStr = `${strMd} ${times}`;
+      return startStr;
     },
     //格式化时间
     timeFormat(time) {
@@ -307,12 +315,7 @@ export default {
 
 <style lang="less" scoped>
 .overview {
-  background: none;
   .overview-top {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     display: flex;
     height: 160px;
     background: #fff;
@@ -320,6 +323,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     overflow-x: auto;
+    margin-bottom: 7px;
     .overview-top-left {
       flex: 1;
       min-width: 300px;
@@ -379,21 +383,16 @@ export default {
     }
   }
   .overview-bottom {
-    position: absolute;
-    top: 180px;
-    left: 0;
-    right: 0;
-    bottom: 20px;
+    width: 100%;
+    height: 500px;
     background: #fff;
     padding: 16px 16px 0;
+    margin-bottom: 7px;
   }
   .overview-calendar {
-    position: absolute;
-    top: 580px;
-    left: 0;
-    right: 0;
+    width: 100%;
     background: #fff;
-    padding: 16px 16px 40px;
+    padding: 16px 16px 50px;
   }
 }
 /deep/.el-radio-button--medium .el-radio-button__inner {
