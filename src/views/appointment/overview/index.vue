@@ -392,7 +392,7 @@ export default {
   .overview-calendar {
     width: 100%;
     background: #fff;
-    padding: 16px 16px 50px;
+    padding: 50px 20px 50px;
   }
 }
 /deep/.el-radio-button--medium .el-radio-button__inner {
