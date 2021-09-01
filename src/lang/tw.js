@@ -280,7 +280,8 @@ export default {
       enterReason: '請輸入拒絕原因',
       inputPassword: '請輸入密碼',
       startTime:'起始時間',
-      endTime:'結束時間'
+      endTime:'結束時間',
+      departmentName: '請輸入部門名稱/員工姓名',
     },
     tip: {
       userNameNotEmpty: '請輸入賬號',

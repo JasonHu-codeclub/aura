@@ -156,7 +156,7 @@
           :data="meetingRoomsFillter"
           style="width: 100%"
           @cell-click="clickTableCell"
-          :height="tableHeight - 126"
+          :height="tableHeight - 100"
           border
         >
           <el-table-column
@@ -244,8 +244,8 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="res-select-time">
-        <span v-if="selectRowTime.time.startTime"
+      <div class="res-select-time" v-if="selectRowTime.time.startTime">
+        <span
           >{{ $t("message.select") }}：{{ searchData.date }}&nbsp;{{
             selectRowTime.time.startTime
           }}&nbsp;至&nbsp;{{ selectRowTime.time.endTime }}</span
@@ -453,6 +453,7 @@ import {
   conflictValidatorApi
 } from "@api/appoint";
 export default {
+  name: "Home",
   components: {
     TimeTableCell,
     dialogCancel
@@ -677,6 +678,9 @@ export default {
     };
     fn();
     this.timer = setInterval(fn, 1000 * 60, true);
+    this.resizeHeight(100);
+  },
+  activated() {
     this.resizeHeight(100);
   },
   methods: {
@@ -1265,8 +1269,8 @@ export default {
   }
 }
 .res-table {
-  overflow-y: hidden;
-  overflow-x: hidden;
+  // overflow-y: hidden;
+  // overflow-x: hidden;
   .res-table-centent {
     overflow-x: auto;
     /deep/.el-table {
@@ -1284,11 +1288,14 @@ export default {
     font-weight: normal;
   }
   .res-select-time {
-    min-height: 16px;
+    position: sticky;
+    bottom: 0;
     color: #5473e8;
     font-size: 14px;
     text-align: center;
-    margin: 20px 0;
+    padding: 20px 0;
+    background: #fff;
+    z-index: 1000;
   }
 }
 // .floor-name {
@@ -1642,5 +1649,9 @@ export default {
     transform: translateY(-50%);
     font-size: 18px;
   }
+}
+
+/deep/.el-table--scrollable-y .el-table__body-wrapper {
+  height: calc(100% - 35.4px) !important;
 }
 </style>

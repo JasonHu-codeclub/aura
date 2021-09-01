@@ -1,4 +1,4 @@
- <template>
+<template>
   <div class="app-wrap invitation-wrap">
     <!-- 搜索 -->
     <div class="filter">
@@ -28,6 +28,7 @@
             type="text"
             v-model="searchForm.keyword"
             :placeholder="$t('placeholder.nameTypes')"
+            @keyup.enter.native="getMyMeetingInfo"
             @clear="getMyMeetingInfo"
             clearable
           ></el-input>
@@ -116,12 +117,7 @@
         v-loading="dataLoading"
       >
         <!-- 序号 -->
-        <el-table-column
-          :label="$t('message.serial')"
-          type="index"
-          width="60"
-          align="center"
-        >
+        <el-table-column :label="$t('message.serial')" type="index" width="60" align="center">
         </el-table-column>
         <!-- 主题 -->
         <el-table-column
@@ -149,31 +145,19 @@
           align="center"
         ></el-table-column>
         <!-- 预约类型 -->
-        <el-table-column
-          prop="category"
-          :label="$t('message.AppointmentType')"
-          align="center"
-        >
+        <el-table-column prop="category" :label="$t('message.AppointmentType')" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.categoryStr }}</span>
           </template>
         </el-table-column>
         <!-- 状态 -->
-        <el-table-column
-          prop="status"
-          :label="$t('message.meetingStatus')"
-          align="center"
-        >
+        <el-table-column prop="status" :label="$t('message.meetingStatus')" align="center">
           <template slot-scope="scope">
             <span>{{ listStatus[scope.row.status]["name"] }}</span>
           </template>
         </el-table-column>
         <!-- 参会人数 -->
-        <el-table-column
-          prop="participant"
-          :label="$t('message.participantsNum')"
-          align="center"
-        >
+        <el-table-column prop="participant" :label="$t('message.participantsNum')" align="center">
           <template slot-scope="scope">
             <el-tooltip
               :disabled="!scope.row.participant"
@@ -245,12 +229,12 @@
     ></dialog-cancel>
   </div>
 </template>
- <script>
+<script>
 import { myMeetingListApi, meetCancelApi } from "@/api/currentMeet";
 import Pagination from "@/components/Pagination";
 import dialogCancel from "./dialogCancel";
 import qs from "querystring";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 export default {
   components: { Pagination, dialogCancel }, // 分页
   data() {
@@ -259,56 +243,56 @@ export default {
       searchForm: {
         user_type: "", // 用户类型
         status: [], // 状态
-        keyword: "", // 会议名称
+        keyword: "" // 会议名称
       },
       chooseDate: null, // 日期
       statusList: [], // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
       currentStatus: [
         // 当前会议状态
-        { key: 1, name:this.$t('statusList.meeting')},
-        { key: 0, name:this.$t('statusList.pending')},
-        { key: 2, name:this.$t('statusList.noStart') },
+        { key: 1, name: this.$t("statusList.meeting") },
+        { key: 0, name: this.$t("statusList.pending") },
+        { key: 2, name: this.$t("statusList.noStart") }
       ],
       historyStatus: [
         // 历史会议状态
-        { key: 3, name:this.$t('statusList.hasEnded')},
-        { key: 6, name:this.$t('statusList.noApproval')},
-        { key: 4, name:this.$t('statusList.hasRefused')},
-        { key: 5, name:this.$t('statusList.hasCancel')},
+        { key: 3, name: this.$t("statusList.hasEnded") },
+        { key: 6, name: this.$t("statusList.noApproval") },
+        { key: 4, name: this.$t("statusList.hasRefused") },
+        { key: 5, name: this.$t("statusList.hasCancel") }
       ],
       listStatus: [
         // 表格列表状态
-        { key: 0, name:this.$t('statusList.pending')},
-        { key: 1, name:this.$t('statusList.meeting')},
-        { key: 2, name:this.$t('statusList.noStart') },
-        { key: 3, name:this.$t('statusList.hasEnded') },
-        { key: 4, name:this.$t('statusList.hasRefused') },
-        { key: 5, name:this.$t('statusList.hasCancel')},
-        { key: 6, name:this.$t('statusList.noApproval') },
+        { key: 0, name: this.$t("statusList.pending") },
+        { key: 1, name: this.$t("statusList.meeting") },
+        { key: 2, name: this.$t("statusList.noStart") },
+        { key: 3, name: this.$t("statusList.hasEnded") },
+        { key: 4, name: this.$t("statusList.hasRefused") },
+        { key: 5, name: this.$t("statusList.hasCancel") },
+        { key: 6, name: this.$t("statusList.noApproval") }
       ],
       userList: [
-        { key: 1, name:this.$t('userList.initiate') },
-        { key: 2, name:this.$t('userList.byInvitation')},
+        { key: 1, name: this.$t("userList.initiate") },
+        { key: 2, name: this.$t("userList.byInvitation") }
       ],
       paginationQuery: {
         page: 1, // 当前页
-        limit: 10, // 每页显示条目个数
+        limit: 10 // 每页显示条目个数
       },
       pickerOptions: {
         // 控制日期选择
         disabledDate(time) {
           // return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
-        },
+        }
       },
       categoryList: {
-        1: this.$t('categoryList.singleAppointment'),
-        2: this.$t('categoryList.repeatAppointment'),
-        3: this.$t('categoryList.crossAppointment'),
+        1: this.$t("categoryList.singleAppointment"),
+        2: this.$t("categoryList.repeatAppointment"),
+        3: this.$t("categoryList.crossAppointment")
       },
       repetitionType: {
-        1:this.$t('repeatTypeList.daily'),
-        2:this.$t('repeatTypeList.weeks'),
-        3:this.$t('repeatTypeList.month'),
+        1: this.$t("repeatTypeList.daily"),
+        2: this.$t("repeatTypeList.weeks"),
+        3: this.$t("repeatTypeList.month")
       },
       total: 0, // 总页数
       searchBtnStatus: false, // 查询loading
@@ -318,22 +302,26 @@ export default {
       dataLoading: false, // 列表loading
       cancelTitle: "", // 弹窗title
       cancelContent: "", // 弹窗内容
-      deleteBtnLoading: false, // 弹窗确认loading
+      deleteBtnLoading: false // 弹窗确认loading
     };
   },
   props: {
     dataType: {
       require: true,
-      type: Number,
-    },
+      type: Number
+    }
   },
   mounted() {
     // 获取数据
     this.getMyMeetingInfo();
     // 状态查询
-    this.statusList =this.dataType == 1 ? this.currentStatus : this.historyStatus;
+    this.statusList = this.dataType == 1 ? this.currentStatus : this.historyStatus;
 
     this.resizeHeight(100);
+  },
+  activated() {
+    // 获取数据
+    this.getMyMeetingInfo();
   },
   methods: {
     // 选择日期
@@ -348,24 +336,20 @@ export default {
         type: this.dataType,
         start_date: this.chooseDate ? this.chooseDate[0] : "",
         end_date: this.chooseDate ? this.chooseDate[1] : "",
-        ...this.searchForm,
+        ...this.searchForm
       };
       this.dataLoading = true;
       const result = await myMeetingListApi(params);
       let meetings = result.data.meetings;
-      meetings.map((v) => {
+      meetings.map(v => {
         v.satrtTime = `${v.date} ${v.start}`;
         v.endTime = `${v.end_date} ${v.end}`;
         v.categoryStr =
           v.category == 2
-            ? `${this.categoryList[v.category]}（${
-                this.repetitionType[v.repetition_type]
-              }）`
+            ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）`
             : this.categoryList[v.category];
-        v.participant_users.map((item) => {
-          v.personnel = v.personnel
-            ? v.personnel + "，" + item.nickname
-            : item.nickname;
+        v.participant_users.map(item => {
+          v.personnel = v.personnel ? v.personnel + "，" + item.nickname : item.nickname;
         });
       });
       this.myMeetingInfo = meetings;
@@ -376,28 +360,22 @@ export default {
     detailsMeet(row) {
       // 判断单次还是重复预约 category会议类型 1=》单次预约，2=》重复预约 ，3=》跨日预约
       let meetType =
-        !!row.category && row.category == 2 && this.dataType != 2
-          ? "repeat"
-          : "/details";
+        !!row.category && row.category == 2 && this.dataType != 2 ? "repeat" : "/details";
       this.$router.push({
         path: meetType,
         query: {
           menu: this.dataType === 1 ? "current" : "history",
-          id: row.id,
-        },
+          id: row.id
+        }
       });
     },
     // 编辑会议
     editMeetingInfo(row) {
       if (row.status === 1) {
         // 会议中提示
-        this.$alert(
-          this.$t("message.meetingProgress"),
-          this.$t("message.tips"),
-          {
-            confirmButtonText: this.$t("button.confirm"),
-          }
-        ).catch(() => {});
+        this.$alert(this.$t("message.meetingProgress"), this.$t("message.tips"), {
+          confirmButtonText: this.$t("button.confirm")
+        }).catch(() => {});
         return false;
       }
       // 跳转编辑页
@@ -405,8 +383,8 @@ export default {
         path: "edit",
         query: {
           menu: "current",
-          id: row.id,
-        },
+          id: row.id
+        }
       });
     },
     // 取消会议
@@ -416,13 +394,11 @@ export default {
       this.selectCurrentRowData = data;
       this.cancelTitle = this.$t("message.cancelTips");
       if (data.category == 2) {
-        this.cancelContent = `${this.$t("message.cancels")}${
-          data.meeting_count
-        }${this.$t("message.confirms")}<br/>${this.$t("tip.confirmTips")}`;
+        this.cancelContent = `${this.$t("message.cancels")}${data.meeting_count}${this.$t(
+          "message.confirms"
+        )}<br/>${this.$t("tip.confirmTips")}`;
       } else {
-        this.cancelContent = `${this.$t("tip.cancelMeeting")}<br/>${this.$t(
-          "tip.confirmTips"
-        )}`;
+        this.cancelContent = `${this.$t("tip.cancelMeeting")}<br/>${this.$t("tip.confirmTips")}`;
       }
     },
     // 取消会议请求
@@ -435,12 +411,12 @@ export default {
       }
       // 取消/结束会议成功提示
       this.deleteBtnLoading = true; // 确认按钮loading
-      meetCancelApi(params).then((res) => {
+      meetCancelApi(params).then(res => {
         this.deleteBtnLoading = false; // 确认按钮loading
         if (res.meta.code == "RESP_OKAY") {
           this.$message({
             message: this.$t("tip.meetCancelled"),
-            type: "success",
+            type: "success"
           });
           if (this.myMeetingInfo.length == 1 && this.paginationQuery.page > 1) {
             this.paginationQuery.page--;
@@ -454,12 +430,12 @@ export default {
     resetMeetingInfo() {
       this.paginationQuery = {
         page: 1, // 当前页
-        limit: 10, // 每页显示条目个数
+        limit: 10 // 每页显示条目个数
       };
       this.searchForm = {
         user_type: "", // 用户类型
         status: [], // 状态
-        keyword: "", // 会议名称
+        keyword: "" // 会议名称
       };
       (this.chooseDate = null), // 日期
         this.getMyMeetingInfo();
@@ -467,7 +443,7 @@ export default {
     handleClose() {
       this.cancelTitle = "";
       this.cancelContent = "";
-    },
+    }
   },
   beforeDestroy() {
     // 注销onresizes事件
@@ -478,10 +454,10 @@ export default {
   beforeMount() {},
   beforeUpdate() {},
   updated() {},
-  beforeDestroy() {},
+  beforeDestroy() {}
 };
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 .invitation-wrap {
   .filter {
     display: flex;

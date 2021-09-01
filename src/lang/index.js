@@ -27,7 +27,6 @@ export function getLanguage() {
   }
   return 'zh_CN'
 }
-console.log(getLanguage(),'getLanguage()')
 const i18n = new VueI18n({
   // set locale
   // options: en | zh | es

@@ -1,10 +1,5 @@
-/*
- * Created: 2021-03-01 11:00:19
- * Author : Jan
- * Last Modified: 2021-03-16 17:31:14
- * Modified By: Jan
- * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
- */
+/* * Created: 2021-03-01 11:00:19 * Author : Jan * Last Modified: 2021-03-16 17:31:14 * Modified By:
+Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved. */
 
 <template>
   <div :class="classObj" class="app-wrapper">
@@ -26,14 +21,12 @@
   </div>
 </template>
 <script>
-import { AppMain, NavBar, SideBar, TagsView } from './components'
-import { mapState } from 'vuex'
+import { AppMain, NavBar, SideBar, TagsView } from "./components";
+import { mapState } from "vuex";
 export default {
   components: { AppMain, NavBar, SideBar, TagsView },
-  data () {
-    return {
-
-    }
+  data() {
+    return {};
   },
   computed: {
     ...mapState({
@@ -43,25 +36,21 @@ export default {
       needTagsView: state => state.settings.tagsView,
       fixedHeader: state => state.settings.fixedHeader
     }),
-    classObj () {
+    classObj() {
       return {
         hideSidebar: !this.sidebar.opened,
         openSidebar: this.sidebar.opened,
         withoutAnimation: this.sidebar.withoutAnimation,
-        mobile: this.device === 'mobile'
-      }
+        mobile: this.device === "mobile"
+      };
     }
   },
   watch: {},
-  methods: {
-
-  },
-  created () {
-
-  }
-}
+  methods: {},
+  created() {}
+};
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 .app-wrapper {
   position: relative;
   height: 100%;
@@ -75,7 +64,7 @@ export default {
   .sidebar-container {
     transition: width 0.28s;
     width: 210px !important;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     height: 100%;
     position: absolute;
     font-size: 0px;

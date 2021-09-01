@@ -277,7 +277,8 @@ export default {
     enterReason: 'Please enter the reason for rejection',
     inputPassword: 'Please input a password',
     startTime:'Start time',
-    endTime:'End time'
+    endTime:'End time',
+    departmentName: 'Please enter department name / employee name', 
   },
   tip: {
     userNameNotEmpty: 'Please enter the account number',

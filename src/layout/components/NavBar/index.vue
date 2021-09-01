@@ -1,54 +1,36 @@
-/*
- * Created: 2021-03-01 11:22:15
- * Author : Jan
- * Last Modified: 2021-03-24 10:14:00
- * Modified By: Jan
- * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
- */
+/* * Created: 2021-03-01 11:22:15 * Author : Jan * Last Modified: 2021-03-24 10:14:00 * Modified By:
+Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved. */
 
 <template>
   <div class="navbar">
-    <!-- 汉堡包-折叠按钮 -->
-    <!-- <hamburger
-      id="hamburger-container"
-      :is-active="sidebar.opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    /> -->
-    <!-- 面包屑 -->
-    <!-- <breadcrumb id="breadcrumb-container" class="breadcrumb-container" /> -->
     <!-- 标题 -->
-    <div class="right-left">{{systemName}}</div>
+    <div class="right-left">{{ systemName }}</div>
     <div class="right-menu">
-      <template v-if="device !== 'mobile'">
-        <!-- <search id="header-search" class="right-menu-item" /> -->
-      </template>
       <!-- 头像,名称 -->
-      <el-dropdown
-        class="avatar-container right-menu-item hover-effect"
-        trigger="click"
-      >
+      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <span class="user-name">{{ name }}</span>
-          <span class="user-avatar" :style="{backgroundImage: avatar?'url('+ baseURL + avatar +')': 'url('+userImg+')'}"></span>
-          <!-- <img :src="avatar" class="user-avatar" /> -->
-          <!-- <i class="el-icon-caret-bottom" /> -->
+          <span
+            class="user-avatar"
+            :style="{
+              backgroundImage: avatar ? 'url(' + baseURL + avatar + ')' : 'url(' + userImg + ')'
+            }"
+          ></span>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/user">
-            <el-dropdown-item>{{$t('message.personalCenter')}}</el-dropdown-item>
-          </router-link> 
-          <!-- <el-dropdown-item @click.native="dialogVisible=true">{{$t('message.setPassord')}}</el-dropdown-item> -->
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">{{$t('message.loginOut')}}</span>
+          <!-- 个人中心 -->
+          <router-link to="/user" v-if="roleId !== 1">
+            <el-dropdown-item>{{ $t("message.personalCenter") }}</el-dropdown-item>
+          </router-link>
+          <el-dropdown-item :divided="roleId !== 1" @click.native="logout">
+            <span style="display: block">{{ $t("message.loginOut") }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <span class="division"></span>
-      <lang-select class="language"  />
+      <lang-select class="language" />
       <!-- 全屏按钮 -->
       <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
       <el-dialog
         :title="$t('message.setPassord')"
         :visible.sync="dialogVisible"
@@ -91,28 +73,23 @@
             <el-button type="primary" @click="submitForm('ruleForm')">{{
               $t("button.submit")
             }}</el-button>
-            <el-button @click="resetForm('ruleForm')">{{
-              $t("button.reset")
-            }}</el-button>
+            <el-button @click="resetForm('ruleForm')">{{ $t("button.reset") }}</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
-
-
-
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Breadcrumb from './components/BreadCrumb'
-import Hamburger from './components/Hamburger'
-import Screenfull from './components/Screenfull'
-import LangSelect from '@/components/LangSelect'
+import { mapGetters } from "vuex";
+import Breadcrumb from "./components/BreadCrumb";
+import Hamburger from "./components/Hamburger";
+import Screenfull from "./components/Screenfull";
+import LangSelect from "@/components/LangSelect";
 // import Search from './components/HeaderSearch'
-import { imgBaseUrl } from '@/utils/varible'
-import { resetPassReq } from '@/api/user' 
+import { imgBaseUrl } from "@/utils/varible";
+import { resetPassReq } from "@/api/user";
 export default {
   components: {
     Breadcrumb,
@@ -124,82 +101,68 @@ export default {
   data() {
     var checkOldPass = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error(this.$t('message.emptyPassord')))
+        return callback(new Error(this.$t("message.emptyPassord")));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error(this.$t('message.enterNewPassword')))
+      if (value === "") {
+        callback(new Error(this.$t("message.enterNewPassword")));
       } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
+        if (this.ruleForm.checkPass !== "") {
+          this.$refs.ruleForm.validateField("checkPass");
         }
-        callback()
+        callback();
       }
-    }
+    };
     var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error(this.$t('message.againPassword')))
+      if (value === "") {
+        callback(new Error(this.$t("message.againPassword")));
       } else if (value !== this.ruleForm.pass) {
-        callback(new Error(this.$t('message.inconsistentPasswords')))
+        callback(new Error(this.$t("message.inconsistentPasswords")));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       baseURL: imgBaseUrl,
       dialogVisible: false,
       ruleForm: {
-        pass: '',
-        checkPass: '',
-        oldPass: ''
+        pass: "",
+        checkPass: "",
+        oldPass: ""
       },
       rules: {
-        pass: [
-          { validator: validatePass, trigger: 'blur' }
-        ],
-        checkPass: [
-          { validator: validatePass2, trigger: 'blur' }
-        ],
-        oldPass: [
-          { validator: checkOldPass, trigger: 'blur' }
-        ]
+        pass: [{ validator: validatePass, trigger: "blur" }],
+        checkPass: [{ validator: validatePass2, trigger: "blur" }],
+        oldPass: [{ validator: checkOldPass, trigger: "blur" }]
       },
-      userImg: require('../../../assets/user.png')
-    }
+      userImg: require("../../../assets/user.png")
+    };
   },
   computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar',
-      'device',
-      'name',
-      'systemName'
-    ])
+    ...mapGetters(["sidebar", "avatar", "device", "name", "systemName", "roleId"])
   },
-  mounted() {
-     
-  },
+  mounted() {},
   methods: {
     // 切换侧边栏展开/缩起
-    toggleSideBar () {
-      this.$store.dispatch('app/toggleSideBar')
+    toggleSideBar() {
+      this.$store.dispatch("app/toggleSideBar");
     },
     // 登出
-    async logout () {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    async logout() {
+      await this.$store.dispatch("user/logout");
+      this.$router.push(`/login?redirect=${this.$route.fullPath}`);
     },
     // 切换头像选项
-    async handleMyself (command) {
-      if (command === 'home') {
-      } else if (command === 'setting') {
-        this.dialogVisible = true
-      } else if (command === 'logout') {
-        const result = await logoutReq()
-        if (result.ret === '0') {
+    async handleMyself(command) {
+      if (command === "home") {
+      } else if (command === "setting") {
+        this.dialogVisible = true;
+      } else if (command === "logout") {
+        const result = await logoutReq();
+        if (result.ret === "0") {
           // 移除用户
           // localStorage.removeItem('username')
           // // 移除cookie
@@ -209,37 +172,40 @@ export default {
       }
     },
     // 修改密码
-    submitForm (formName) {
-      this.$refs[formName].validate(async (valid) => {
+    submitForm(formName) {
+      this.$refs[formName].validate(async valid => {
         if (valid) {
-          const result = await resetPassReq({ old_password: this.ruleForm.oldPass, new_password: this.ruleForm.pass })
-          if (result.ret === '0') {
+          const result = await resetPassReq({
+            old_password: this.ruleForm.oldPass,
+            new_password: this.ruleForm.pass
+          });
+          if (result.ret === "0") {
             this.$message({
-              message: this.$t('tip.resetPwdSuccess'),
-              type: 'success'
-            })
+              message: this.$t("tip.resetPwdSuccess"),
+              type: "success"
+            });
             // this.handleMyself('logout')
           } else {
             this.$message({
               message: result.msg,
-              type: 'error'
-            })
+              type: "error"
+            });
           }
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     // 重置修改密码框
-    resetForm (formName) {
-      this.$refs[formName].resetFields()
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     },
     // 弹窗关闭回调
-    handleClose () {
-      this.$refs['ruleForm'].resetFields()
-    },
+    handleClose() {
+      this.$refs["ruleForm"].resetFields();
+    }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -251,7 +217,7 @@ export default {
   color: #fff;
   background: #3a3b4c;
   // box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-  .right-left{
+  .right-left {
     float: left;
     font-size: 18px;
     line-height: 54px;
@@ -309,16 +275,16 @@ export default {
       }
     }
 
-    .language{
+    .language {
       width: 86px;
       color: #fff;
       margin-right: 10px;
       cursor: pointer;
     }
 
-    .division{
+    .division {
       width: 1px;
-      background: #979797;
+      background: #595d65;
       display: inline-block;
       height: 20px;
       margin: 0 18px;
@@ -332,7 +298,7 @@ export default {
         align-items: center;
         .user-name {
           font-size: 14px;
-          color: #FFFFFF;
+          color: #ffffff;
         }
         .user-avatar {
           cursor: pointer;

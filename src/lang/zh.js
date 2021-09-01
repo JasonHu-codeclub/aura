@@ -281,7 +281,8 @@ export default {
     enterReason: '请输入拒绝原因',
     inputPassword: '请输入密码',
     startTime:'起始时间',
-    endTime:'结束时间'
+    endTime:'结束时间',
+    departmentName: '请输入部门名称/员工姓名', 
 
   },
   tip: {

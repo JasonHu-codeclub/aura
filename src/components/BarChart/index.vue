@@ -105,7 +105,7 @@ export default {
             name: duration,
             type: "bar",
             barGap: 0,
-            barWidth: "38",
+            barWidth: this.dataJson.barWidth,
             emphasis: {
               focus: "none"
             },
@@ -117,7 +117,7 @@ export default {
           {
             name: frequency,
             type: "bar",
-            barWidth: "38",
+            barWidth: this.dataJson.barWidth,
             emphasis: {
               focus: "none"
             },
@@ -139,6 +139,8 @@ export default {
         option.xAxis[0].data = data.title;
         option.series[0].data = data.duration;
         option.series[1].data = data.frequency;
+        option.series[0].barWidth = data.barWidth;
+        option.series[1].barWidth = data.barWidth;
         this.chart.setOption(option, true);
       });
     }

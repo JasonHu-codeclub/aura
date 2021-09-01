@@ -77,20 +77,24 @@ const lineChartData = {
   weeks: {
     title: [],
     duration: ["", "", "", "", "", "", ""],
-    frequency: ["", "", "", "", "", "", ""]
+    frequency: ["", "", "", "", "", "", ""],
+    barWidth: 30
   },
   months: {
     title: [],
     duration: [],
-    frequency: []
+    frequency: [],
+    barWidth: 10
   },
   years: {
     title: [],
     duration: [],
-    frequency: []
+    frequency: [],
+    barWidth: 30
   }
 };
 export default {
+  name: "overview",
   components: { BarChart, FullCalendar },
   data() {
     return {
@@ -110,7 +114,7 @@ export default {
           interactionPlugin // needed for dateClick
         ],
         aspectRatio: 2, //宽高比例
-        eventLimit: 3, //每日事件展示上限
+        eventLimit: true, //每日事件展示上限
         eventLimitText: "更多",
         initialView: "dayGridMonth", // 设置默认显示月，可选周、日
         editable: false, //是否允许拖拽事件
@@ -149,17 +153,16 @@ export default {
   methods: {
     // 点击更多
     eventClickHandle(arg) {
-      console.log(arg, "arg");
       let that = this;
       setTimeout(function() {
         let doc = document.getElementsByClassName("fc-popover")[0];
-        doc.innerHTML = that.creadHtml(arg.allSegs);
+        doc.innerHTML = that.creadHtml(arg.allSegs, arg.date);
       }, 5);
     },
     // 弹窗更多列表内容
-    creadHtml(data) {
+    creadHtml(data, day) {
       let htmlStr = "";
-      let dates = dayjs(data.date).format("YYYY.MM.DD");
+      let dates = dayjs(day).format("YYYY.MM.DD");
       if (data) {
         data.map(res => {
           htmlStr += `<div class="popover-list">
@@ -221,15 +224,10 @@ export default {
         for (let key in zh[types]) {
           lineChartData[types]["title"].push(this.$t(types + "." + key));
         }
-      }
-      if (types == "months") {
+      } else if (types == "months") {
         lineChartData[types]["title"] = [];
-        let monthsStr = [];
-        for (let key in zh[types]) {
-          monthsStr.push(this.$t(types + "." + key));
-        }
         data[types].map((res, index) => {
-          lineChartData[types]["title"].push(monthsStr[index]);
+          lineChartData[types]["title"].push(index + 1);
         });
       }
 

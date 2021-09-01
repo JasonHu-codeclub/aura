@@ -1,10 +1,5 @@
-/*
- * Created: 2021-03-01 11:10:52
- * Author : Jan
- * Last Modified: 2021-03-09 11:36:32
- * Modified By: Jan
- * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
- */
+/* * Created: 2021-03-01 11:10:52 * Author : Jan * Last Modified: 2021-03-09 11:36:32 * Modified By:
+Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved. */
 
 <template>
   <section class="app-main">
@@ -17,18 +12,19 @@
 </template>
 <script>
 export default {
-  name: 'AppMain',
+  name: "AppMain",
   computed: {
     cachedViews() {
-      return this.$store.state.tagsView.cachedViews
+      return this.$store.state.tagsView.cachedViews;
     },
     key() {
-      return this.$route.path
+      return this.$route.path;
     }
-  }
-}
+  },
+  mounted() {}
+};
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 .app-main {
   /* 50= navbar  50  */
   min-height: calc(100vh - 50px);
