@@ -341,19 +341,8 @@ export default {
     // 获取数据
     this.getApproveInfo();
     this.resizeHeight(100);
-    const fn = function() {
-      that.setTimeSatus();
-    };
-    // fn()
-    // this.timer = setInterval(fn, 1000 * 60, true)
-  },
-  activated() {
-    // 获取数据
-    this.getApproveInfo();
   },
   methods: {
-    // 更新状态
-    setTimeSatus() {},
     // 大厦信息，楼层
     async getFloorList() {
       const result = await getMansionFloorApi();
@@ -476,16 +465,20 @@ export default {
       this.isShowInput = false;
     }
   },
-  beforeDestroy() {
+  activated() {
+    // 获取数据
+    this.getApproveInfo();
+  },
+  beforeRouteLeave(to, from, next) {
     // 注销onresizes事件
     window.onresize = null;
+    next();
   },
   created() {},
   beforeCreate() {},
   beforeMount() {},
   beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {}
+  updated() {}
 };
 </script>
 <style lang="less" scoped>

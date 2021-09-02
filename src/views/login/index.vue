@@ -46,7 +46,6 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
                   show-password
                   :placeholder="$t('tip.pwdNotEmpty')"
                   v-model="ruleForm.password"
-                  @keyup.enter.native="handleLogin"
                 >
                   <template slot="prepend"><svg-icon icon-class="password" slot="label"/></template>
                 </el-input>
@@ -180,11 +179,21 @@ export default {
     }
   },
   mounted() {
+    // if (
+    //   navigator.userAgent.match(
+    //     /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+    //   )
+    // ) {
+    //   console.log("移动端");
+    // } else {
+    //   console.log("pc端");
+    // }
+
+    // 回车键
     let _this = this;
     document.onkeydown = function(e) {
       if (e.keyCode === 13) {
-        _this.handleLogin(); //这里调用按钮登陆的事件
-        console.log("handleLogin");
+        _this.handleLogin();
       }
     };
   },

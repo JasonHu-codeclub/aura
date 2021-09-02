@@ -453,8 +453,7 @@ export default {
   beforeCreate() {},
   beforeMount() {},
   beforeUpdate() {},
-  updated() {},
-  beforeDestroy() {}
+  updated() {}
 };
 </script>
 <style lang="less" scoped>

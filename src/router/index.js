@@ -10,7 +10,7 @@ Vue.use(VueRouter);
 const originalPush = VueRouter.prototype.replace
 VueRouter.prototype.replace = function replace (location, onResolve, onReject) {
   if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
-  return originalPush.call(this, location).catch(err => err)
+  return originalPush.call(this, location) //.catch(err => err)
 }
 
 // 固定显示的路由表
@@ -66,7 +66,8 @@ export const asyncRoutes = [
       meta: {
         title: 'route.home',
         icon: 'appo',
-        affix: true
+        affix: true,
+        keepAlive: true
       }
     }]
   },
@@ -81,21 +82,10 @@ export const asyncRoutes = [
         meta: {
           title: 'route.current',
           icon: 'current',
-          affix: false
+          affix: false,
+          keepAlive: true
         }
       },
-      // 详情
-      // {
-      //   path: 'details',
-      //   component: () => import('@views/appointment/current-meet/details'),
-      //   name: 'Details',
-      //   hidden: true,
-      //   meta: {
-      //     title: 'detailsMeet',
-      //     affix: false,
-      //     activeMenu: '/current/current_list'
-      //   }
-      // },
       // 重复会议列表
       {
           path: 'repeat',
@@ -105,7 +95,8 @@ export const asyncRoutes = [
           meta: {
             title: 'route.repeatMeet',
             affix: false,
-            activeMenu: '/current/current_list'
+            activeMenu: '/current/current_list',
+            keepAlive: true
           }
       },
       // 编辑
@@ -117,7 +108,8 @@ export const asyncRoutes = [
           meta: {
             title: 'route.editMeet',
             affix: false,
-            activeMenu: '/current/current_list'
+            activeMenu: '/current/current_list',
+            keepAlive: false
           }
       },
     ]
@@ -134,7 +126,8 @@ export const asyncRoutes = [
       meta: {
         title: 'route.detailsMeet',
         affix: false,
-        activeMenu: ''
+        activeMenu: '',
+        keepAlive: false
       },
       hidden: true
     }]
@@ -151,7 +144,9 @@ export const asyncRoutes = [
       meta: {
         title: 'route.history',
         icon: 'history',
-        affix: false
+        affix: false,
+        keepAlive: true,
+        noCache: false
       }
     }]
   },
@@ -167,7 +162,9 @@ export const asyncRoutes = [
       meta: {
         title: 'route.overview',
         icon: 'overview',
-        affix: false
+        affix: false,
+        keepAlive: false,
+        noCache: false
       }
     }]
   },
@@ -184,7 +181,8 @@ export const asyncRoutes = [
         title: 'route.Approve',
         icon: 'approve',
         affix: false,
-        role: 'is_belong_approve' // 权限
+        role: 'is_belong_approve', // 权限
+        keepAlive: true
       }
     },
     // 冲突
@@ -196,7 +194,8 @@ export const asyncRoutes = [
       meta: {
         title: 'route.conflict',
         affix: false,
-        activeMenu: '/approve/approve_list'
+        activeMenu: '/approve/approve_list',
+        keepAlive: true
       }
     }]
   },
@@ -213,7 +212,8 @@ export const asyncRoutes = [
         title: 'route.service',
         icon: 'service',
         affix: false,
-        role: 'is_belong_service' // 权限
+        role: 'is_belong_service', // 权限
+        keepAlive: true
       }
     }]
   },
@@ -228,40 +228,13 @@ export const asyncRoutes = [
       name: 'User',
       meta: {
         title: 'route.user',
-        affix: false
+        affix: false,
+        keepAlive: false,
+        role: 'is_belong_user', // 权限
       },
       hidden: true
     }]
   },
-  
-  // appointment,
-  // visit,
-  
-  // {
-  //   path: '/template',
-  //   component: Layout,
-  //   redirect: '/template/table',
-  //   name: 'Template',
-  //   alwaysShow: true,
-  //   meta: {
-  //     title: 'Template',
-  //     icon: 'username'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'table',
-  //       component: () => import('@views/template/table'),
-  //       name: 'Table',
-  //       meta: { title: '表格功能' }
-  //     },
-  //     {
-  //       path: 'upload_excel',
-  //       component: () => import('@views/template/uploadExcel'),
-  //       name: 'UploadExcel',
-  //       meta: { title: '上传表格' }
-  //     }
-  //   ]
-  // },
   {
     path: '*',
     redirect: '/404',

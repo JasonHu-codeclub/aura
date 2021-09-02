@@ -1,18 +1,9 @@
-/*
- * Created: 2021-03-01 11:31:10
- * Author : Jan
- * Last Modified: 2021-03-17 10:07:48
- * Modified By: Jan
- * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
- */
+/* * Created: 2021-03-01 11:31:10 * Author : Jan * Last Modified: 2021-03-17 10:07:48 * Modified By:
+Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved. */
 
 <template>
   <div id="tags-view-container" class="tags-view-container">
-    <scroll-pane
-      ref="scrollPane"
-      class="tags-view-wrapper"
-      @scroll="handleScroll"
-    >
+    <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
       <router-link
         v-for="tag in visitedViews"
         ref="tag"
@@ -46,123 +37,123 @@
       <li @click="closeAllTags(selectedTag)">关闭所有</li>
     </ul> -->
     <!-- 切换弹窗 -->
-    <dialog-page-close ref="dialogPage" @confirmHandling="saveHanld" @cancelHandling="closeTags"/>
+    <dialog-page-close ref="dialogPage" @confirmHandling="saveHanld" @cancelHandling="closeTags" />
   </div>
 </template>
 <script>
-import { generateTitle } from '@/utils/i18n'
-import ScrollPane from './ScrollPane'
-import path from 'path'
-import dialogPageClose from '@/components/dialogPageClose'
-import bus from '@/utils/bus'
+import { generateTitle } from "@/utils/i18n";
+import ScrollPane from "./ScrollPane";
+import path from "path";
+import dialogPageClose from "@/components/dialogPageClose";
+import bus from "@/utils/bus";
 export default {
   components: { ScrollPane, dialogPageClose },
-  data () {
+  data() {
     return {
       visible: false,
       top: 0,
       left: 0,
       selectedTag: {},
       affixTags: []
-    }
+    };
   },
   computed: {
-    visitedViews () {
-      return this.$store.state.tagsView.visitedViews
+    visitedViews() {
+      return this.$store.state.tagsView.visitedViews;
     },
-    routes () {
-      return this.$store.state.permission.routes
+    routes() {
+      return this.$store.state.permission.routes;
     }
   },
   watch: {
-    $route () {
-      this.addTags()
-      this.moveToCurrentTag()
+    $route() {
+      this.addTags();
+      this.moveToCurrentTag();
     },
-    visible (value) {
+    visible(value) {
       if (value) {
-        document.body.addEventListener('click', this.closeMenu)
+        document.body.addEventListener("click", this.closeMenu);
       } else {
-        document.body.removeEventListener('click', this.closeMenu)
+        document.body.removeEventListener("click", this.closeMenu);
       }
     }
   },
-  mounted () {
-    bus.$on('closeTagHanld', this.closeTags)
-    this.initTags()
-    this.addTags()
+  mounted() {
+    bus.$on("closeTagHanld", this.closeTags);
+    this.initTags();
+    this.addTags();
   },
   methods: {
     generateTitle,
-    isActive (route) {
-      return route.path === this.$route.path
+    isActive(route) {
+      return route.path === this.$route.path;
     },
-    isAffix (tag) {
-      return tag.meta && tag.meta.affix
+    isAffix(tag) {
+      return tag.meta && tag.meta.affix;
     },
-    filterAffixTags (routes, basePath = '/') {
-      let tags = []
+    filterAffixTags(routes, basePath = "/") {
+      let tags = [];
       routes.forEach(route => {
         if (route.meta && route.meta.affix) {
-          const tagPath = path.resolve(basePath, route.path)
+          const tagPath = path.resolve(basePath, route.path);
           tags.push({
             fullPath: tagPath,
             path: tagPath,
             name: route.name,
             meta: { ...route.meta }
-          })
+          });
         }
         if (route.children) {
-          const tempTags = this.filterAffixTags(route.children, route.path)
+          const tempTags = this.filterAffixTags(route.children, route.path);
           if (tempTags.length >= 1) {
-            tags = [...tags, ...tempTags]
+            tags = [...tags, ...tempTags];
           }
         }
-      })
-      return tags
+      });
+      return tags;
     },
-    initTags () {
-      const affixTags = this.affixTags = this.filterAffixTags(this.routes)
+    initTags() {
+      const affixTags = (this.affixTags = this.filterAffixTags(this.routes));
       for (const tag of affixTags) {
         // Must have tag name
         if (tag.name) {
-          this.$store.dispatch('tagsView/addVisitedView', tag)
+          this.$store.dispatch("tagsView/addVisitedView", tag);
         }
       }
     },
-    addTags () {
-      const { name } = this.$route
+    addTags() {
+      const { name } = this.$route;
       if (name) {
-        this.$store.dispatch('tagsView/addView', this.$route)
+        this.$store.dispatch("tagsView/addView", this.$route);
       }
-      return false
+      return false;
     },
-    moveToCurrentTag () {
-      const tags = this.$refs.tag
+    moveToCurrentTag() {
+      const tags = this.$refs.tag;
       this.$nextTick(() => {
         for (const tag of tags) {
           if (tag.to.path === this.$route.path) {
-            this.$refs.scrollPane.moveToTarget(tag)
+            this.$refs.scrollPane.moveToTarget(tag);
             // when query is different then update
             if (tag.to.fullPath !== this.$route.fullPath) {
-              this.$store.dispatch('tagsView/updateVisitedView', this.$route)
+              this.$store.dispatch("tagsView/updateVisitedView", this.$route);
             }
-            break
+            break;
           }
         }
-      })
+      });
     },
     // 刷新当前tag下的页面
-    refreshSelectedTag (view) {
-      this.$store.dispatch('tagsView/delCachedView', view).then(() => {
-        const { fullPath } = view
-        console.log('view', view)
+    refreshSelectedTag(view) {
+      this.$store.dispatch("tagsView/delCachedView", view).then(() => {
+        const { fullPath } = view;
+        console.log("view", view);
         this.$nextTick(() => {
           this.$router.replace({
-            path: '/redirect' + fullPath
-          })
-        })
-      })
+            path: "/redirect" + fullPath
+          });
+        });
+      });
     },
     // 关闭当前tag的页面
     // closeSelectedTag (view) {
@@ -174,95 +165,95 @@ export default {
     // },
 
     // 关闭当前tag的页面
-    closeSelectedTag (view) {
-      this.viewData = view
-      if(view.name == "Edit"){
-        this.$refs.dialogPage.dialogVisibleLive = true
-      }else{
-        this.closeTags()    
+    closeSelectedTag(view) {
+      this.viewData = view;
+      if (view.name == "Edit") {
+        this.$refs.dialogPage.dialogVisibleLive = true;
+      } else {
+        this.closeTags();
       }
     },
     // 离开前保存
     saveHanld() {
-      bus.$emit('saveInfo', 'closeTag')
+      bus.$emit("saveInfo", "closeTag");
     },
     // 关闭当前tag的页面
     closeTags() {
-      let view = this.viewData 
-      this.$refs.dialogPage.dialogVisibleLive = false
-      this.$store.dispatch('tagsView/setCloseTagView', true)// 标记关闭方式
-      this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
+      let view = this.viewData;
+      this.$refs.dialogPage.dialogVisibleLive = false;
+      this.$store.dispatch("tagsView/setCloseTagView", true); // 标记关闭方式
+      this.$store.dispatch("tagsView/delView", view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
-          this.toLastView(visitedViews, view)
+          this.toLastView(visitedViews, view);
         }
-      })
+      });
     },
 
     // 关闭其他页面
-    closeOthersTags () {
-      this.$router.push(this.selectedTag)
-      this.$store.dispatch('tagsView/delOthersViews', this.selectedTag).then(() => {
-        this.moveToCurrentTag()
-      })
+    closeOthersTags() {
+      this.$router.push(this.selectedTag);
+      this.$store.dispatch("tagsView/delOthersViews", this.selectedTag).then(() => {
+        this.moveToCurrentTag();
+      });
     },
     // 关闭所有
-    closeAllTags (view) {
-      this.$store.dispatch('tagsView/delAllViews').then(({ visitedViews }) => {
+    closeAllTags(view) {
+      this.$store.dispatch("tagsView/delAllViews").then(({ visitedViews }) => {
         if (this.affixTags.some(tag => tag.path === view.path)) {
-          return
+          return;
         }
-        this.toLastView(visitedViews, view)
-      })
+        this.toLastView(visitedViews, view);
+      });
     },
     // 跳转到上一个tag的页面
-    toLastView (visitedViews, view) {
-      const latestView = visitedViews.slice(-1)[0]
+    toLastView(visitedViews, view) {
+      const latestView = visitedViews.slice(-1)[0];
       if (latestView) {
-        this.$router.push(latestView.fullPath)
+        this.$router.push(latestView.fullPath);
       } else {
         // now the default is to redirect to the home page if there is no tags-view,
         // you can adjust it according to your needs.
-        if (view.name === 'Dashboard') {
+        if (view.name === "Dashboard") {
           // to reload home page
-          this.$router.replace({ path: '/redirect' + view.fullPath })
+          this.$router.replace({ path: "/redirect" + view.fullPath });
         } else {
-          this.$router.push('/')
+          this.$router.push("/");
         }
       }
     },
     // 右键鼠标事件-打开菜单
-    openMenu (tag, e) {
-      const menuMinWidth = 105
-      const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
-      const offsetWidth = this.$el.offsetWidth // container width
-      const maxLeft = offsetWidth - menuMinWidth // left boundary
-      const left = e.clientX - offsetLeft + 15 // 15: margin right
+    openMenu(tag, e) {
+      const menuMinWidth = 105;
+      const offsetLeft = this.$el.getBoundingClientRect().left; // container margin left
+      const offsetWidth = this.$el.offsetWidth; // container width
+      const maxLeft = offsetWidth - menuMinWidth; // left boundary
+      const left = e.clientX - offsetLeft + 15; // 15: margin right
 
       if (left > maxLeft) {
-        this.left = maxLeft
+        this.left = maxLeft;
       } else {
-        this.left = left
+        this.left = left;
       }
 
-      this.top = e.clientY
-      this.visible = true
-      this.selectedTag = tag
+      this.top = e.clientY;
+      this.visible = true;
+      this.selectedTag = tag;
     },
-    closeMenu () {
-      this.visible = false
+    closeMenu() {
+      this.visible = false;
     },
-    handleScroll () {
-      this.closeMenu()
+    handleScroll() {
+      this.closeMenu();
     }
   },
   beforeDestroy() {
     //组件销毁前需要解绑事件。否则会出现重复触发事件的问题
-    bus.$off('closeTagHanld');
+    bus.$off("closeTagHanld");
   }
-}
+};
 </script>
 <style lang="less" scoped>
-@import '../../../styles/variables.less';
+@import "../../../styles/variables.less";
 .tags-view-container {
   height: 40px;
   margin-left: 20px;

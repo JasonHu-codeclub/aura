@@ -8,9 +8,10 @@ import meetingTemplate from "../current-meet/components/meet-list";
 export default {
   name: "HistoryRecord",
   components: { meetingTemplate },
-  beforeDestroy() {
+  beforeRouteLeave(to, from, next) {
     // 注销onresizes事件
     window.onresize = null;
+    next();
   }
 };
 </script>

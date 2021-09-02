@@ -1203,6 +1203,13 @@ export default {
     clearInterval(this.timer);
     // 注销onresizes事件
     window.onresize = null;
+  },
+  beforeRouteLeave(to, from, next) {
+    // 销毁定时器
+    clearInterval(this.timer);
+    // 注销onresizes事件
+    window.onresize = null;
+    next();
   }
 };
 </script>

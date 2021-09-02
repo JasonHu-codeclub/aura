@@ -105,6 +105,7 @@ const actions = {
           reject('需要重新登录')
         }
         const { nickname, group, id, thumb_avatar, pc_permissions} = user
+        pc_permissions['is_belong_user'] = id === 1 ? 0 : 1 // 超级管理员登录时无个人中心页面
         commit('SET_ROLES', group.permissions)
         commit('SET_USERNAME', nickname)
         commit('SET_AVATAR', thumb_avatar)
@@ -159,6 +160,7 @@ const actions = {
         commit('SET_ROLES', '')
         removeToken()
         resetRouter()
+        dispatch('tagsView/delAllViews', null, { root: true })
         resolve()
       }).catch(error => {
         reject(error)
