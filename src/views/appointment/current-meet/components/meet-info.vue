@@ -7,6 +7,7 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.38)"
   >
+    <!-- 保存 -->
     <div
       class="save-submit"
       v-show="dataType === 2 && ruleForm.can_update != 0"
@@ -48,17 +49,21 @@
             <div class="edit-box-value">{{ ruleForm.is_secret ? "*" : categoryStr || "--" }}</div>
           </div>
         </div>
-        <div
-          class="edit-sign_in"
-          v-if="ruleForm.status == 1 || ruleForm.status == 2 || ruleForm.status == 3"
-        >
-          <span v-if="ruleForm.is_sign == 1" class="sign_item-in"
-            ><i class="el-icon-circle-check"></i>{{ $t("tip.signIn") }}</span
+
+        <!-- 签到标签 -->
+        <template v-if="ruleForm.is_need_sign">
+          <div
+            class="edit-sign_in"
+            v-if="ruleForm.status == 1 || ruleForm.status == 2 || ruleForm.status == 3"
           >
-          <span v-else class="sign_item-warn"
-            ><i class="el-icon-warning"></i>{{ $t("tip.notSignIn") }}</span
-          >
-        </div>
+            <span v-if="ruleForm.is_sign == 1" class="sign_item-in"
+              ><i class="el-icon-circle-check"></i>{{ $t("tip.signIn") }}</span
+            >
+            <span v-else class="sign_item-warn"
+              ><i class="el-icon-warning"></i>{{ $t("tip.notSignIn") }}</span
+            >
+          </div>
+        </template>
       </div>
 
       <!-- 基本信息 -->
@@ -337,6 +342,7 @@
               <el-input
                 :placeholder="$t('message.mailbox')"
                 class="input2"
+                :class="{ warning: item.isEmailEqual }"
                 v-model="item.email"
                 clearable
               ></el-input>
@@ -344,6 +350,7 @@
               <el-input
                 :placeholder="$t('placeholder.phone')"
                 class="input2"
+                :class="{ warning: item.isPhoneEqual }"
                 v-model="item.phone"
                 oninput="value=value.replace(/^\.+|[^\d.]/g,'')"
                 maxlength="11"
@@ -884,6 +891,8 @@ export default {
           nameError: false,
           mailError: false,
           phoneError: false,
+          isEmailEqual: false,
+          isPhoneEqual: false,
           error: false
         }
       ];
@@ -898,6 +907,8 @@ export default {
               nameError: false,
               mailError: false,
               phoneError: false,
+              isEmailEqual: false,
+              isPhoneEqual: false,
               error: false
             });
             strExt = strExt ? strExt + "，" + item.name : item.name;
@@ -926,42 +937,19 @@ export default {
           nameError: false,
           mailError: false,
           phoneError: false,
-          isEqual: false,
+          isEmailEqual: false,
+          isPhoneEqual: false,
           error: false
         });
       }
     },
     // 确认外部参会人员
     addExtMeetPeople() {
-      // var arr = ["1", "2", "3", "4", "5", "6", "6", "7", "8", "1", "1", "1"];
-      // var list = [];
-      // for (var i = 0; i < arr.length; i++) {
-      //   var hasRead = false;
-      //   for (var k = 0; k < list.length; k++) {
-      //     if (i == list[k]) {
-      //       hasRead = true;
-      //     }
-      //   }
-      //   if (hasRead) {
-      //     break;
-      //   }
-      //   var _index = i,
-      //     haveSame = false;
-      //   for (var j = i + 1; j < arr.length; j++) {
-      //     if (arr[i] == arr[j]) {
-      //       list.push(j);
-      //       _index += "," + j;
-      //       haveSame = true;
-      //     }
-      //   }
-      //   if (haveSame) {
-      //     alert("数组中值为" + arr[i] + "相同元素的下标为" + _index);
-      //   }
-      // }
       // 参会人名字 邮箱检验
       let flag = false;
       let other = this.outParticipantGuids.map(item => {
-        //filter
+        item["isEmailEqual"] = false;
+        item["isPhoneEqual"] = false;
         if (item.email || item.name || item.phone) {
           if (item.name === "") {
             // 名字
@@ -1011,9 +999,39 @@ export default {
       if (flag) {
         return false;
       }
+      // 相同外部参会人校验
+      if (!this.checkSame(this.outParticipantGuids)) {
+        this.$message({
+          message: "不可添加相同的参会人员",
+          type: "error",
+          customClass: "z_index"
+        });
+        return false;
+      }
       this.ruleForm.out_participant = JSON.parse(JSON.stringify(this.outParticipantGuids));
       this.outParticipantHandle();
       this.extVisible = false;
+    },
+    // 外部参会人校验
+    checkSame(arr) {
+      let same = true;
+      var newArr = arr;
+      for (var i = newArr.length - 1; i >= 0; i--) {
+        var targetNode = newArr[i];
+        for (var j = 0; j < i; j++) {
+          if (targetNode["email"] == newArr[j]["email"] && targetNode["email"] !== "") {
+            targetNode["isEmailEqual"] = true;
+            newArr[j]["isEmailEqual"] = true;
+            same = false;
+          }
+          if (targetNode["phone"] == newArr[j]["phone"] && targetNode["phone"] !== "") {
+            targetNode["isPhoneEqual"] = true;
+            newArr[j]["isPhoneEqual"] = true;
+            same = false;
+          }
+        }
+      }
+      return same;
     },
     // 显示内部参会人员弹框
     showInnerDialog() {
@@ -1164,6 +1182,8 @@ export default {
         delete res.nameError;
         delete res.mailError;
         delete res.phoneError;
+        delete res.isEmailEqual;
+        delete res.isPhoneEqual;
         delete res.isEqual;
       });
 
@@ -1944,5 +1964,14 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+/deep/.warning .el-input__inner {
+  border: red 1px solid !important;
+}
+</style>
+<style>
+.z_index {
+  z-index: 3000 !important;
 }
 </style>

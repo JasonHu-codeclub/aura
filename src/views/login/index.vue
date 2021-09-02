@@ -209,8 +209,8 @@ export default {
         })
         .then(res => {
           if (res.meta.code == "RESP_OKAY") {
-            message({
-              message: res.data.meta.message,
+            this.$message({
+              message: res.meta.message,
               type: "success",
               duration: 3 * 1000
             });
@@ -218,8 +218,8 @@ export default {
             this.$router.replace("/");
             // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
           } else {
-            message({
-              message: res.data.meta.message,
+            this.$message({
+              message: res.meta.message,
               type: "error",
               duration: 3 * 1000
             });
