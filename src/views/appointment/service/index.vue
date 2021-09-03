@@ -18,7 +18,7 @@
             :start-placeholder="$t('message.startDates')"
             :end-placeholder="$t('message.endDates')"
             range-separator="-"
-            @change="getApproveInfo"
+            @change="inputChange"
             >></el-date-picker
           >
         </div>
@@ -32,7 +32,7 @@
             :props="props"
             :placeholder="$t('placeholder.MeetingFloor')"
             :show-all-levels="true"
-            @change="getApproveInfo"
+            @change="inputChange"
             clearable
           ></el-cascader>
         </div>
@@ -42,8 +42,7 @@
           <el-select
             v-model="searchForm.status"
             :placeholder="$t('message.status')"
-            @change="getApproveInfo"
-            @clear="getApproveInfo"
+            @change="inputChange"
             clearable
           >
             <el-option
@@ -60,8 +59,7 @@
           <el-select
             v-model="searchForm.meeting_room_id"
             :placeholder="$t('message.room')"
-            @change="getApproveInfo"
-            @clear="getApproveInfo"
+            @change="inputChange"
             clearable
           >
             <el-option
@@ -77,7 +75,7 @@
           <el-button
             type="primary"
             class="search"
-            @click="getApproveInfo"
+            @click="inputChange"
             :loading="searchBtnStatus"
             >{{ $t("button.search") }}</el-button
           >
@@ -343,6 +341,10 @@ export default {
     this.resizeHeight(100);
   },
   methods: {
+    inputChange() {
+      this.paginationQuery.page = 1; // 筛选条件变更重置当前页
+      this.getApproveInfo();
+    },
     // 大厦信息，楼层
     async getFloorList() {
       const result = await getMansionFloorApi();

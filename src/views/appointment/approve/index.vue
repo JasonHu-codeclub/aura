@@ -19,7 +19,7 @@
             :start-placeholder="$t('message.startDates')"
             :end-placeholder="$t('message.endDates')"
             range-separator="-"
-            @change="dateChange"
+            @change="inputChange"
             >></el-date-picker
           >
         </div>
@@ -30,8 +30,8 @@
             type="text"
             v-model="searchForm.keyword"
             :placeholder="$t('placeholder.nameTypes')"
-            @keyup.enter.native="getApproveInfo"
-            @clear="getApproveInfo"
+            @keyup.enter.native="inputChange"
+            @clear="inputChange"
             clearable
           ></el-input>
         </div>
@@ -41,8 +41,7 @@
           <el-select
             v-model="searchForm.approve_status"
             :placeholder="$t('message.status')"
-            @change="getApproveInfo"
-            @clear="getApproveInfo"
+            @change="inputChange"
             clearable
           >
             <el-option
@@ -59,7 +58,7 @@
           <el-button
             type="primary"
             class="search"
-            @click="getApproveInfo"
+            @click="inputChange"
             :loading="searchBtnStatus"
             >{{ $t("button.search") }}</el-button
           >
@@ -280,7 +279,8 @@ export default {
   },
   methods: {
     // 选择日期
-    dateChange(value) {
+    inputChange() {
+      this.paginationQuery.page = 1; // 当前页
       this.getApproveInfo();
     },
     // 获取列表数据

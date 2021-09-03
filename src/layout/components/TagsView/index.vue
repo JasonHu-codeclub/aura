@@ -80,11 +80,39 @@ export default {
   },
   mounted() {
     bus.$on("closeTagHanld", this.closeTags);
+    // 页面刷新前缓存和赋值
+    this.beforeUnload();
     this.initTags();
     this.addTags();
   },
   methods: {
     generateTitle,
+    beforeUnload() {
+      // 监听页面刷新
+      window.addEventListener("beforeunload", () => {
+        // 转换tabViews数据
+        const tabViews = this.visitedViews.map(item => {
+          return {
+            fullPath: item.fullPath,
+            hash: item.hash,
+            meta: { ...item.meta },
+            name: item.name,
+            params: { ...item.params },
+            path: item.path,
+            query: { ...item.query },
+            title: item.title
+          };
+        });
+        sessionStorage.setItem("tabViews", JSON.stringify(tabViews));
+      });
+      // 页面初始化加载判断缓存中是否有数据
+      const oldViews = JSON.parse(sessionStorage.getItem("tabViews")) || [];
+      if (oldViews.length > 0) {
+        this.$store.state.tagsView.visitedViews = oldViews;
+        // 赋值后清除数据
+        sessionStorage.clear();
+      }
+    },
     isActive(route) {
       return route.path === this.$route.path;
     },

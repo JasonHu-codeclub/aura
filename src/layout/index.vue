@@ -1,6 +1,3 @@
-/* * Created: 2021-03-01 11:00:19 * Author : Jan * Last Modified: 2021-03-16 17:31:14 * Modified By:
-Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved. */
-
 <template>
   <div :class="classObj" class="app-wrapper">
     <!-- 侧边栏 -->

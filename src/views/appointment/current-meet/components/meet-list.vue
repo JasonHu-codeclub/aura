@@ -17,7 +17,7 @@
             :start-placeholder="$t('message.startDates')"
             :end-placeholder="$t('message.endDates')"
             range-separator="-"
-            @change="dateChange"
+            @change="inputChange"
             >></el-date-picker
           >
         </div>
@@ -28,8 +28,8 @@
             type="text"
             v-model="searchForm.keyword"
             :placeholder="$t('placeholder.nameTypes')"
-            @keyup.enter.native="getMyMeetingInfo"
-            @clear="getMyMeetingInfo"
+            @keyup.enter.native="inputChange"
+            @clear="inputChange"
             clearable
           ></el-input>
         </div>
@@ -39,8 +39,7 @@
           <el-select
             v-model="searchForm.status"
             :placeholder="$t('message.status')"
-            @change="getMyMeetingInfo"
-            @clear="getMyMeetingInfo"
+            @change="inputChange"
             collapse-tags
             multiple
             clearable
@@ -59,8 +58,7 @@
           <el-select
             v-model="searchForm.user_type"
             :placeholder="$t('message.all')"
-            @change="getMyMeetingInfo"
-            @clear="getMyMeetingInfo"
+            @change="inputChange"
             clearable
           >
             <el-option
@@ -77,23 +75,7 @@
           <el-button
             type="primary"
             class="search"
-            @click="getMyMeetingInfo"
-            :loading="searchBtnStatus"
-            >{{ $t("button.search") }}</el-button
-          >
-          <!-- 重置 -->
-          <el-button type="info" class="search" @click="resetMeetingInfo">{{
-            $t("button.reset")
-          }}</el-button>
-        </div>
-      </div>
-      <div class="filter-item" v-if="false">
-        <div class="filter-item-box">
-          <!-- 查询 -->
-          <el-button
-            type="primary"
-            class="search"
-            @click="getMyMeetingInfo"
+            @click="inputChange"
             :loading="searchBtnStatus"
             >{{ $t("button.search") }}</el-button
           >
@@ -325,7 +307,8 @@ export default {
   },
   methods: {
     // 选择日期
-    dateChange(value) {
+    inputChange() {
+      this.paginationQuery.page = 1; // 当前页
       this.getMyMeetingInfo();
     },
     // 获取列表数据

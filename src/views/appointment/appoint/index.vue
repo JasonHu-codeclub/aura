@@ -244,8 +244,8 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="res-select-time" v-if="selectRowTime.time.startTime">
-        <span
+      <div class="res-select-time" :class="{ sticky: selectRowTime.time.startTime }">
+        <span v-if="selectRowTime.time.startTime"
           >{{ $t("message.select") }}：{{ searchData.date }}&nbsp;{{
             selectRowTime.time.startTime
           }}&nbsp;至&nbsp;{{ selectRowTime.time.endTime }}</span
@@ -254,7 +254,7 @@
     </div>
     <!-- /表格 -->
 
-    <!-- 会议详情 -->
+    <!-- 会议室信息 -->
     <el-dialog
       :title="$t('message.roomInfo')"
       :visible.sync="dialogVisible"
@@ -1295,14 +1295,20 @@ export default {
     font-weight: normal;
   }
   .res-select-time {
-    position: sticky;
-    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
     color: #5473e8;
     font-size: 14px;
     text-align: center;
     padding: 20px 0;
     background: #fff;
     z-index: 1000;
+  }
+  .sticky {
+    position: sticky;
+    bottom: 0;
   }
 }
 // .floor-name {
