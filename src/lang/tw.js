@@ -334,7 +334,8 @@ export default {
       successful: '操作成功',
       leave: '離開',
       attendees:'請勾選內部參會人員',
-      title:'標題不能為空'
+      title:'標題不能為空',
+      alreadyExists: '參會人已存在'
     },
     weeks: {
       Monday: '周一',

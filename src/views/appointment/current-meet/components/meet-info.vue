@@ -1002,7 +1002,7 @@ export default {
       // 相同外部参会人校验
       if (!this.checkSame(this.outParticipantGuids)) {
         this.$message({
-          message: "不可添加相同的参会人员",
+          message: this.$t("tip.alreadyExists"),
           type: "error",
           customClass: "z_index"
         });

@@ -336,7 +336,8 @@ export default {
     successful: '操作成功',
     leave: '离开',
     attendees:'请勾选内部参会人员',
-    title:'标题不能为空'
+    title:'标题不能为空',
+    alreadyExists: '参会人已存在'
   },
   weeks: {
     Monday: '周一',

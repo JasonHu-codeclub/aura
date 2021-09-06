@@ -331,7 +331,8 @@ export default {
     successful: 'Operation successful',
     leave: 'leave',
     attendees:'Please check internal attendees',
-    title:'The title cannot be empty'
+    title:'The title cannot be empty',
+    alreadyExists: 'Participant already exists'
   },
   weeks: {
     Monday: 'Monday',
