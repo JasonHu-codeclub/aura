@@ -4,10 +4,22 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
 <template>
   <div id="login">
     <div class="login-content">
-      <div style="display: flex;justify-content: flex-end;position: absolute;top: 5%;right:5%">
-        <div @click="chooseLang('zh_CN')" class="zh_CN"></div>
-        <div style="margin: 0 10px;" @click="chooseLang('en')" class="en"></div>
-        <div @click="chooseLang('zh_HK')" class="zh_HK"></div>
+      <div class="login-language">
+        <div
+          @click="chooseLang('zh_CN')"
+          class="zh_CN"
+          :class="{ cn_active: $i18n.locale == 'zh_CN' }"
+        ></div>
+        <div
+          @click="chooseLang('en')"
+          class="en"
+          :class="{ en_active: $i18n.locale == 'en' }"
+        ></div>
+        <div
+          @click="chooseLang('zh_HK')"
+          class="zh_HK"
+          :class="{ fan_active: $i18n.locale == 'zh_HK' }"
+        ></div>
       </div>
       <h3 class="login-content-logo">
         <img :src="host + companyLogo" class="login-content-logo-img" alt="" />
@@ -246,37 +258,52 @@ export default {
     width: 38.2%;
     max-width: 730px;
     min-width: 400px;
-    background: rgba(13, 80, 188, 0.7);
+    background: rgba(13, 80, 188, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 10px 0 32px #231f45;
+    .login-language {
+      display: flex;
+      justify-content: flex-end;
+      position: absolute;
+      top: 5%;
+      right: 5%;
+    }
     .zh_CN,
     .en,
     .zh_HK {
-      height: 20px;
-      width: 20px;
-    }
-    .zh_CN {
-      background-image: url("../../assets/CN.png");
-      background-size: 100%;
-    }
-    .zh_CN:hover {
-      background-image: url("../../assets/zh_CN.png");
+      height: 26px;
+      width: 26px;
+      background-repeat: no-repeat;
+      cursor: pointer;
     }
     .en {
-      background-image: url("../../assets/EN.png");
+      margin: 0 10px;
+    }
+    .zh_CN {
+      background-image: url("../../assets/jian_noactive.png");
       background-size: 100%;
     }
-    .en:hover {
-      background-image: url("../../assets/zh_EN.png");
+    .zh_CN:hover,
+    .cn_active {
+      background-image: url("../../assets/jian_active.png");
+    }
+    .en {
+      background-image: url("../../assets/en_noactive.png");
+      background-size: 100%;
+    }
+    .en:hover,
+    .en_active {
+      background-image: url("../../assets/en_active.png");
     }
     .zh_HK {
-      background-image: url("../../assets/TW.png");
+      background-image: url("../../assets/fan_noactive.png");
       background-size: 100%;
     }
-    .zh_HK:hover {
-      background-image: url("../../assets/zh_TW.png");
+    .zh_HK:hover,
+    .fan_active {
+      background-image: url("../../assets/fan_active.png");
     }
     .login-content-logo {
       position: absolute;

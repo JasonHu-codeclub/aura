@@ -1,34 +1,28 @@
-/*
- * Created: 2021-03-01 11:30:22
- * Author : Jan
- * Last Modified: 2021-03-24 10:36:22
- * Modified By: Jan
- * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
- */
+/* * Created: 2021-03-01 11:30:22 * Author : Jan * Last Modified: 2021-03-24 10:36:22 * Modified By:
+Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved. */
 
 <template>
   <div class="sidebar-logo-container" :class="{ collapse: collapse }">
     <transition name="sidebarLogoFade">
-      <router-link
-        v-if="collapse"
-        key="collapse"
-        class="sidebar-logo-link"
-        to="/"
-      >
+      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
         <h1 v-else class="sidebar-title">{{ title }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="systemLogo" :src="baseURL + systemLogo" class="sidebar-logo" />
+        <img
+          v-if="systemLogo"
+          :src="baseURL + systemLogo + '?time=' + new Date().getTime()"
+          class="sidebar-logo"
+        />
         <!-- <h1 class="sidebar-title">{{ systemName }}</h1> -->
       </router-link>
     </transition>
   </div>
 </template>
 <script>
-const defaultSettings = require('@/settings.js')
-import { imgBaseUrl } from '@/utils/varible'
-import { mapGetters } from 'vuex'
+const defaultSettings = require("@/settings.js");
+import { imgBaseUrl } from "@/utils/varible";
+import { mapGetters } from "vuex";
 export default {
   components: {},
   props: {
@@ -37,27 +31,24 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       baseURL: imgBaseUrl,
       title: defaultSettings.title,
       // logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
-      logo: require('@/assets/logo.png')
-    }
+      logo: require("@/assets/logo.png")
+    };
   },
   computed: {
-    ...mapGetters(['systemLogo'])
+    ...mapGetters(["systemLogo"])
   },
   watch: {},
-  methods: {
-  },
-  created () {
-  },
-  mounted () {
-  }
-}
+  methods: {},
+  created() {},
+  mounted() {}
+};
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 .sidebarLogoFade-enter-active {
   transition: opacity 1.5s;
 }

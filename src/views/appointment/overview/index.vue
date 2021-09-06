@@ -219,13 +219,12 @@ export default {
       let dataObj = this.handelArr(data[types]);
       lineChartData[types]["duration"] = dataObj.arr_hours; // 总小时数
       lineChartData[types]["frequency"] = dataObj.arr_count; // 总场数
+      lineChartData[types]["title"] = [];
       if (types == "weeks" || types == "years") {
-        lineChartData[types]["title"] = [];
         for (let key in zh[types]) {
           lineChartData[types]["title"].push(this.$t(types + "." + key));
         }
       } else if (types == "months") {
-        lineChartData[types]["title"] = [];
         data[types].map((res, index) => {
           lineChartData[types]["title"].push(index + 1);
         });

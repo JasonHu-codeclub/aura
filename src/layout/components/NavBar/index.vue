@@ -13,7 +13,9 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
           <span
             class="user-avatar"
             :style="{
-              backgroundImage: avatar ? 'url(' + baseURL + avatar + ')' : 'url(' + userImg + ')'
+              backgroundImage: avatar
+                ? 'url(' + baseURL + avatar + '?time=' + new Date().getTime() + ')'
+                : 'url(' + userImg + ')'
             }"
           ></span>
         </div>
