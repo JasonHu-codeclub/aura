@@ -21,7 +21,7 @@ import i18n from './lang'
   // 动态设置favicon.ico
   let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
       let icoUrl = await store.dispatch('user/icoSetting')
-      link.href = imgBaseUrl + icoUrl
+      link.href = imgBaseUrl + icoUrl + '?time=' + new Date().getTime()
       link.rel="icon"
       document.title = store.getters.companyName
       document.getElementsByTagName('head')[0].appendChild(link);

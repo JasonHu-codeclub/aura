@@ -320,7 +320,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     overflow-x: auto;
-    margin-bottom: 7px;
+    margin-bottom: 20px;
     .overview-top-left {
       flex: 1;
       min-width: 300px;
@@ -384,7 +384,7 @@ export default {
     height: 500px;
     background: #fff;
     padding: 16px 16px 0;
-    margin-bottom: 7px;
+    margin-bottom: 20px;
   }
   .overview-calendar {
     width: 100%;
