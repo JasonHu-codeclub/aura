@@ -24,7 +24,8 @@ const state = {
   systemName: '',  // 系统名称 
   companyName: '', // 公司名称
   companyLogo: '', // 公司logo
-  is_auth: '' // 公司logo
+  is_auth: '', // 公司logo
+  editId: ''
 }
 
 const mutations = {
@@ -58,6 +59,9 @@ const mutations = {
   },
   SET_COMPANYLOGO(state, data) {
     state.companyLogo = data
+  },
+  SET_EDITKEY(state, data) {
+    state.editId = data
   }
 }
 
@@ -173,6 +177,13 @@ const actions = {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', '')
       removeToken()
+      resolve()
+    })
+  },
+  // 存储详情页ID
+  setEditId ({ commit }, data) {
+    return new Promise(resolve => {
+      commit('SET_EDITKEY', data)
       resolve()
     })
   },

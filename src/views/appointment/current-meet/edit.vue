@@ -20,7 +20,7 @@ import { mapGetters } from "vuex";
 import meetInfo from "./components/meet-info";
 import dialogPageClose from "@/components/dialogPageClose";
 export default {
-  name: "edit",
+  name: "Edit",
   data() {
     return {
       falg: false, // 是否允许跳转

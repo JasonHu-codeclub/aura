@@ -109,7 +109,7 @@ export const asyncRoutes = [
             title: 'route.editMeet',
             affix: false,
             activeMenu: '/current/current_list',
-            keepAlive: false
+            keepAlive: true
           }
       },
     ]

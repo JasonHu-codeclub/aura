@@ -26,6 +26,7 @@ const getters = {
   companyName: state => state.user.companyName,
   companyLogo: state => state.user.companyLogo,
   isCloseTag: state => state.tagsView.isCloseTag,
-  isCloseTagSave: state => state.tagsView.isCloseTagSave
+  isCloseTagSave: state => state.tagsView.isCloseTagSave,
+  editId: state => state.user.editId
 }
 export default getters

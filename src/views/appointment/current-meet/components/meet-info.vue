@@ -554,7 +554,7 @@ import {
 } from "@/api/currentMeet";
 import bus from "@/utils/bus";
 import dayjs from "dayjs";
-import Cookies from "js-cookie";
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -627,6 +627,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(["editId"]),
     //  茶点服务
     serveListArr() {
       if (this.dataType === 1 || this.ruleForm.can_update == 0) {
@@ -638,6 +639,14 @@ export default {
       }
     }
   },
+  activated() {
+    const id = Number(this.$route.query.id);
+    if (this.$route.name !== "Edit" || id !== this.editId) {
+      // 获取详情信息
+      this.getDateilsInfo(id);
+    }
+    this.$store.dispatch("user/setEditId", id);
+  },
   mounted() {
     let query = this.$route.query;
     // 活动菜单
@@ -645,6 +654,7 @@ export default {
     this.$route.meta.activeMenu = this.activeMenuList[this.menuStr];
     // 获取详情信息
     this.getDateilsInfo(query.id);
+    this.$store.dispatch("user/setEditId", Number(query.id));
     // 获取会议类型
     this.getMeetingTypeInfo();
     // 获取部门信息
