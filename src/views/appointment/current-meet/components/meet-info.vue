@@ -641,7 +641,7 @@ export default {
   },
   activated() {
     const id = Number(this.$route.query.id);
-    if (this.$route.name !== "Edit" || id !== this.editId) {
+    if (id !== this.editId) {
       // 获取详情信息
       this.getDateilsInfo(id);
     }
@@ -1339,7 +1339,7 @@ export default {
   .edit-box {
     margin-bottom: 4px;
     padding: 6px 6px 6px 8px;
-    margin-bottom: 7px;
+    margin-bottom: 20px;
     background: #fff;
     border-radius: 4px;
     .edit-box-title {

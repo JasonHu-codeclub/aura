@@ -1,15 +1,11 @@
-
-/**
-  会议详情
- */
+/** 会议详情 */
 <template>
   <meet-info :data-type="1" />
 </template>
 <script>
-import meetInfo from './components/meet-info'
+import meetInfo from "./components/meet-info";
 export default {
-  name: 'detailsInfo',
+  name: "Details",
   components: { meetInfo }
-}
+};
 </script>
-
