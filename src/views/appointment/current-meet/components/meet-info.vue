@@ -645,7 +645,7 @@ export default {
       // 获取详情信息
       this.getDateilsInfo(id);
     }
-    this.$store.dispatch("user/setEditId", id);
+    this.$store.dispatch("user/setEditId", {type: 'edit', id: id});
   },
   mounted() {
     let query = this.$route.query;
@@ -654,7 +654,7 @@ export default {
     this.$route.meta.activeMenu = this.activeMenuList[this.menuStr];
     // 获取详情信息
     this.getDateilsInfo(query.id);
-    this.$store.dispatch("user/setEditId", Number(query.id));
+    this.$store.dispatch("user/setEditId", {type: 'edit', id: Number(query.id)});
     // 获取会议类型
     this.getMeetingTypeInfo();
     // 获取部门信息

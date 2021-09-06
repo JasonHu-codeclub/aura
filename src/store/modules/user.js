@@ -25,7 +25,9 @@ const state = {
   companyName: '', // 公司名称
   companyLogo: '', // 公司logo
   is_auth: '', // 公司logo
-  editId: ''
+  editId: '',
+  repeatId: '',
+  conflictId: ''
 }
 
 const mutations = {
@@ -62,6 +64,12 @@ const mutations = {
   },
   SET_EDITKEY(state, data) {
     state.editId = data
+  },
+  SET_REPEATKEY(state, data) {
+    state.repeatId = data
+  },
+  SET_CONFKEY(state, data) {
+    state.conflictId = data
   }
 }
 
@@ -180,10 +188,20 @@ const actions = {
       resolve()
     })
   },
-  // 存储详情页ID
+  // 存储需缓存的ID
   setEditId ({ commit }, data) {
     return new Promise(resolve => {
-      commit('SET_EDITKEY', data)
+      switch(data.type){
+        case 'edit':
+          commit('SET_EDITKEY', data.id)
+          break;
+        case 'repeat':
+          commit('SET_REPEATKEY', data.id)
+          break;
+        case 'conflict':
+            commit('SET_CONFKEY', data.id)
+          break;
+      }
       resolve()
     })
   },

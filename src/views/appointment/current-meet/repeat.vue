@@ -161,6 +161,7 @@
 import { getRepeatDetailApi, meetCancelApi } from "@/api/currentMeet";
 import Pagination from "@/components/Pagination";
 import dialogCancel from "./components/dialogCancel";
+import { mapGetters } from "vuex";
 export default {
   name: "Repeat",
   components: { Pagination, dialogCancel },
@@ -220,6 +221,9 @@ export default {
       personnel: ""
     };
   },
+  computed: {
+    ...mapGetters(["repeatId"])
+  },
   mounted() {
     // 获取数据
     this.getMeetingRepet();
@@ -229,10 +233,19 @@ export default {
     this.$route.meta.activeMenu =
       menu === "current" ? "/current/current_list" : "/history/history_list";
     this.isInvitation = menu === "current" ? false : true;
+
+    const id = Number(this.$route.query.id);
+    this.$store.dispatch("user/setEditId", { type: "repeat", id: id });
   },
   activated() {
     // 获取数据
-    this.getMeetingRepet();
+    const id = Number(this.$route.query.id);
+    if (id !== this.repeatId) {
+      this.chooseDate = null;
+      this.paginationQuery.page = 1; // 当前页
+      this.getMeetingRepet();
+    }
+    this.$store.dispatch("user/setEditId", { type: "repeat", id: id });
   },
   methods: {
     // 选择日期
@@ -328,6 +341,11 @@ export default {
         }
       });
     }
+  },
+  beforeRouteLeave(to, from, next) {
+    // 注销onresizes事件
+    window.onresize = null;
+    next();
   },
   beforeDestroy() {
     // 注销onresizes事件

@@ -184,6 +184,7 @@
 import { meetingShowApi, serviceAgreeApi, serviceRefuseApi } from "@/api/approve";
 import Pagination from "@/components/Pagination";
 import dialogCancel from "@/views/appointment/current-meet/components/dialogCancel";
+import { mapGetters } from "vuex";
 export default {
   name: "Conflict",
   components: { Pagination, dialogCancel }, // 分页
@@ -244,14 +245,25 @@ export default {
       type: Number
     }
   },
+  computed: {
+    ...mapGetters(["conflictId"])
+  },
   mounted() {
     // 获取数据
     this.getApproveInfo();
     this.resizeHeight(100);
+    const id = Number(this.$route.query.id);
+    this.$store.dispatch("user/setEditId", { type: "conflict", id: id });
   },
   activated() {
     // 获取数据
-    this.getApproveInfo();
+    const id = Number(this.$route.query.id);
+    if (id !== this.conflictId) {
+      this.chooseDate = null;
+      this.paginationQuery.page = 1; // 当前页
+      this.getApproveInfo();
+    }
+    this.$store.dispatch("user/setEditId", { type: "conflict", id: id });
   },
   methods: {
     inputChange() {
@@ -306,8 +318,8 @@ export default {
         approve_status: "", // 状态
         keyword: "" // 会议名称
       };
-      (this.chooseDate = null), // 日期
-        this.getApproveInfo();
+      this.chooseDate = null; // 日期
+      this.getApproveInfo();
     },
     // 详情
     detailsMeet(row) {
@@ -368,6 +380,11 @@ export default {
       this.cancelContent = "";
       this.isShowInput = false;
     }
+  },
+  beforeRouteLeave(to, from, next) {
+    // 注销onresizes事件
+    window.onresize = null;
+    next();
   },
   beforeDestroy() {
     // 注销onresizes事件

@@ -407,6 +407,11 @@ export default {
       this.isShowInput = false;
     }
   },
+  beforeRouteLeave(to, from, next) {
+    // 注销onresizes事件
+    window.onresize = null;
+    next();
+  },
   beforeDestroy() {
     // 注销onresizes事件
     window.onresize = null;
