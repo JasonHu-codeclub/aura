@@ -30,6 +30,7 @@ export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@views/login'),
+    name: 'Login',
     hidden: true
   },
   {

@@ -337,7 +337,9 @@ export default {
     leave: '离开',
     attendees:'请勾选内部参会人员',
     title:'标题不能为空',
-    alreadyExists: '参会人已存在'
+    alreadyExists: '参会人已存在',
+    enterprise: '企业微信',
+    wechat: '微信',
   },
   weeks: {
     Monday: '周一',

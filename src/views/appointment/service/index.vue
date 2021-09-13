@@ -106,7 +106,6 @@
           prop="title"
           :label="$t('message.theme')"
           align="center"
-          width="160"
           show-overflow-tooltip
         >
           <template slot-scope="scope">

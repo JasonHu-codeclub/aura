@@ -595,17 +595,12 @@ export default {
       timeConfig: {}, // 可预约时间段
       appStartTimes: "", // 预约开始时间
       appEndTimes: "", // 预约结束时间
-      defaultValue: "", //设置开始起始时间
-      currentTime:
-        new Date().getMinutes() == "00"
-          ? (this.defaultValue = new Date().getHours() + ":" + "00")
-          : new Date().getMinutes() < 30
-          ? (this.defaultValue = new Date().getHours() + ":" + "30")
-          : (this.defaultValue = new Date().getHours() + 1 + ":" + "00") //当前时间
+      defaultValue: "" //设置开始起始时间
     };
   },
   created() {
-    this.defaultValue = this.currentTime;
+    // 设置搜索起止时间
+    this.setTimeCrrentTime();
   },
   computed: {
     ...mapGetters(["userInfo"]),
@@ -664,6 +659,7 @@ export default {
   },
   watch: {},
   mounted() {
+    const that = this;
     // 大厦楼层
     this.getFloorList();
     // 获取时间规则
@@ -672,18 +668,27 @@ export default {
     this.getReservableList();
     // 获取设备列表
     this.getEquipmentList();
-    const that = this;
-    const fn = function() {
-      that.pollingSearchRoom();
-    };
-    fn();
-    this.timer = setInterval(fn, 1000 * 60, true);
+    // 会议室列表
+    this.searchMeetingRoom();
+    this.timer = setInterval(that.pollingSearchRoom, 1000 * 60, true);
     this.resizeHeight(100);
   },
   activated() {
+    let that = this;
     this.resizeHeight(100);
+    this.timer = setInterval(that.pollingSearchRoom, 1000 * 60, true);
   },
   methods: {
+    // 设置搜索起止时间
+    setTimeCrrentTime() {
+      let times =
+        new Date().getMinutes() == "00"
+          ? (this.defaultValue = new Date().getHours() + ":" + "00")
+          : new Date().getMinutes() < 30
+          ? (this.defaultValue = new Date().getHours() + ":" + "30")
+          : (this.defaultValue = new Date().getHours() + 1 + ":" + "00"); //当前时间
+      this.defaultValue = times;
+    },
     // 冲突弹窗关闭
     handleApproveClose() {
       this.cancelTitle = "";
@@ -1072,6 +1077,7 @@ export default {
     },
     // 轮询会议室
     async pollingSearchRoom(type) {
+      this.setTimeCrrentTime();
       let params = {
         date: this.searchData.date, // 日期
         start_time: this.searchData.startTime, //开始时间
@@ -1081,7 +1087,6 @@ export default {
         reservable: this.searchData.peopleNum, // 人数
         equipment: this.searchData.equipment // 设备id
       };
-      this.tableLoading = true;
       const result = await getAppointmentApi(params);
       this.meetingRooms = result.data.meeting_rooms;
       // 如果是预约成功后的刷新
@@ -1090,7 +1095,6 @@ export default {
         this.selectRowTime.time.startIndex = null;
         this.selectRowTime.time.endIndex = null;
       }
-      this.tableLoading = false;
     },
     setTimesOptions() {
       // let msg = this.meetingRooms[0]['message']
@@ -1119,7 +1123,8 @@ export default {
       if (value !== dayjs().format("YYYY-MM-DD")) {
         this.defaultValue = this.startTimesOptions.start;
       } else {
-        this.defaultValue = this.currentTime;
+        // this.defaultValue = this.setTimeCrrentTime()//this.currentTime;
+        this.setTimeCrrentTime();
       }
       let that = this;
       setTimeout(() => {
@@ -1309,6 +1314,7 @@ export default {
   .sticky {
     position: sticky;
     bottom: 0;
+    box-shadow: 0 -4px 13px -3px #e8e8e8;
   }
 }
 // .floor-name {

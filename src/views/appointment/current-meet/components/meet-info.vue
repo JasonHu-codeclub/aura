@@ -253,7 +253,10 @@
             </div>
           </div>
           <!-- 设备服务 -->
-          <div class="edit-box-item" v-if="ruleForm.equipment_show == 1">
+          <div
+            class="edit-box-item"
+            v-if="ruleForm.equipment_show == 1 && equipmentList.length != 0"
+          >
             <div class="edit-box-label">{{ $t("message.equipmentServices") }}：</div>
             <div class="edit-box-value">
               <el-select
@@ -640,12 +643,16 @@ export default {
     }
   },
   activated() {
-    const id = Number(this.$route.query.id);
-    if (id !== this.editId) {
+    // 活动菜单
+    let query = this.$route.query;
+    this.menuStr = query.menu;
+    this.$route.meta.activeMenu = this.activeMenuList[this.menuStr];
+    const id = Number(query.id);
+    if (this.dataType === 1 || id !== this.editId) {
       // 获取详情信息
       this.getDateilsInfo(id);
     }
-    this.$store.dispatch("user/setEditId", {type: 'edit', id: id});
+    this.$store.dispatch("user/setEditId", { type: "edit", id: id });
   },
   mounted() {
     let query = this.$route.query;
@@ -654,7 +661,7 @@ export default {
     this.$route.meta.activeMenu = this.activeMenuList[this.menuStr];
     // 获取详情信息
     this.getDateilsInfo(query.id);
-    this.$store.dispatch("user/setEditId", {type: 'edit', id: Number(query.id)});
+    this.$store.dispatch("user/setEditId", { type: "edit", id: Number(query.id) });
     // 获取会议类型
     this.getMeetingTypeInfo();
     // 获取部门信息
@@ -697,12 +704,17 @@ export default {
           case 0:
             this.bgclass = "waiting"; // 待审批
             break;
+          case 1:
+            this.bgclass = "passed"; // 会议中
+            break;
           case 2:
-            this.bgclass = "passed"; // 已通过
+            this.bgclass = "passed"; // 未开始
             break;
           case 4:
             this.bgclass = "refused"; // 已拒绝
             break;
+            default:
+              this.bgclass = "waiting";
         }
 
         // 会议时间
@@ -744,6 +756,7 @@ export default {
         this.getServiceInfo();
 
         // 设备
+        this.checkListEquipment = [];
         this.ruleForm.equipment &&
           this.ruleForm.equipment.forEach(item => {
             if (this.dataType === 1) {
@@ -865,7 +878,7 @@ export default {
         case 3:
           dec += parseInt(step / month); // 重复每月
           let dates = parseFloat(start_time[0].split("-")[2]);
-          weekDec = `（${this.$t(repeatTypeList.month)}${dates}${this.$t("public.date")}）`;
+          weekDec = `（${this.$t("repeatTypeList.month")}${dates}${this.$t("public.date")}）`;
           break;
       }
       this.reapSessions = dec
@@ -1245,8 +1258,6 @@ export default {
           });
           if (types == "leavePage") {
             this.$emit("saveInfo");
-          } else if (types == "closeTag") {
-            bus.$emit("closeTagHanld");
           } else {
             this.$emit("changeIsSave", true);
             this.$store.dispatch("tagsView/delView", this.$route);

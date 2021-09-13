@@ -58,7 +58,7 @@ export default {
 
   // 离开此页面前
   beforeRouteLeave(to, form, next) {
-    if (this.isSave) {
+    if (this.isSave || to.name == "Login") {
       next();
       return;
     }

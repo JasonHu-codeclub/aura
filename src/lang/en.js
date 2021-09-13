@@ -332,7 +332,9 @@ export default {
     leave: 'leave',
     attendees:'Please check internal attendees',
     title:'The title cannot be empty',
-    alreadyExists: 'Participant already exists'
+    alreadyExists: 'Participant already exists',
+    enterprise: 'Enterprise wechat',
+      wechat: 'Wechat',
   },
   weeks: {
     Monday: 'Monday',

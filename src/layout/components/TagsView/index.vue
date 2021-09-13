@@ -37,7 +37,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
       <li @click="closeAllTags(selectedTag)">关闭所有</li>
     </ul> -->
     <!-- 切换弹窗 -->
-    <dialog-page-close ref="dialogPage" @confirmHandling="saveHanld" @cancelHandling="closeTags" />
+    <!-- <dialog-page-close ref="dialogPage" @confirmHandling="saveHanld" @cancelHandling="closeTags" /> -->
   </div>
 </template>
 <script>
@@ -79,7 +79,7 @@ export default {
     }
   },
   mounted() {
-    bus.$on("closeTagHanld", this.closeTags);
+    // bus.$on("closeTagHanld", this.closeTags);
     // 页面刷新前缓存和赋值
     this.beforeUnload();
     this.initTags();
@@ -184,31 +184,9 @@ export default {
       });
     },
     // 关闭当前tag的页面
-    // closeSelectedTag (view) {
-    //   this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
-    //     if (this.isActive(view)) {
-    //       this.toLastView(visitedViews, view)
-    //     }
-    //   })
-    // },
-
-    // 关闭当前tag的页面
     closeSelectedTag(view) {
-      this.viewData = view;
-      if (view.name == "Edit") {
-        this.$refs.dialogPage.dialogVisibleLive = true;
-      } else {
-        this.closeTags();
-      }
-    },
-    // 离开前保存
-    saveHanld() {
-      bus.$emit("saveInfo", "closeTag");
-    },
-    // 关闭当前tag的页面
-    closeTags() {
-      let view = this.viewData;
-      this.$refs.dialogPage.dialogVisibleLive = false;
+      // let view = this.viewData;
+      // this.$refs.dialogPage.dialogVisibleLive = false;
       this.$store.dispatch("tagsView/setCloseTagView", true); // 标记关闭方式
       this.$store.dispatch("tagsView/delView", view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
@@ -216,6 +194,32 @@ export default {
         }
       });
     },
+
+    // 关闭当前tag的页面
+    // closeSelectedTag(view) {
+    //   this.viewData = view;
+    //   this.closeTags();
+    //   // if (view.name == "Edit") {
+    //   //   this.$refs.dialogPage.dialogVisibleLive = true;
+    //   // } else {
+    //   //   this.closeTags();
+    //   // }
+    // },
+    // // 离开前保存
+    // // saveHanld() {
+    // //   bus.$emit("saveInfo", "closeTag");
+    // // },
+    // // 关闭当前tag的页面
+    // closeTags() {
+    //   let view = this.viewData;
+    //   this.$refs.dialogPage.dialogVisibleLive = false;
+    //   this.$store.dispatch("tagsView/setCloseTagView", true); // 标记关闭方式
+    //   this.$store.dispatch("tagsView/delView", view).then(({ visitedViews }) => {
+    //     if (this.isActive(view)) {
+    //       this.toLastView(visitedViews, view);
+    //     }
+    //   });
+    // },
 
     // 关闭其他页面
     closeOthersTags() {
@@ -276,7 +280,7 @@ export default {
   },
   beforeDestroy() {
     //组件销毁前需要解绑事件。否则会出现重复触发事件的问题
-    bus.$off("closeTagHanld");
+    // bus.$off("closeTagHanld");
   }
 };
 </script>

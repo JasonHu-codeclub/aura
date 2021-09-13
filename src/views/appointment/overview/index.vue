@@ -132,12 +132,14 @@ export default {
       },
       dataList: [],
       start: "",
-      end: ""
+      end: "",
+      dataTypes: 1,
+      timeInfo: {}
     };
   },
   watch: {
     tabPosition(news, old) {
-      this.getStatistics(news, "change");
+      this.getStatistics(news);
     },
     start(news, old) {
       this.dataList = [];
@@ -149,6 +151,14 @@ export default {
     window.onresize = null;
     this.getStatistics();
     this.calendarApi = this.$refs.fullCalendar.getApi(); // 获取当前日历视图信息
+  },
+  activated() {
+    // 设置会议预约次数/时长统计
+    this.getStatistics(this.dataTypes);
+    // 设置日历数据
+    let start = this.timeFormat(this.timeInfo.start);
+    let end = this.timeFormat(this.timeInfo.end);
+    this.getCalendar(start, end);
   },
   methods: {
     // 点击更多
@@ -182,7 +192,8 @@ export default {
       return box;
     },
     // 获取数据
-    getStatistics(types = 1, nav) {
+    getStatistics(types = 1) {
+      this.dataTypes = types;
       let params = { type: types ? this.getType[types] : 1 };
       getStatisticsApi(params).then(res => {
         if (res.meta.code == "RESP_OKAY") {
@@ -199,7 +210,7 @@ export default {
               typeStr = "years";
               break;
           }
-          this.resetData(typeStr, res.data, nav);
+          this.resetData(typeStr, res.data);
         }
       });
     },
@@ -215,7 +226,7 @@ export default {
       });
     },
     // 重组数据
-    resetData(types, data, nav) {
+    resetData(types, data) {
       let dataObj = this.handelArr(data[types]);
       lineChartData[types]["duration"] = dataObj.arr_hours; // 总小时数
       lineChartData[types]["frequency"] = dataObj.arr_count; // 总场数
@@ -296,6 +307,7 @@ export default {
     },
     //选择prevYear,prev,next,nextYear事件
     handleDatesSet(info) {
+      this.timeInfo = info;
       this.start = this.timeFormat(info.start);
       this.end = this.timeFormat(info.end);
     },

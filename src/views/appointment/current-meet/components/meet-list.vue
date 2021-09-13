@@ -113,7 +113,7 @@
           prop="start_time"
           :label="$t('message.meetingTime')"
           align="center"
-          width="240"
+          width="160"
           show-overflow-tooltip
         >
           <template slot-scope="scope">
@@ -139,7 +139,12 @@
           </template>
         </el-table-column>
         <!-- 参会人数 -->
-        <el-table-column prop="participant" :label="$t('message.participantsNum')" align="center">
+        <el-table-column
+          prop="participant"
+          :label="$t('message.participantsNum')"
+          align="center"
+          width="100"
+        >
           <template slot-scope="scope">
             <el-tooltip
               :disabled="!scope.row.participant"
@@ -159,7 +164,6 @@
         <el-table-column
           prop="user_nickname"
           :label="$t('message.sender')"
-          width="120"
           align="center"
         ></el-table-column>
         <!-- 操作 -->

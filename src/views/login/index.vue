@@ -30,11 +30,16 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
             <span class="divider-text">{{ $t("thirdPartyAccount") }}</span>
           </div>
           <div class="login-content-type">
-            <!-- <span class="login-content-type-icon login-content-type-weixin-1 margin-r-20" @click="handleLoginType('wechat')"></span> -->
             <span
               class="login-content-type-icon login-content-type-weixin-2"
               @click="handleLoginType('qiye')"
+              :title="$t('tip.enterprise')"
             ></span>
+            <!-- <span
+              class="login-content-type-icon login-content-type-weixin-1 "
+              @click="handleLoginType('wechat')"
+              :title="$t('tip.wechat')"
+            ></span> -->
           </div>
           <div class="login-content-divider">
             <span class="divider-text">{{ $t("accountLogin") }}</span>
@@ -48,7 +53,11 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
               hide-required-asterisk
             >
               <el-form-item label="" prop="username">
-                <el-input :placeholder="$t('tip.userNameNotEmpty')" v-model="ruleForm.username">
+                <el-input
+                  :placeholder="$t('tip.userNameNotEmpty')"
+                  v-model="ruleForm.username"
+                  clearable
+                >
                   <template slot="prepend"><svg-icon icon-class="username" slot="label"/></template>
                 </el-input>
               </el-form-item>
@@ -58,6 +67,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
                   show-password
                   :placeholder="$t('tip.pwdNotEmpty')"
                   v-model="ruleForm.password"
+                  clearable
                 >
                   <template slot="prepend"><svg-icon icon-class="password" slot="label"/></template>
                 </el-input>
@@ -115,8 +125,9 @@ export default {
       agentid: "1000014",
       // appid: "wwf2765f97989edf49", // 企业号
       // agentid: "1000006",
-      wxAppid: "wx633cde8a865d394e", // 微信应用appid
-      otherQuery: {}
+      wxAppid: "wx85a71682d259d702", // 微信开放平台appid
+      AppSecret: "wx85a71682d259d703", // 应用密钥AppSecret
+      otherQuery: {} // 回调参数
     };
   },
   computed: {
@@ -163,16 +174,14 @@ export default {
         // 企业微信
         window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${
           this.appid
-        }&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=STATE`;
+        }&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=qiye`;
       } else if (type === "wechat") {
         // 微信登录
         window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${
           this.wxAppid
         }&redirect_uri=${encodeURIComponent(
-          redirect_uri
-        )}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect`;
-        // https://open.weixin.qq.com/connect/qrconnect?appid=wxbdc5610cc59c1631&redirect_uri=https%3A%2F%2Fpassport.yhd.com%2Fwechat%2Fcallback.do&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect
-        // https://open.weixin.qq.com/connect/qrconnect?appid=wxbdc5610cc59c1631&redirect_uri=https%3A%2F%2Fpassport.yhd.com%2Fwechat%2Fcallback.do&response_type=code&scope=snsapi_login&state=3d6be0a4035d839573b04816624a415e#wechat_redirect
+          "http://www.iot-oa.com/#/login"
+        )}&response_type=code&scope=snsapi_login&state=wechat#wechat_redirect`;
       }
     },
     getOtherQuery(query) {
@@ -212,12 +221,14 @@ export default {
   created() {
     /* 存在code,第三方登录 */
     if (this.otherQuery.code) {
-      this.pageLoading = false;
+      // let appid = this.otherQuery.state == "wechat" ? this.wxAppid : this.appid;
+      // let secret = this.otherQuery.state == "wechat" ? this.AppSecret : "";
       this.$store
         .dispatch("user/otherLogin", {
           appid: this.appid,
           code: this.otherQuery.code,
           state: this.otherQuery.state
+          // secret: secret
         })
         .then(res => {
           if (res.meta.code == "RESP_OKAY") {
@@ -226,7 +237,6 @@ export default {
               type: "success",
               duration: 3 * 1000
             });
-            this.pageLoading = true;
             this.$router.replace("/");
             // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
           } else {
@@ -337,13 +347,13 @@ export default {
           position: absolute;
           left: 50%;
           top: 50%;
+          width: 180px;
           transform: translate(-50%, -50%);
           background: #134eb9;
-          padding: 3px 8px;
           color: #82adf1;
         }
         .login-content-type {
-          padding: 20px 0 38px;
+          padding: 26px 0 30px;
           .login-content-type-icon {
             display: inline-block;
             width: 52px;
@@ -351,7 +361,6 @@ export default {
             border-radius: 50%;
             cursor: pointer;
             background-color: #eee;
-            margin-right: 10px;
           }
           .login-content-type-weixin-1 {
             background: url("../../assets/weixin-1.png") no-repeat;
@@ -371,30 +380,53 @@ export default {
         margin-top: 20px;
         /deep/.el-form-item__content {
           margin: 0 !important;
+          .el-input-group {
+            border-radius: 4px;
+            box-sizing: content-box;
+            border: 1px #82adf1 solid;
+            background-color: #5272e9;
+          }
         }
         /deep/.el-button--medium {
           width: 100%;
+          height: 40.6px;
           background: #fff;
           color: #0d50bc;
           font-weight: bold;
+          padding: 12px 20px;
+          letter-spacing: 2px;
+        }
+        /deep/.el-input-group__prepend {
+          position: relative;
+          color: #fff;
+          border: none;
+          background-color: #5272e9 !important;
+          &::after {
+            content: "";
+            position: absolute;
+            width: 1px;
+            height: 20px;
+            background: #82adf1;
+            right: 0;
+            top: 50%;
+            margin-top: -10px;
+          }
+        }
+        /deep/.el-input__inner {
+          height: 40px;
+          color: #fff;
+          border: none;
+          background: #5272e9 !important;
+          &::-webkit-input-placeholder {
+            color: #82adf1;
+          }
+          &:-internal-autofill-selected {
+            -webkit-box-shadow: 0 0 0 1000px #5272e9 inset !important;
+            -webkit-text-fill-color: white;
+          }
         }
       }
     }
   }
-}
-/deep/.el-form-item {
-  margin-bottom: 20px;
-}
-/deep/.el-input__inner {
-  height: 40px;
-}
-/deep/.el-button--medium {
-  padding: 12px 20px;
-}
-/deep/input:-internal-autofill-selected {
-  background-color: red !important;
-}
-.myinput {
-  background-color: red !important;
 }
 </style>
