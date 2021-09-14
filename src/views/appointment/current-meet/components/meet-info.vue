@@ -642,11 +642,10 @@ export default {
       }
     }
   },
+
   activated() {
     // 活动菜单
     let query = this.$route.query;
-    this.menuStr = query.menu;
-    this.$route.meta.activeMenu = this.activeMenuList[this.menuStr];
     const id = Number(query.id);
     if (this.dataType === 1 || id !== this.editId) {
       // 获取详情信息
@@ -655,10 +654,8 @@ export default {
     this.$store.dispatch("user/setEditId", { type: "edit", id: id });
   },
   mounted() {
-    let query = this.$route.query;
     // 活动菜单
-    this.menuStr = query.menu;
-    this.$route.meta.activeMenu = this.activeMenuList[this.menuStr];
+    let query = this.$route.query;
     // 获取详情信息
     this.getDateilsInfo(query.id);
     this.$store.dispatch("user/setEditId", { type: "edit", id: Number(query.id) });
@@ -666,7 +663,6 @@ export default {
     this.getMeetingTypeInfo();
     // 获取部门信息
     this.getDepartmentInfo();
-
     // 关闭或刷新页面时提示用户保存
     let _this = this;
     window.onbeforeunload = function(e) {
@@ -682,7 +678,6 @@ export default {
         window.onbeforeunload = null;
       }
     };
-
     // 关闭标签保存会议信息
     bus.$on("saveInfo", this.save);
   },
@@ -713,8 +708,8 @@ export default {
           case 4:
             this.bgclass = "refused"; // 已拒绝
             break;
-            default:
-              this.bgclass = "waiting";
+          default:
+            this.bgclass = "waiting";
         }
 
         // 会议时间

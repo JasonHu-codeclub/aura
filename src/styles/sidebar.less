@@ -6,11 +6,10 @@
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
 
- #app {
-
+#app {
   .main-container {
     min-height: 100%;
-    transition: margin-left .28s;
+    transition: margin-left 0.28s;
     margin-left: @sideBarWidth;
     position: relative;
   }
@@ -30,7 +29,8 @@
 
     // reset element-ui css
     .horizontal-collapse-transition {
-      transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
+      transition: 0s width ease-in-out, 0s padding-left ease-in-out,
+        0s padding-right ease-in-out;
     }
 
     .scrollbar-wrapper {
@@ -87,44 +87,45 @@
       }
     }
 
-    .is-active>.el-submenu__title {
+    .is-active > .el-submenu__title {
       color: @subMenuActiveText !important;
       background-color: @subMenuActiveBg !important;
     }
 
-    & .nest-menu .el-submenu>.el-submenu__title,
+    & .nest-menu .el-submenu > .el-submenu__title,
     & .el-submenu .el-menu-item {
       font-size: 16px;
       min-width: @sideBarWidth !important;
       background-color: @subMenuBg !important;
-      &.is-active{
-        background-color:@subMenuActiveBg !important;
+      &.is-active {
+        background-color: @subMenuActiveBg !important;
       }
       &:hover {
         background-color: @subMenuHover !important;
       }
     }
 
-    .el-menu-item.is-active{
-      background-color:@subMenuActiveBg !important;
+    .el-menu-item.is-active {
+      background-color: @subMenuActiveBg !important;
     }
 
-    .el-submenu__title, .el-menu-item{
+    .el-submenu__title,
+    .el-menu-item {
       font-size: 16px;
       padding-left: 32px !important;
     }
 
     .nest-menu {
       padding: 10px 0 0;
-      .el-menu-item{
+      .el-menu-item {
         height: 30px;
         line-height: 26px;
         font-size: 16px;
         padding-left: 71px !important;
       }
     }
-    .router-link-active>.submenu-title-noDropdown:before{
-      content: '';
+    .is-active:before {
+      content: "";
       display: block;
       position: absolute;
       left: 0;
@@ -134,8 +135,8 @@
       height: 100%;
     }
 
-    .is-active.is-opened>.el-submenu__title:before{
-      content: '';
+    .is-active.is-opened > .el-submenu__title:before {
+      content: "";
       display: block;
       position: absolute;
       left: 0;
@@ -179,7 +180,7 @@
     .el-submenu {
       overflow: hidden;
 
-      &>.el-submenu__title {
+      & > .el-submenu__title {
         padding: 0 !important;
 
         .svg-icon {
@@ -198,8 +199,8 @@
 
     .el-menu--collapse {
       .el-submenu {
-        &>.el-submenu__title {
-          &>span {
+        & > .el-submenu__title {
+          & > span {
             height: 0;
             width: 0;
             overflow: hidden;
@@ -222,7 +223,7 @@
     }
 
     .sidebar-container {
-      transition: transform .28s;
+      transition: transform 0.28s;
       width: @sideBarWidth !important;
     }
 
@@ -236,7 +237,6 @@
   }
 
   .withoutAnimation {
-
     .main-container,
     .sidebar-container {
       transition: none;
@@ -246,7 +246,7 @@
 
 // when menu collapsed
 .el-menu--vertical {
-  &>.el-menu {
+  & > .el-menu {
     .svg-icon {
       margin-right: 16px;
     }
@@ -256,7 +256,7 @@
     }
   }
 
-  .nest-menu .el-submenu>.el-submenu__title,
+  .nest-menu .el-submenu > .el-submenu__title,
   .el-menu-item {
     position: relative;
     font-size: 16px;
@@ -267,7 +267,7 @@
   }
 
   // the scroll bar appears when the subMenu is too long
-  >.el-menu--popup {
+  > .el-menu--popup {
     max-height: 100vh;
     overflow-y: auto;
 
