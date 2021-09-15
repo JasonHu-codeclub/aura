@@ -11,11 +11,11 @@
  * 由后台保存绑定在用户属性中 roles=[role1,role2,...],每个路由带上这个标识来判断
  */
 import { constantRoutes, asyncRoutes } from '@/router'
-
+const _path = ['/service/service_list', '/approve/approve_list']
 
 const state = {
   routes: [], // 所有路由
-  addRoutes: [] // 权限所拥有的路由
+  addRoutes: [], // 权限所拥有的路由
 }
 
 const actions = {
@@ -25,6 +25,12 @@ const actions = {
       let accessedRoutes = filterAsyncRoutes(asyncRoutes, data)
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
+    })
+  },
+  isPermission({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      let is_per = pagePermission(data.roles, data.path)
+     resolve(is_per)
     })
   }
 }
@@ -43,7 +49,6 @@ export function filterAsyncRoutes (routes, roles) {
   const res = []
   routes.forEach(route => {
     const tmp = { ...route }
-    
     if (hasPermission(roles, tmp)) {
       if (tmp.children) {
         tmp.children = filterAsyncRoutes(tmp.children, roles)
@@ -77,6 +82,24 @@ function hasPermission (roles, route) {
   } else {
     return true
   }
+}
+
+/**
+ * 判断当前页面路由权限
+ * @param {权限列表} roles 
+ * @param {路由} route 
+ */
+function pagePermission (roles, path){
+  let isPerm = true
+  for(let i=0;i<_path.length;i++){
+    if(_path[i] == path){
+      let key = path.split('/')[1]
+      let s = 'is_belong_' + key
+      isPerm = !!roles[s]
+      break;
+    }
+  }
+  return isPerm
 }
 
 export default {

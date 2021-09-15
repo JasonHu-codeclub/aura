@@ -245,7 +245,9 @@ export default {
       loginThird: '使用第三方賬號登錄',
       LeaveConfirm: '確定離開當前頁面嗎？',
       changesConfirm: '系統可能不會保存您所做的更改。',
-      LeaveCurrentPage: '您正在編輯信息中，離開前是否保存內容'
+      LeaveCurrentPage: '您正在編輯信息中，離開前是否保存內容',
+      meetingSchedule: '會議行程',
+      roleChanged: '角色許可權已發生改變'
     },
     placeholder: {
       MeetingFloor: '會議室所在樓層',

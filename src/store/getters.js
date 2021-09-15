@@ -30,5 +30,6 @@ const getters = {
   editId: state => state.user.editId,
   repeatId: state => state.user.repeatId,
   conflictId: state => state.user.conflictId,
+  permissions: state => state.user.permissions
 }
 export default getters

@@ -221,9 +221,6 @@ export default {
       personnel: ""
     };
   },
-  computed: {
-    ...mapGetters(["repeatId"])
-  },
   mounted() {
     // 获取数据
     this.getMeetingRepet();
@@ -239,13 +236,7 @@ export default {
   },
   activated() {
     // 获取数据
-    const id = Number(this.$route.query.id);
-    if (id !== this.repeatId) {
-      this.chooseDate = null;
-      this.paginationQuery.page = 1; // 当前页
-      this.getMeetingRepet();
-    }
-    this.$store.dispatch("user/setEditId", { type: "repeat", id: id });
+    this.getMeetingRepet();
   },
   methods: {
     // 选择日期

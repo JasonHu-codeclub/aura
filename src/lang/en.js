@@ -245,7 +245,8 @@ export default {
     LeaveConfirm: 'Are you sure to leave the current page?',
     changesConfirm: 'Your changes may not be saved.',
     LeaveCurrentPage: 'You are editing information. Do you want to save the content before leaving',
-    meetingSchedule: 'Meeting Schedule'
+    meetingSchedule: 'Meeting Schedule',
+    roleChanged: 'Role permissions have changed'
   },
   placeholder: {
     MeetingFloor: 'Floor',

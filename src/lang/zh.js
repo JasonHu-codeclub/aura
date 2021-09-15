@@ -246,7 +246,8 @@ export default {
     LeaveConfirm: '确定离开当前页面吗？',
     changesConfirm: '系统可能不会保存您所做的更改。',
     LeaveCurrentPage: '您正在编辑信息中，离开前是否保存内容',
-    meetingSchedule: '会议行程'
+    meetingSchedule: '会议行程',
+    roleChanged: '角色权限已发生改变' 
   },
   placeholder: {
     MeetingFloor: '会议室所在楼层',

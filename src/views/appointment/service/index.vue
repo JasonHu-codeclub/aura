@@ -397,6 +397,19 @@ export default {
             });
           this.myMeetingInfo = meetings;
           this.total = res.data.total; // 总条数
+        } else {
+          this.myMeetingInfo = [];
+          this.total = 0; // 总条数
+        }
+        // 无权限操作
+        if (res.meta.code == "GENL_0401") {
+          let that = this;
+          setTimeout(() => {
+            // 删除tab按钮
+            that.$store.dispatch("tagsView/delView", { path: that.$route.path });
+            that.$router.push("/home");
+            location.reload();
+          }, 1500);
         }
         this.dataLoading = false;
       });

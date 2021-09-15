@@ -327,6 +327,19 @@ export default {
             });
           this.myMeetingInfo = meetings;
           this.total = res.data.total; // 总条数
+        } else {
+          this.myMeetingInfo = [];
+          this.total = 0; // 总条数
+        }
+        // 无权限操作
+        if (res.meta.code == "GENL_0401") {
+          let that = this;
+          setTimeout(() => {
+            // 删除tab按钮
+            that.$store.dispatch("tagsView/delView", { path: that.$route.path });
+            that.$router.push("/home");
+            location.reload();
+          }, 1500);
         }
         this.dataLoading = false;
       });
@@ -347,7 +360,7 @@ export default {
     // 详情
     detailsMeet(row) {
       // 判断是否冲突row.conflict_number>1冲突
-      let path = row.conflict_number > 1 ? "/conflict" : "/details";
+      let path = row.conflict_number > 1 ? "/approve/conflict" : "/details";
       this.$router.push({
         path: path,
         query: {

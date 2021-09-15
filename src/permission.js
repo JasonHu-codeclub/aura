@@ -16,6 +16,7 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/page-title'
 import { imgBaseUrl } from '@/utils/varible'
+import { message } from '@/utils/resetMessage';
 import i18n from './lang'
 (async function (){
   // 动态设置favicon.ico
@@ -43,8 +44,27 @@ router.beforeEach(async (to, from, next) => {
     } else {
       // 2.1 判断当前用户的权限是否已生成
       const hasRoles = store.getters.roles 
+      const permissions = store.getters.permissions
       if (hasRoles) {
-        next()
+        // 判断当前页面是否有权限
+        if(to.path == '/404'){
+          const isPermission = await store.dispatch('permission/isPermission', {roles: permissions, path: to.redirectedFrom})
+          if(!isPermission){
+            message({
+              message: i18n.t('message.roleChanged'),
+              type: 'error',
+              duration: 3 * 1000
+            });
+            // 删除tab按钮
+            store.dispatch("tagsView/delView", {path: to.redirectedFrom})
+            next({path: '/home'})
+            NProgress.done();
+          }else{
+            next()
+          }
+        }else{
+          next()
+        }
       } else {
         try {
           await store.dispatch('user/getSystemInfo')

@@ -27,7 +27,8 @@ const state = {
   is_auth: '', // 公司logo
   editId: '',
   repeatId: '',
-  conflictId: ''
+  conflictId: '',
+  permissions: ''
 }
 
 const mutations = {
@@ -70,6 +71,9 @@ const mutations = {
   },
   SET_CONFKEY(state, data) {
     state.conflictId = data
+  },
+  SET_PERMISSIONS(state, data) {
+    state.permissions = data
   }
 }
 
@@ -118,6 +122,7 @@ const actions = {
         }
         const { nickname, group, id, thumb_avatar, pc_permissions} = user
         pc_permissions['is_belong_user'] = id === 1 ? 0 : 1 // 超级管理员登录时无个人中心页面
+        commit('SET_PERMISSIONS', pc_permissions)
         commit('SET_ROLES', group.permissions)
         commit('SET_USERNAME', nickname)
         commit('SET_AVATAR', thumb_avatar)

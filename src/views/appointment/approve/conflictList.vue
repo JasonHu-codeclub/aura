@@ -245,9 +245,6 @@ export default {
       type: Number
     }
   },
-  computed: {
-    ...mapGetters(["conflictId"])
-  },
   mounted() {
     // 获取数据
     this.getApproveInfo();
@@ -257,13 +254,7 @@ export default {
   },
   activated() {
     // 获取数据
-    const id = Number(this.$route.query.id);
-    if (id !== this.conflictId) {
-      this.chooseDate = null;
-      this.paginationQuery.page = 1; // 当前页
-      this.getApproveInfo();
-    }
-    this.$store.dispatch("user/setEditId", { type: "conflict", id: id });
+    this.getApproveInfo();
   },
   methods: {
     inputChange() {

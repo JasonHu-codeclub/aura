@@ -188,7 +188,7 @@ export const asyncRoutes = [
     },
     // 冲突
     {
-      path: '/conflict',
+      path: 'conflict',
       component: () => import('@views/appointment/approve/conflictList'),
       name: 'Conflict',
       hidden: true,
