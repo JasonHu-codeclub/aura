@@ -1,32 +1,15 @@
-/*
- * Created: 2021-03-02 09:17:38
- * Author : Jan
- * Last Modified: 2021-03-16 16:50:31
- * Modified By: Jan
- * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
- */
-
 /**
  * 处理页面跳转的鉴权行为,设置全局路由守卫
  */
 import router from './router'
 import store from './store'
-import { getToken } from './utils/auth'
 import NProgress from 'nprogress' // progress bar
-import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/page-title'
-import { imgBaseUrl } from '@/utils/varible'
 import { message } from '@/utils/resetMessage';
+import { getToken } from './utils/auth'
 import i18n from './lang'
-(async function (){
-  // 动态设置favicon.ico
-  let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-      let icoUrl = await store.dispatch('user/icoSetting')
-      link.href = imgBaseUrl + icoUrl + '?time=' + new Date().getTime()
-      link.rel="icon"
-      document.title = store.getters.companyName
-      document.getElementsByTagName('head')[0].appendChild(link);
-})()
+import 'nprogress/nprogress.css' // progress bar style
+
 // 白名单,不需要登录的路由路径
 const whiteList = ['/login']
 router.beforeEach(async (to, from, next) => {

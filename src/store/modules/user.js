@@ -8,6 +8,7 @@
 import { getSystemInfoApi, getWebInfoApi, getQywechatConfigApi } from '@/api/appoint'
 import { loginApi, logoutApi, getInfoApi, getCodeApi, qyWechatLoginApi } from '@api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { setIcon } from '@/utils/tool'
 import router, { resetRouter } from '@/router'
 import qs from 'querystring'
 const state = {
@@ -138,7 +139,11 @@ const actions = {
     return new Promise((resolve, reject) => {
       getSystemInfoApi().then(res=>{
         if(res&&res.meta.code=="RESP_OKAY"){
-          commit('SET_SYSTEMINFO', res.data.front_system_setting)
+          let setInfo = res.data.front_system_setting
+          let { front_system_name, front_system_title_logo } = setInfo
+          commit('SET_SYSTEMINFO', setInfo)
+          commit('SET_COMPANYNAME', front_system_name)
+          setIcon(front_system_title_logo)// 设置icon
         }
         resolve(res)
       })
@@ -150,12 +155,7 @@ const actions = {
   icoSetting ({ commit, dispatch }, data) {
     return new Promise((resolve, reject) => {
       getWebInfoApi().then(res => {
-        let {front_system_inside_logo, front_system_name, front_system_title_logo} = res.data.info
-        if(res && res.meta.code=="RESP_OKAY"){
-          commit('SET_COMPANYLOGO', front_system_inside_logo)
-          commit('SET_COMPANYNAME', front_system_name)
-        }
-        resolve(front_system_title_logo)
+        resolve(res.data.info)
       }).catch(error => {
         reject(error)
       })

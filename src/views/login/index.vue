@@ -37,11 +37,13 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
             <span class="divider-text">{{ $t("thirdPartyAccount") }}</span>
           </div>
           <div class="login-content-type">
+            <!-- 企业微信登录 -->
             <span
               class="login-content-type-icon login-content-type-weixin-2"
               @click="handleLoginType('qiye')"
               :title="$t('tip.enterprise')"
             ></span>
+            <!-- 微信登录 -->
             <!-- <span
               class="login-content-type-icon login-content-type-weixin-1 "
               @click="handleLoginType('wechat')"
@@ -96,10 +98,8 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
   </div>
 </template>
 <script>
-import { imgBaseUrl } from "@/utils/varible";
-import { getSystemInfoApi } from "@/api/user";
-import { mapGetters } from "vuex";
-import { getHost, decrypt } from "@/utils/tool";
+import { imgBaseUrl, initToken } from "@/utils/varible";
+import { getHost, decrypt, setIcon } from "@/utils/tool";
 export default {
   components: {},
   data() {
@@ -129,38 +129,20 @@ export default {
       },
       redirect: undefined,
       appid: "", // 企业号
-      agentid: "",
-      wxAppid: "wx85a71682d259d702", // 微信开放平台appid
-      AppSecret: "wx85a71682d259d703", // 应用密钥AppSecret
-      otherQuery: {} // 回调参数
+      agentid: "", // 自建应用ID
+      wxAppid: "", // 微信开放平台appid
+      AppSecret: "", // 应用密钥AppSecret
+      otherQuery: {}, // 回调参数
+      companyLogo: "", // 公司logo
+      companyName: "" // 公司名称
     };
   },
-  computed: {
-    ...mapGetters(["companyLogo", "companyName"])
-  },
-  mounted() {
-    // 获取企业号appid,agentid
-    this.$store.dispatch("user/getQywechatConfig").then(res => {
-      if (res && res.meta.code == "RESP_OKAY") {
-        let dataJson = decrypt(
-          res.data.code,
-          "8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF"
-        );
-        let appidInfo = JSON.parse(dataJson);
-        this.appid = appidInfo.qywechat_app_id;
-        this.agentid = appidInfo.qywechat_h5_id;
-      }
-    });
-
-    // 回车键
-    let _this = this;
-    document.onkeydown = function(e) {
-      if (e.keyCode === 13) {
-        _this.handleLogin();
-      }
-    };
-  },
+  computed: {},
   created() {
+    // 获取企业号appid,agentid
+    this.getAppidInfo();
+    // 获取公司信息
+    this.getSystemInfo();
     /* 存在code,第三方登录 */
     if (this.otherQuery.code) {
       // let appid = this.otherQuery.state == "wechat" ? this.wxAppid : this.appid;
@@ -191,6 +173,15 @@ export default {
         });
     }
   },
+  mounted() {
+    // 回车键
+    let _this = this;
+    document.onkeydown = function(e) {
+      if (e.keyCode === 13) {
+        _this.handleLogin();
+      }
+    };
+  },
   watch: {
     $route: {
       handler: function(route) {
@@ -204,6 +195,27 @@ export default {
     }
   },
   methods: {
+    // 获取企业号appid,agentid
+    getAppidInfo() {
+      this.$store.dispatch("user/getQywechatConfig").then(res => {
+        if (res && res.meta.code == "RESP_OKAY") {
+          let dataJson = decrypt(res.data.code, initToken);
+          let appidInfo = JSON.parse(dataJson);
+          this.appid = appidInfo.qywechat_app_id;
+          this.agentid = appidInfo.qywechat_h5_id;
+        }
+      });
+    },
+    // 获取公司信息
+    getSystemInfo() {
+      this.$store.dispatch("user/icoSetting").then(res => {
+        let { front_system_inside_logo, front_system_name, front_system_title_logo } = res;
+        this.companyLogo = front_system_inside_logo; // 公司logo
+        this.companyName = front_system_name; // 公司名称
+        document.title = front_system_name; // title
+        setIcon(front_system_title_logo); // icon
+      });
+    },
     // 登录
     handleLogin() {
       this.$refs.ruleForm.validate(valid => {

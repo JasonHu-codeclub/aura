@@ -1,3 +1,4 @@
+import { imgBaseUrl } from "@/utils/varible";
 // 动态请求头
 const getHost = function (url) {
   let host = null
@@ -155,12 +156,19 @@ function base64_decode (data) {
   return dec;
 }
 
-
+// 设置icon
+function setIcon(url){
+  let link = document.querySelector("link[rel*='icon']") || document.createElement("link");
+  link.href = imgBaseUrl + url + "?time=" + new Date().getTime(); // icon
+  link.rel = "icon";
+  document.getElementsByTagName("head")[0].appendChild(link);
+}
 
 export {
   getHost,
   unfoldArr,
   downLoadXls,
   deduplicate,
-  decrypt
+  decrypt,
+  setIcon
 }
