@@ -124,7 +124,7 @@
                   v-model="ruleForm.repetition_end_date"
                   disabled
                 ></el-input>
-                <span class="edit-box-total">{{ reapSessions }}</span>
+                <span class="edit-box-total">{{ ruleForm.repetition_count }}</span>
               </div>
               <div class="edit-box-repeat_time">{{ $t("message.term") }}</div>
             </div>
@@ -711,6 +711,9 @@ export default {
           default:
             this.bgclass = "waiting";
         }
+
+        // 	重复会议次数
+        this.ruleForm.repetition_count = `共${this.ruleForm.repetition_count}场会议`;
 
         // 会议时间
         this.meetTime = this.setMeetTime(
@@ -1557,6 +1560,7 @@ export default {
         }
         .edit-box-total {
           color: #34343f;
+          margin-left: 6px;
         }
         .edit-nex-input {
           width: 182px;

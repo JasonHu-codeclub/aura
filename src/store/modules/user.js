@@ -5,7 +5,7 @@
  * Modified By: Jan
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
-import { getSystemInfoApi, getWebInfoApi } from '@/api/appoint'
+import { getSystemInfoApi, getWebInfoApi, getQywechatConfigApi } from '@/api/appoint'
 import { loginApi, logoutApi, getInfoApi, getCodeApi, qyWechatLoginApi } from '@api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
@@ -28,7 +28,7 @@ const state = {
   editId: '',
   repeatId: '',
   conflictId: '',
-  permissions: ''
+  permissions: '',
 }
 
 const mutations = {
@@ -147,7 +147,7 @@ const actions = {
     })
   },
   // 设置ico, 登录页公司名称，logo
-  icoSetting ({ commit }, data) {
+  icoSetting ({ commit, dispatch }, data) {
     return new Promise((resolve, reject) => {
       getWebInfoApi().then(res => {
         let {front_system_inside_logo, front_system_name, front_system_title_logo} = res.data.info
@@ -156,6 +156,15 @@ const actions = {
           commit('SET_COMPANYNAME', front_system_name)
         }
         resolve(front_system_title_logo)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getQywechatConfig({ commit }, data){
+    return new Promise((resolve, reject) => {
+      getQywechatConfigApi().then(res => {
+        resolve(res)
       }).catch(error => {
         reject(error)
       })

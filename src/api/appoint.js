@@ -16,6 +16,18 @@ export function getWebInfoApi (data) {
   return request({
     url: "/get-web-info",
     method: "get",
+    headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
+    params: data
+  })
+}
+
+
+// 获取企业号appid和agentid加密数据(不需要登录)
+export function getQywechatConfigApi (data) {
+  return request({
+    url: "/get-qywechat-config",
+    method: "get",
+    headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
     params: data
   })
 }

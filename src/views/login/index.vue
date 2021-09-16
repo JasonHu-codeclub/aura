@@ -22,7 +22,14 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
         ></div>
       </div>
       <h3 class="login-content-logo">
-        <img :src="host + companyLogo" class="login-content-logo-img" alt="" />
+        <!-- :style="{
+          backgroundImage: 'url(' + host + companyLogo + '?time=' + new Date().getTime() + ')'
+        }" -->
+        <img
+          :src="host + companyLogo + '?time=' + new Date().getTime()"
+          class="login-content-logo-img"
+          alt=""
+        />
       </h3>
       <div class="login-content-box">
         <div class="login-content-form">
@@ -92,7 +99,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
 import { imgBaseUrl } from "@/utils/varible";
 import { getSystemInfoApi } from "@/api/user";
 import { mapGetters } from "vuex";
-import { getHost } from "@/utils/tool";
+import { getHost, decrypt } from "@/utils/tool";
 export default {
   components: {},
   data() {
@@ -121,10 +128,8 @@ export default {
         ]
       },
       redirect: undefined,
-      appid: "ww63beae6c0cd72cf1", // 企业号
-      agentid: "1000014",
-      // appid: "wwf2765f97989edf49", // 企业号
-      // agentid: "1000006",
+      appid: "", // 企业号
+      agentid: "",
       wxAppid: "wx85a71682d259d702", // 微信开放平台appid
       AppSecret: "wx85a71682d259d703", // 应用密钥AppSecret
       otherQuery: {} // 回调参数
@@ -133,82 +138,19 @@ export default {
   computed: {
     ...mapGetters(["companyLogo", "companyName"])
   },
-  watch: {
-    $route: {
-      handler: function(route) {
-        const query = route.query;
-        if (query) {
-          this.redirect = query.redirect;
-          this.otherQuery = this.getOtherQuery(query);
-        }
-      },
-      immediate: true
-    }
-  },
-  methods: {
-    // 登录
-    handleLogin() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
-          this.loginLoading = true;
-          this.$store
-            .dispatch("user/login", {
-              username: this.ruleForm.username,
-              pwd: this.ruleForm.password,
-              company: ""
-            })
-            .then(res => {
-              this.loginLoading = false;
-              if (res.meta.code == "RESP_OKAY") {
-                this.$router.replace("/");
-                // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })// 因为权限控制
-              }
-            });
-        }
-      });
-    },
-    // 第三方登录
-    handleLoginType(type) {
-      const redirect_uri = getHost() + "/sp-pcmeet/#/login";
-      if (type === "qiye") {
-        // 企业微信
-        window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${
-          this.appid
-        }&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=qiye`;
-      } else if (type === "wechat") {
-        // 微信登录
-        window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${
-          this.wxAppid
-        }&redirect_uri=${encodeURIComponent(
-          "http://www.iot-oa.com/#/login"
-        )}&response_type=code&scope=snsapi_login&state=wechat#wechat_redirect`;
-      }
-    },
-    getOtherQuery(query) {
-      return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== "redirect") {
-          acc[cur] = query[cur];
-        }
-        return acc;
-      }, {});
-    },
-    chooseLang(lang) {
-      this.$i18n.locale = lang;
-      this.$store.dispatch("app/setLanguage", lang);
-      // 重新刷新页面
-      window.location.reload();
-    }
-  },
   mounted() {
-    // if (
-    //   navigator.userAgent.match(
-    //     /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
-    //   )
-    // ) {
-    //   console.log("移动端");
-    // } else {
-    //   console.log("pc端");
-    // }
+    // 获取企业号appid,agentid
+    this.$store.dispatch("user/getQywechatConfig").then(res => {
+      if (res && res.meta.code == "RESP_OKAY") {
+        let dataJson = decrypt(
+          res.data.code,
+          "8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF"
+        );
+        let appidInfo = JSON.parse(dataJson);
+        this.appid = appidInfo.qywechat_app_id;
+        this.agentid = appidInfo.qywechat_h5_id;
+      }
+    });
 
     // 回车键
     let _this = this;
@@ -247,6 +189,79 @@ export default {
             });
           }
         });
+    }
+  },
+  watch: {
+    $route: {
+      handler: function(route) {
+        const query = route.query;
+        if (query) {
+          this.redirect = query.redirect;
+          this.otherQuery = this.getOtherQuery(query);
+        }
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    // 登录
+    handleLogin() {
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          this.loginLoading = true;
+          this.$store
+            .dispatch("user/login", {
+              username: this.ruleForm.username,
+              pwd: this.ruleForm.password,
+              company: ""
+            })
+            .then(res => {
+              this.loginLoading = false;
+              if (res.meta.code == "RESP_OKAY") {
+                this.$router.replace("/");
+                // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })// 因为权限控制
+              }
+            });
+        }
+      });
+    },
+    // 第三方登录
+    handleLoginType(type) {
+      if (this.appid == "" || this.agentid == "") {
+        this.$message({
+          message: "未设置企业微信登录",
+          type: "error"
+        });
+        return false;
+      }
+      const redirect_uri = getHost() + "/sp-pcmeet/#/login";
+      if (type === "qiye") {
+        // 企业微信
+        window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${
+          this.appid
+        }&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=qiye`;
+      } else if (type === "wechat") {
+        // 微信登录
+        window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${
+          this.wxAppid
+        }&redirect_uri=${encodeURIComponent(
+          "http://www.iot-oa.com/#/login"
+        )}&response_type=code&scope=snsapi_login&state=wechat#wechat_redirect`;
+      }
+    },
+    getOtherQuery(query) {
+      return Object.keys(query).reduce((acc, cur) => {
+        if (cur !== "redirect") {
+          acc[cur] = query[cur];
+        }
+        return acc;
+      }, {});
+    },
+    chooseLang(lang) {
+      this.$i18n.locale = lang;
+      this.$store.dispatch("app/setLanguage", lang);
+      // 重新刷新页面
+      window.location.reload();
     }
   }
 };
@@ -318,12 +333,15 @@ export default {
     .login-content-logo {
       position: absolute;
       top: 9%;
+      width: 300px;
       height: 80px;
       color: #88b6ff;
       font-size: 18px;
       z-index: 1000;
+      text-align: center;
       background-size: contain;
       background-repeat: no-repeat;
+      background-position: center center;
       .login-content-logo-img {
         height: 100%;
       }
