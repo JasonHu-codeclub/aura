@@ -798,9 +798,7 @@ export default {
         if (this.ruleForm.service.length > 0) {
           this.ruleForm.service.map(res => {
             services.map(item => {
-              if (res.id == item.id) {
-                item.value = res.value;
-              }
+              item.value = res.id == item.id ? res.value : 0;
             });
           });
         } else {
@@ -823,7 +821,6 @@ export default {
           }
         });
       });
-
       let arrs = [];
       this.serviceList.map(res => {
         arr.map(item => {
