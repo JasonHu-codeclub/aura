@@ -22,9 +22,6 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
         ></div>
       </div>
       <h3 class="login-content-logo">
-        <!-- :style="{
-          backgroundImage: 'url(' + host + companyLogo + '?time=' + new Date().getTime() + ')'
-        }" -->
         <img
           :src="host + companyLogo + '?time=' + new Date().getTime()"
           class="login-content-logo-img"

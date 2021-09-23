@@ -676,6 +676,7 @@ export default {
   activated() {
     let that = this;
     this.resizeHeight(100);
+    this.searchMeetingRoom();
     this.timer = setInterval(that.pollingSearchRoom, 1000 * 60, true);
   },
   methods: {
