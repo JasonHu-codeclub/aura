@@ -127,14 +127,14 @@ export default {
         events: [],
         eventMouseEnter: this.eventMouseEnter,
         locale: Cookies.get("language") == "en" ? "" : "zh-cn",
-        // moreLinkDidMount: this.eventClickHandle
         moreLinkClick: this.eventClickHandle
       },
       dataList: [],
       start: "",
       end: "",
       dataTypes: 1,
-      timeInfo: {}
+      timeInfo: {},
+      calendarApi: ""
     };
   },
   watch: {
@@ -159,6 +159,7 @@ export default {
     let start = this.timeFormat(this.timeInfo.start);
     let end = this.timeFormat(this.timeInfo.end);
     this.getCalendar(start, end);
+    this.calendarApi.updateSize(); // 强制更新日历宽高
   },
   methods: {
     // 点击更多
