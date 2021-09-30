@@ -140,35 +140,6 @@ export default {
     this.getAppidInfo();
     // 获取公司信息
     this.getSystemInfo();
-    /* 存在code,第三方登录 */
-    if (this.otherQuery.code) {
-      // let appid = this.otherQuery.state == "wechat" ? this.wxAppid : this.appid;
-      // let secret = this.otherQuery.state == "wechat" ? this.AppSecret : "";
-      this.$store
-        .dispatch("user/otherLogin", {
-          appid: this.appid,
-          code: this.otherQuery.code,
-          state: this.otherQuery.state
-          // secret: secret
-        })
-        .then(res => {
-          if (res.meta.code == "RESP_OKAY") {
-            this.$message({
-              message: res.meta.message,
-              type: "success",
-              duration: 3 * 1000
-            });
-            this.$router.replace("/");
-            // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
-          } else {
-            this.$message({
-              message: res.meta.message,
-              type: "error",
-              duration: 3 * 1000
-            });
-          }
-        });
-    }
   },
   mounted() {
     // 回车键
@@ -200,8 +171,39 @@ export default {
           let appidInfo = JSON.parse(dataJson);
           this.appid = appidInfo.qywechat_app_id;
           this.agentid = appidInfo.qywechat_h5_id;
+          if (this.otherQuery.code) {
+            this.otherLogin(this.appid);
+          }
         }
       });
+    },
+    otherLogin(appid) {
+      /* 存在code,第三方登录 */
+      this.loginLoading = true;
+      this.$store
+        .dispatch("user/otherLogin", {
+          appid: appid,
+          code: this.otherQuery.code,
+          state: this.otherQuery.state
+        })
+        .then(res => {
+          this.loginLoading = false;
+          if (res.meta.code == "RESP_OKAY") {
+            this.$message({
+              message: this.$t("tip.loginSuccess"),
+              type: "success",
+              duration: 3 * 1000
+            });
+            this.$router.replace("/");
+            // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+          } else {
+            this.$message({
+              message: res.meta.message,
+              type: "error",
+              duration: 3 * 1000
+            });
+          }
+        });
     },
     // 获取公司信息
     getSystemInfo() {
