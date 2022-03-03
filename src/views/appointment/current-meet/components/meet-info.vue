@@ -24,29 +24,42 @@
     </div>
 
     <div class="meeting-edit-wrap">
-      <div v-if="ruleForm.approve_msg" :class="['meeting-edit-conflict', bgclass]">
+      <div
+        v-if="ruleForm.approve_msg"
+        :class="['meeting-edit-conflict', bgclass]"
+      >
         {{ ruleForm.approve_msg }}
       </div>
       <!-- 会议信息 -->
       <div class="edit-box">
-        <div class="edit-box-title">{{ $t("placeholder.conferenceInfor") }}</div>
+        <div class="edit-box-title">
+          {{ $t("placeholder.conferenceInfor") }}
+        </div>
         <div class="edit-box-list">
           <!-- 会议地点 -->
           <div class="edit-box-item">
             <div class="edit-box-label">{{ $t("labe.meetAddress") }}：</div>
-            <div class="edit-box-value">{{ ruleForm.meeting_room_name || "--" }}</div>
+            <div class="edit-box-value">
+              {{ ruleForm.meeting_room_name || "--" }}
+            </div>
           </div>
           <!-- 会议设备 -->
           <div class="edit-box-item">
             <div class="edit-box-label">{{ $t("labe.equipmentOfroom") }}：</div>
             <div class="edit-box-value">
-              {{ ruleForm.is_secret ? "*" : ruleForm.meeting_room_equipment || "--" }}
+              {{
+                ruleForm.is_secret
+                  ? "*"
+                  : ruleForm.meeting_room_equipment || "--"
+              }}
             </div>
           </div>
           <!-- 预约类型 -->
           <div class="edit-box-item">
             <div class="edit-box-label">{{ $t("labe.AppointmentType") }}：</div>
-            <div class="edit-box-value">{{ ruleForm.is_secret ? "*" : categoryStr || "--" }}</div>
+            <div class="edit-box-value">
+              {{ ruleForm.is_secret ? "*" : categoryStr || "--" }}
+            </div>
           </div>
         </div>
 
@@ -54,7 +67,11 @@
         <template v-if="ruleForm.is_need_sign">
           <div
             class="edit-sign_in"
-            v-if="ruleForm.status == 1 || ruleForm.status == 2 || ruleForm.status == 3"
+            v-if="
+              ruleForm.status == 1 ||
+              ruleForm.status == 2 ||
+              ruleForm.status == 3
+            "
           >
             <span v-if="ruleForm.is_sign == 1" class="sign_item-in"
               ><i class="el-icon-circle-check"></i>{{ $t("tip.signIn") }}</span
@@ -68,11 +85,15 @@
 
       <!-- 基本信息 -->
       <div class="edit-box">
-        <div class="edit-box-title">{{ $t("message.essentialInformation") }}</div>
+        <div class="edit-box-title">
+          {{ $t("message.essentialInformation") }}
+        </div>
         <div class="edit-box-list">
           <!-- 会议信息 -->
           <div class="edit-box-item">
-            <div class="edit-box-label">{{ $t("placeholder.conferenceInfor") }}：</div>
+            <div class="edit-box-label">
+              {{ $t("placeholder.conferenceInfor") }}：
+            </div>
             <div class="edit-box-value">
               <span v-if="dataType === 1 || ruleForm.can_update == 0">{{
                 ruleForm.is_secrecy ? $t("public.secret") : $t("public.public")
@@ -90,7 +111,9 @@
           </div>
           <!-- 会议主题 -->
           <div class="edit-box-item">
-            <div class="edit-box-label"><i class="warring ">*</i>{{ $t("message.theme") }}：</div>
+            <div class="edit-box-label">
+              <i class="warring">*</i>{{ $t("message.theme") }}：
+            </div>
             <div class="edit-box-value">
               <el-input
                 class="input edit-box-input"
@@ -110,9 +133,15 @@
           <template v-if="ruleForm.category == 2">
             <!-- 重复开始时间 -->
             <div class="edit-box-item">
-              <div class="edit-box-label">{{ $t("message.repeatStartTime") }}：</div>
+              <div class="edit-box-label">
+                {{ $t("message.repeatStartTime") }}：
+              </div>
               <div class="edit-box-value">
-                <el-input class="input edit-box-input" v-model="ruleForm.date" disabled></el-input>
+                <el-input
+                  class="input edit-box-input"
+                  v-model="ruleForm.date"
+                  disabled
+                ></el-input>
               </div>
             </div>
             <!-- 重复截止时间 -->
@@ -124,7 +153,9 @@
                   v-model="ruleForm.repetition_end_date"
                   disabled
                 ></el-input>
-                <span class="edit-box-total">{{ ruleForm.repetition_count }}</span>
+                <span class="edit-box-total">{{
+                  ruleForm.repetition_count
+                }}</span>
               </div>
               <div class="edit-box-repeat_time">{{ $t("message.term") }}</div>
             </div>
@@ -133,7 +164,11 @@
           <div class="edit-box-item">
             <div class="edit-box-label">{{ $t("message.meetingTime") }}：</div>
             <div class="edit-box-value">
-              <el-input class="input edit-box-input" v-model="meetTime" disabled></el-input>
+              <el-input
+                class="input edit-box-input"
+                v-model="meetTime"
+                disabled
+              ></el-input>
             </div>
           </div>
           <!-- 会议类型 -->
@@ -158,13 +193,15 @@
 
           <!-- 内部参会人 -->
           <div class="edit-box-item">
-            <div class="edit-box-label">{{ $t("message.internalParticipants") }}：</div>
+            <div class="edit-box-label">
+              {{ $t("message.internalParticipants") }}：
+            </div>
             <div class="edit-box-value">
               <span
                 class="edit-box-value border"
                 :class="{
                   disabled_edit: dataType === 1 || ruleForm.can_update == 0,
-                  not_allowed: ruleForm.is_secret
+                  not_allowed: ruleForm.is_secret,
                 }"
                 @click="showInnerDialog"
               >
@@ -173,14 +210,19 @@
             </div>
           </div>
           <!-- 外部参会人 -->
-          <div class="edit-box-item" v-if="ruleForm.external_participants_show == 1">
-            <div class="edit-box-label">{{ $t("message.externalParticipants") }}：</div>
+          <div
+            class="edit-box-item"
+            v-if="ruleForm.external_participants_show == 1"
+          >
+            <div class="edit-box-label">
+              {{ $t("message.externalParticipants") }}：
+            </div>
             <div class="edit-box-value">
               <span
                 class="edit-box-value border"
                 :class="{
                   disabled_edit: dataType === 1 || ruleForm.can_update == 0,
-                  not_allowed: ruleForm.is_secret
+                  not_allowed: ruleForm.is_secret,
                 }"
                 @click="showExtDialog"
               >
@@ -197,15 +239,22 @@
       </div>
 
       <!-- 会议服务 -->
-      <div class="edit-box" v-if="ruleForm.service_show == 1 || ruleForm.equipment_show == 1">
+      <div
+        class="edit-box"
+        v-if="ruleForm.service_show == 1 || ruleForm.equipment_show == 1"
+      >
         <div class="edit-box-title">{{ $t("route.service") }}</div>
         <div
           class="edit-box-list"
-          :class="{ 'disabled_edit-box': dataType === 1 || ruleForm.can_update == 0 }"
+          :class="{
+            'disabled_edit-box': dataType === 1 || ruleForm.can_update == 0,
+          }"
         >
           <!-- 茶点服务 -->
           <div class="edit-box-item f-start" v-if="ruleForm.service_show == 1">
-            <div class="edit-box-label margin-top-10">{{ $t("message.Refreshment") }}：</div>
+            <div class="edit-box-label margin-top-10">
+              {{ $t("message.Refreshment") }}：
+            </div>
             <div class="edit-box-value">
               <el-select
                 v-model="ruleForm.serviceId"
@@ -233,7 +282,9 @@
                   v-for="(item, index) in serveListArr"
                   :key="index"
                 >
-                  <span class="edit-refreshment-label" :class="{ highlight: item.value > 0 }"
+                  <span
+                    class="edit-refreshment-label"
+                    :class="{ highlight: item.value > 0 }"
                     >{{ item.name }}：</span
                   >
                   <el-input
@@ -257,7 +308,9 @@
             class="edit-box-item"
             v-if="ruleForm.equipment_show == 1 && equipmentList.length != 0"
           >
-            <div class="edit-box-label">{{ $t("message.equipmentServices") }}：</div>
+            <div class="edit-box-label">
+              {{ $t("message.equipmentServices") }}：
+            </div>
             <div class="edit-box-value">
               <el-select
                 v-model="checkListEquipment"
@@ -292,7 +345,9 @@
         <div class="edit-box-list">
           <!-- 备注 -->
           <div class="edit-box-item f-start">
-            <span class="edit-box-label margin-top-10">{{ $t("message.remarks2") }}：</span>
+            <span class="edit-box-label margin-top-10"
+              >{{ $t("message.remarks2") }}：</span
+            >
             <el-input
               type="textarea"
               class="input edit-box-input"
@@ -306,8 +361,12 @@
           </div>
           <!-- 拒绝原因 -->
           <div class="edit-box-item" v-if="ruleForm.refuse_reason">
-            <div class="edit-box-label rejections">{{ $t("labe.rejection") }}：</div>
-            <div class="edit-box-value refuse_reason">{{ ruleForm.refuse_reason || "--" }}</div>
+            <div class="edit-box-label rejections">
+              {{ $t("labe.rejection") }}：
+            </div>
+            <div class="edit-box-value refuse_reason">
+              {{ ruleForm.refuse_reason || "--" }}
+            </div>
           </div>
         </div>
       </div>
@@ -377,13 +436,22 @@
               ></el-button>
             </div>
             <div class="error-box">
-              <div class="error-box-item nameError" v-if="item.nameError && !item.isEqual">
+              <div
+                class="error-box-item nameError"
+                v-if="item.nameError && !item.isEqual"
+              >
                 {{ $t("message.nameError") }}
               </div>
-              <div class="error-box-item emailError" v-if="item.mailError && !item.isEqual">
+              <div
+                class="error-box-item emailError"
+                v-if="item.mailError && !item.isEqual"
+              >
                 {{ $t("message.mailError") }}
               </div>
-              <div class="error-box-item phoneError" v-if="item.phoneError && !item.isEqual">
+              <div
+                class="error-box-item phoneError"
+                v-if="item.phoneError && !item.isEqual"
+              >
                 {{ $t("message.phoneError") }}
               </div>
               <div class="error-box-item mailPhoneError" v-if="item.error">
@@ -403,19 +471,32 @@
               align="center"
             ></el-table-column>
             <!-- 姓名 -->
-            <el-table-column prop="name" :label="$t('message.fullName')" align="center" width="120">
+            <el-table-column
+              prop="name"
+              :label="$t('message.fullName')"
+              align="center"
+              width="120"
+            >
               <template slot-scope="scope">
                 <span>{{ scope.row.name || "/" }}</span>
               </template>
             </el-table-column>
             <!-- 邮箱 -->
-            <el-table-column prop="email" :label="$t('message.mailbox')" align="center">
+            <el-table-column
+              prop="email"
+              :label="$t('message.mailbox')"
+              align="center"
+            >
               <template slot-scope="scope">
                 <span>{{ scope.row.email || "/" }}</span>
               </template>
             </el-table-column>
             <!-- 电话 -->
-            <el-table-column prop="phone" :label="$t('labe.Telephone')" align="center">
+            <el-table-column
+              prop="phone"
+              :label="$t('labe.Telephone')"
+              align="center"
+            >
               <template slot-scope="scope">
                 <span>{{ scope.row.phone || "/" }}</span>
               </template>
@@ -426,15 +507,20 @@
       <div slot="footer" class="dialog-footer">
         <div v-show="dataType === 2" class="footer-tips">
           {{ $t("message.tips") }}：<span class="footer-tips-item"
-            >{{ $t("message.phoneEmailTips") }}<br />{{ $t("message.receiving") }}</span
+            >{{ $t("message.phoneEmailTips") }}<br />{{
+              $t("message.receiving")
+            }}</span
           >
         </div>
         <el-button style="margin-right: 20px" @click="extVisible = false">{{
           $t("button.cancel")
         }}</el-button>
-        <el-button v-show="dataType === 2" type="primary" @click="addExtMeetPeople">{{
-          $t("button.confirm")
-        }}</el-button>
+        <el-button
+          v-show="dataType === 2"
+          type="primary"
+          @click="addExtMeetPeople"
+          >{{ $t("button.confirm") }}</el-button
+        >
       </div>
     </el-dialog>
 
@@ -496,7 +582,12 @@
               align="center"
             ></el-table-column>
             <!-- 姓名 -->
-            <el-table-column prop="name" :label="$t('message.fullName')" align="center" width="120">
+            <el-table-column
+              prop="name"
+              :label="$t('message.fullName')"
+              align="center"
+              width="120"
+            >
               <template slot-scope="scope">
                 <span>{{ scope.row.name || "/" }}</span>
               </template>
@@ -537,9 +628,12 @@
         <el-button style="margin-right: 20px" @click="innerVisible = false">{{
           $t("button.cancel")
         }}</el-button>
-        <el-button v-show="dataType === 2" type="primary" @click="addMeetingPeople">{{
-          $t("button.confirm")
-        }}</el-button>
+        <el-button
+          v-show="dataType === 2"
+          type="primary"
+          @click="addMeetingPeople"
+          >{{ $t("button.confirm") }}</el-button
+        >
       </div>
     </el-dialog>
     <!-- /选择参会人员 -->
@@ -553,7 +647,7 @@ import {
   getMeetingTypeApi,
   getServiceApi,
   getRoomEquipmentApi,
-  saveMeetEditApi
+  saveMeetEditApi,
 } from "@/api/currentMeet";
 import bus from "@/utils/bus";
 import dayjs from "dayjs";
@@ -568,7 +662,7 @@ export default {
         repe_type: 1,
         repe_types: "",
         remark: "",
-        service: []
+        service: [],
       },
       participantGuids: "", // 内部参会人员id
       participantVal: "", // 内部参会人员集合
@@ -579,13 +673,13 @@ export default {
         "",
         this.$t("categoryList.singleAppointment"),
         this.$t("categoryList.repeatAppointment"),
-        this.$t("categoryList.crossAppointment")
+        this.$t("categoryList.crossAppointment"),
       ],
       repetitionType: [
         "",
         this.$t("repeatTypeList.daily"),
         this.$t("repeatTypeList.weeks"),
-        this.$t("repeatTypeList.month")
+        this.$t("repeatTypeList.month"),
       ],
       categoryStr: "", // 会议重复类型
       reapSessions: "", // 重复总场次
@@ -604,12 +698,12 @@ export default {
       defaultProps: {
         // tree配置
         children: "children",
-        label: "name"
+        label: "name",
       },
       defaultChecked: [], // 默认展开被选中的参会人员
       error: {
         // 验证提示
-        title: { isFocus: false }
+        title: { isFocus: false },
       },
       outParticipantGuids: [],
       outParticipantVal: "",
@@ -617,30 +711,30 @@ export default {
         current: "/current/current_list",
         history: "/history/history_list",
         conflict: "/approve/approve_list",
-        services: "/service/service_list"
+        services: "/service/service_list",
       },
       menuStr: "",
-      bgclass: ""
+      bgclass: "",
     };
   },
   props: {
     dataType: {
       require: true,
-      type: Number
-    }
+      type: Number,
+    },
   },
   computed: {
     ...mapGetters(["editId"]),
     //  茶点服务
     serveListArr() {
       if (this.dataType === 1 || this.ruleForm.can_update == 0) {
-        return this.ruleForm.service.filter(res => {
+        return this.ruleForm.service.filter((res) => {
           return res.value > 0;
         });
       } else {
         return this.ruleForm.service;
       }
-    }
+    },
   },
 
   activated() {
@@ -658,14 +752,17 @@ export default {
     let query = this.$route.query;
     // 获取详情信息
     this.getDateilsInfo(query.id);
-    this.$store.dispatch("user/setEditId", { type: "edit", id: Number(query.id) });
+    this.$store.dispatch("user/setEditId", {
+      type: "edit",
+      id: Number(query.id),
+    });
     // 获取会议类型
     this.getMeetingTypeInfo();
     // 获取部门信息
     this.getDepartmentInfo();
     // 关闭或刷新页面时提示用户保存
     let _this = this;
-    window.onbeforeunload = function(e) {
+    window.onbeforeunload = function (e) {
       if (_this.$route.name == "Edit") {
         e = e || window.event;
         // 兼容IE8和Firefox 4之前的版本
@@ -686,7 +783,7 @@ export default {
     getDateilsInfo(id) {
       let that = this;
       this.formLoading = true;
-      getMeetingDetailApi({ id: id }).then(res => {
+      getMeetingDetailApi({ id: id }).then((res) => {
         if (!res || res.meta.code != "RESP_OKAY") {
           setTimeout(() => {
             that.$router.push("/current");
@@ -743,7 +840,7 @@ export default {
         // 茶点服务
         this.ruleForm.serviceId = [];
         this.ruleForm.service &&
-          this.ruleForm.service.map(item => {
+          this.ruleForm.service.map((item) => {
             if (this.dataType === 1) {
               this.ruleForm.serviceId.push(item.name);
             } else {
@@ -756,7 +853,7 @@ export default {
         // 设备
         this.checkListEquipment = [];
         this.ruleForm.equipment &&
-          this.ruleForm.equipment.forEach(item => {
+          this.ruleForm.equipment.forEach((item) => {
             if (this.dataType === 1) {
               this.checkListEquipment.push(item.name);
             } else {
@@ -768,8 +865,12 @@ export default {
         let str = "";
         let arr = [];
         this.ruleForm.inside_participant &&
-          this.ruleForm.inside_participant.forEach(item => {
-            arr.push({ id: item.id, name: item.name, department_name: item.department_name });
+          this.ruleForm.inside_participant.forEach((item) => {
+            arr.push({
+              id: item.id,
+              name: item.name,
+              department_name: item.department_name,
+            });
             str = str ? str + "，" + item.name : item.name;
           });
         this.participantGuids = arr;
@@ -786,23 +887,23 @@ export default {
     // 是否是保密组且会服详情
     isServices() {
       let arr = ["conflict", "services"];
-      let ismenu = arr.find(res => {
+      let ismenu = arr.find((res) => {
         return res == this.menuStr;
       });
       return this.ruleForm.is_secrecy == 1 && !!ismenu ? true : false;
     },
     // 获取茶点服务
     getServiceInfo() {
-      getServiceApi({}).then(res => {
+      getServiceApi({}).then((res) => {
         let services = res.data.services;
         if (this.ruleForm.service.length > 0) {
-          this.ruleForm.service.map(res => {
-            services.map(item => {
+          this.ruleForm.service.map((res) => {
+            services.map((item) => {
               item.value = res.id == item.id ? res.value : 0;
             });
           });
         } else {
-          services.map(res => {
+          services.map((res) => {
             res.value = 0;
           });
         }
@@ -811,24 +912,24 @@ export default {
     },
     // 选择茶点服务
     selectServeChange(arr) {
-      var arr3 = this.serviceList.filter(v => {
-        return arr.every(e => e != v.id);
+      var arr3 = this.serviceList.filter((v) => {
+        return arr.every((e) => e != v.id);
       });
-      this.serviceList.map(res => {
-        arr3.map(item => {
+      this.serviceList.map((res) => {
+        arr3.map((item) => {
           if (res.id == item.id) {
             res.value = 0;
           }
         });
       });
       let arrs = [];
-      this.serviceList.map(res => {
-        arr.map(item => {
+      this.serviceList.map((res) => {
+        arr.map((item) => {
           if (res.id == item) {
             let obj = {
               name: res.name,
               id: res.id,
-              value: res.value
+              value: res.value,
             };
             arrs.push(obj);
           }
@@ -838,7 +939,7 @@ export default {
     },
     // 修改茶点
     changeValueHandle(item) {
-      this.serviceList.map(res => {
+      this.serviceList.map((res) => {
         if (res.id == item.id) {
           res.value = item.value;
         }
@@ -873,7 +974,9 @@ export default {
         case 3:
           dec += parseInt(step / month); // 重复每月
           let dates = parseFloat(start_time[0].split("-")[2]);
-          weekDec = `（${this.$t("repeatTypeList.month")}${dates}${this.$t("public.date")}）`;
+          weekDec = `（${this.$t("repeatTypeList.month")}${dates}${this.$t(
+            "public.date"
+          )}）`;
           break;
       }
       this.reapSessions = dec
@@ -884,8 +987,13 @@ export default {
     // 获取周
     getWeek(dateString) {
       let dateArray = dateString.split("-");
-      let dates = new Date(dateArray[0], parseInt(dateArray[1] - 1), dateArray[2]);
-      let week = this.$t("public.weeks") + this.$t("public.week").charAt(dates.getDay());
+      let dates = new Date(
+        dateArray[0],
+        parseInt(dateArray[1] - 1),
+        dateArray[2]
+      );
+      let week =
+        this.$t("public.weeks") + this.$t("public.week").charAt(dates.getDay());
       return week;
     },
     //  添加外部参会人弹窗
@@ -911,12 +1019,12 @@ export default {
           phoneError: false,
           isEmailEqual: false,
           isPhoneEqual: false,
-          error: false
-        }
+          error: false,
+        },
       ];
       let outData = this.ruleForm.out_participant;
       if (outData && outData.length > 0) {
-        outData.forEach(item => {
+        outData.forEach((item) => {
           if (item.name != "") {
             arrExt.push({
               name: item.name,
@@ -927,7 +1035,7 @@ export default {
               phoneError: false,
               isEmailEqual: false,
               isPhoneEqual: false,
-              error: false
+              error: false,
             });
             strExt = strExt ? strExt + "，" + item.name : item.name;
           }
@@ -957,7 +1065,7 @@ export default {
           phoneError: false,
           isEmailEqual: false,
           isPhoneEqual: false,
-          error: false
+          error: false,
         });
       }
     },
@@ -965,7 +1073,7 @@ export default {
     addExtMeetPeople() {
       // 参会人名字 邮箱检验
       let flag = false;
-      let other = this.outParticipantGuids.map(item => {
+      let other = this.outParticipantGuids.map((item) => {
         item["isEmailEqual"] = false;
         item["isPhoneEqual"] = false;
         if (item.email || item.name || item.phone) {
@@ -1022,11 +1130,13 @@ export default {
         this.$message({
           message: this.$t("tip.alreadyExists"),
           type: "error",
-          customClass: "z_index"
+          customClass: "z_index",
         });
         return false;
       }
-      this.ruleForm.out_participant = JSON.parse(JSON.stringify(this.outParticipantGuids));
+      this.ruleForm.out_participant = JSON.parse(
+        JSON.stringify(this.outParticipantGuids)
+      );
       this.outParticipantHandle();
       this.extVisible = false;
     },
@@ -1037,12 +1147,18 @@ export default {
       for (var i = newArr.length - 1; i >= 0; i--) {
         var targetNode = newArr[i];
         for (var j = 0; j < i; j++) {
-          if (targetNode["email"] == newArr[j]["email"] && targetNode["email"] !== "") {
+          if (
+            targetNode["email"] == newArr[j]["email"] &&
+            targetNode["email"] !== ""
+          ) {
             targetNode["isEmailEqual"] = true;
             newArr[j]["isEmailEqual"] = true;
             same = false;
           }
-          if (targetNode["phone"] == newArr[j]["phone"] && targetNode["phone"] !== "") {
+          if (
+            targetNode["phone"] == newArr[j]["phone"] &&
+            targetNode["phone"] !== ""
+          ) {
             targetNode["isPhoneEqual"] = true;
             newArr[j]["isPhoneEqual"] = true;
             same = false;
@@ -1058,17 +1174,17 @@ export default {
         return;
       }
       this.innerVisible = true;
-      this.participantGuids = this.ruleForm.inside_participant.map(item => {
+      this.participantGuids = this.ruleForm.inside_participant.map((item) => {
         return {
           department_name: item.department_name,
           name: item.name,
-          id: item.id
+          id: item.id,
         };
       });
     },
     // 选择参会人会的面板开启回调设置选中节点
     callbackForInnerDialogOpen() {
-      this.defaultChecked = this.participantGuids.map(item => {
+      this.defaultChecked = this.participantGuids.map((item) => {
         return item.id;
       });
       this.$nextTick(() => {
@@ -1088,8 +1204,8 @@ export default {
       let queryArr = [];
       let extraPeople = [];
       queryArr.push(...this.transformDeepArr(this.queryPeople));
-      this.participantGuids.forEach(ele => {
-        const filterArr = queryArr.filter(e => e.id === ele.id);
+      this.participantGuids.forEach((ele) => {
+        const filterArr = queryArr.filter((e) => e.id === ele.id);
         if (filterArr.length === 0) {
           extraPeople.push(ele);
         }
@@ -1105,7 +1221,7 @@ export default {
     // 将多层数组转为一维数组
     transformDeepArr(arr) {
       let newArr = [];
-      arr.forEach(item => {
+      arr.forEach((item) => {
         if (!item.children) {
           newArr.push(item);
         } else {
@@ -1117,18 +1233,18 @@ export default {
     // 确认选择内部参会人员
     addMeetingPeople() {
       let str = "";
-      let arr = this.participantGuids.map(item => {
+      let arr = this.participantGuids.map((item) => {
         str = str ? str + "，" + item.name : item.name;
         return {
           id: item.id,
           name: item.name,
-          department_name: item.department_name
+          department_name: item.department_name,
         };
       });
       if (arr && arr.length == 0) {
         this.$message({
           message: this.$t("tip.attendees"),
-          type: "error"
+          type: "error",
         });
         return;
       }
@@ -1138,10 +1254,12 @@ export default {
     },
     // 转换tree数据
     transformDatabase(arr, depName) {
-      arr.forEach(item => {
+      arr.forEach((item) => {
         if (item.children) {
           if (item.children.length !== 0) {
-            let names1 = depName ? `${depName} / ${item["name"]}` : item["name"];
+            let names1 = depName
+              ? `${depName} / ${item["name"]}`
+              : item["name"];
             this.transformDatabase(item.children, names1);
           } else {
             let names = depName ? `${depName}` : "";
@@ -1155,7 +1273,7 @@ export default {
     },
     // 获取部门
     getDepartmentInfo() {
-      getDepartmentApi({}).then(res => {
+      getDepartmentApi({}).then((res) => {
         const allData = this.transformDatabase(res.data.departments);
         this.allPeopleInfo = allData;
         this.queryPeople = this.allPeopleInfo;
@@ -1182,20 +1300,24 @@ export default {
       if (!this.ruleForm.title) {
         this.$message({
           message: this.$t("tip.title"),
-          type: "error"
+          type: "error",
         });
         return;
       }
-      let insidePar = JSON.parse(JSON.stringify(this.ruleForm.inside_participant));
+      let insidePar = JSON.parse(
+        JSON.stringify(this.ruleForm.inside_participant)
+      );
       // 内部参会人
-      insidePar.map(res => {
+      insidePar.map((res) => {
         delete res.department_name;
       });
 
       // 外部参会人
       let outPar = JSON.parse(JSON.stringify(this.ruleForm.out_participant));
-      let outParArr = outPar.filter(res => res.name || res.email || res.phone);
-      outParArr.map(res => {
+      let outParArr = outPar.filter(
+        (res) => res.name || res.email || res.phone
+      );
+      outParArr.map((res) => {
         delete res.error;
         delete res.nameError;
         delete res.mailError;
@@ -1207,8 +1329,8 @@ export default {
 
       // 设备
       let equ = [];
-      this.equipmentList.map(res => {
-        this.checkListEquipment.map(e => {
+      this.equipmentList.map((res) => {
+        this.checkListEquipment.map((e) => {
           if (res.id == e) {
             equ.push(res);
           }
@@ -1218,14 +1340,14 @@ export default {
       // 会议类型
       if (this.ruleForm.meeting_type_id) {
         this.ruleForm.meeting_type_name = this.meetTypeList.filter(
-          item => item.id == this.ruleForm.meeting_type_id
+          (item) => item.id == this.ruleForm.meeting_type_id
         )[0]["name"];
       } else {
         this.ruleForm.meeting_type_name = "";
       }
 
       // 会议服务
-      this.ruleForm.service.map(res => {
+      this.ruleForm.service.map((res) => {
         if (res.value == "") {
           res.value = 0;
         }
@@ -1241,15 +1363,15 @@ export default {
         meeting_type_name: this.ruleForm.meeting_type_name || "", //是	string	会议类型 名称
         service: this.ruleForm.service, //	否	array	茶点服务数组
         equipment: equ, // 否	array	设备数组
-        remark: this.ruleForm.remark
+        remark: this.ruleForm.remark,
       };
       this.saveLoading = true;
-      saveMeetEditApi(dataJson).then(res => {
+      saveMeetEditApi(dataJson).then((res) => {
         this.saveLoading = false;
         if (res.meta.code == "RESP_OKAY") {
           this.$message({
             message: this.$t("tip.infoEditSuccess"),
-            type: "success"
+            type: "success",
           });
           if (types == "leavePage") {
             this.$emit("saveInfo");
@@ -1261,7 +1383,7 @@ export default {
         } else {
           this.$message({
             message: res.meta.message,
-            type: "error"
+            type: "error",
           });
         }
       });
@@ -1272,26 +1394,29 @@ export default {
     },
 
     setMeetTime(start, end, type) {
-      let time = type === 2 ? `${start.split(" ")[1]} - ${end.split(" ")[1]}` : `${start} - ${end}`;
+      let time =
+        type === 2
+          ? `${start.split(" ")[1]} - ${end.split(" ")[1]}`
+          : `${start} - ${end}`;
       return time;
     },
     // 获取会议类型
     getMeetingTypeInfo() {
-      getMeetingTypeApi({}).then(res => {
+      getMeetingTypeApi({}).then((res) => {
         this.meetTypeList = res.data.meeting_type;
       });
     },
     // 获取当前会议室设备信息
     getEquipmentInfo(roomId) {
-      getRoomEquipmentApi({ id: roomId }).then(res => {
+      getRoomEquipmentApi({ id: roomId }).then((res) => {
         this.equipmentList = res.data.equipments;
       });
-    }
+    },
   },
   beforeDestroy() {
     //组件销毁前需要解绑事件。否则会出现重复触发事件的问题
     bus.$off("saveInfo");
-  }
+  },
 };
 </script>
 

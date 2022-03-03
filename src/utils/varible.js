@@ -6,5 +6,5 @@
  * Copyright (c) 2019. ���ڰ��������ܿƼ����޹�˾. All Rights Reserved.
  */
 
-export const imgBaseUrl = process.env.NODE_ENV === 'development' ? 'https://alc01.aa-iot.com' : ''
+export const imgBaseUrl = process.env.NODE_ENV === 'development' ? 'https://alc01.iot-oa.com' : ''
 export const initToken = '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF'

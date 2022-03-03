@@ -3,7 +3,10 @@
 <template>
   <div>
     <div class="time-cell" v-if="scope.row.message">
-      <div class="time-cell-list" :class="{ fixed_wrap: scope.row.message.length == 48 }">
+      <div
+        class="time-cell-list"
+        :class="{ fixed_wrap: scope.row.message.length == 48 }"
+      >
         <div
           class="time-cell-content"
           v-for="(item, index) in scope.row.message"
@@ -11,10 +14,12 @@
           @click="chooseTime(index)"
           :class="{
             outDate: outDateNum && index <= outDateNum,
-            fixed_width: scope.row.message.length == 48
+            fixed_width: scope.row.message.length == 48,
           }"
         >
-          <span class="time-cell-dec time-chil" v-if="item.is_hourly">{{ item.time }}</span>
+          <span class="time-cell-dec time-chil" v-if="item.is_hourly">{{
+            item.time
+          }}</span>
           <span class="time-cell-box time-chil"></span>
           <span
             :class="[
@@ -22,10 +27,12 @@
               {
                 active:
                   startIndex === index ||
-                  (endIndex !== null && index >= startIndex && index <= endIndex),
+                  (endIndex !== null &&
+                    index >= startIndex &&
+                    index <= endIndex),
                 startActive: startIndex === index && endIndex !== index,
-                endActive: endIndex === index && startIndex !== index
-              }
+                endActive: endIndex === index && startIndex !== index,
+              },
             ]"
           ></span>
           <!-- 提示框 -->
@@ -64,20 +71,34 @@
                 <el-carousel-item v-for="item in item.meeting" :key="item.guid">
                   <div class="popover-list">
                     <div class="tip-list overhid">
-                      <span class="tip-list-label">{{ $t("message.theme") }}：</span>
+                      <span class="tip-list-label"
+                        >{{ $t("message.theme") }}：</span
+                      >
                       <span class="tip-list-val">{{ item.title || "--" }}</span>
                     </div>
                     <div class="tip-list overhid">
-                      <span class="tip-list-label">{{ $t("message.senderMan") }}：</span>
-                      <span class="tip-list-val">{{ item.sender || "--" }}</span>
+                      <span class="tip-list-label"
+                        >{{ $t("message.senderMan") }}：</span
+                      >
+                      <span class="tip-list-val">{{
+                        item.sender || "--"
+                      }}</span>
                     </div>
                     <div class="tip-list overhid">
-                      <span class="tip-list-label">{{ $t("message.startTime") }}：</span>
-                      <span class="tip-list-val">{{ item.start_time || "--" }}</span>
+                      <span class="tip-list-label"
+                        >{{ $t("message.startTime") }}：</span
+                      >
+                      <span class="tip-list-val">{{
+                        item.start_time || "--"
+                      }}</span>
                     </div>
                     <div class="tip-list overhid">
-                      <span class="tip-list-label">{{ $t("message.endTime") }}：</span>
-                      <span class="tip-list-val">{{ item.end_time || "--" }}</span>
+                      <span class="tip-list-label"
+                        >{{ $t("message.endTime") }}：</span
+                      >
+                      <span class="tip-list-val">{{
+                        item.end_time || "--"
+                      }}</span>
                     </div>
                   </div>
                 </el-carousel-item>
@@ -91,8 +112,8 @@
                   meetings: item.status === 1,
                   startclass: item.start,
                   endclass: item.end,
-                  width_min: item.widthMin
-                }
+                  width_min: item.widthMin,
+                },
               ]"
             >
             </span>
@@ -118,19 +139,19 @@ export default {
       carouselDom: "",
       initialIndex: 0,
       maxIndex: 0,
-      initialVal: 1
+      initialVal: 1,
     };
   },
   props: {
     recordSelectTime: Function,
     scope: Object,
     disabled: Boolean,
-    chooseDate: String
+    chooseDate: String,
   },
   computed: {
     forbidClick() {
       return {
-        pointerEvents: "none"
+        pointerEvents: "none",
       };
     },
     // 不可预约时间状态
@@ -148,7 +169,7 @@ export default {
       } else {
         return false;
       }
-    }
+    },
   },
   methods: {
     // 鼠标滚动切换会议详情 判断滚动方向
@@ -217,7 +238,10 @@ export default {
         if (index > this.startIndex && index !== this.endIndex) {
           this.endTime = this.hanldTimes(times, index);
           this.endIndex = index;
-        } else if (index === this.startIndex && this.startIndex === this.endIndex) {
+        } else if (
+          index === this.startIndex &&
+          this.startIndex === this.endIndex
+        ) {
           this.startTime = null;
           this.endTime = null;
           this.startIndex = null;
@@ -242,7 +266,11 @@ export default {
       }
       // 处理时间冲突逻辑
       const period = timeStatus.slice(this.startIndex, this.endIndex + 1);
-      if (this.startIndex && this.endIndex && period.some((item, index) => item === 1)) {
+      if (
+        this.startIndex &&
+        this.endIndex &&
+        period.some((item, index) => item === 1)
+      ) {
         this.startTime = times[index].time;
         this.startIndex = index;
         this.endTime = this.hanldTimes(times, index);
@@ -265,10 +293,10 @@ export default {
         timeName = times[index + 1].time;
       }
       return timeName;
-    }
+    },
   },
   created() {},
-  mounted() {}
+  mounted() {},
 };
 </script>
 <style lang="less" scoped>
