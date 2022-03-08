@@ -12,6 +12,7 @@ import { setIcon } from '@/utils/tool'
 import router, { resetRouter } from '@/router'
 import qs from 'querystring'
 const state = {
+  isAutoLogin: parseInt(process.env.VUE_APP_IS_AUTO_LOGIN),  //使用统一平台登录
   token: getToken(), // 用户标识
   username: '',// 用户名称
   avatar: '', // 用户头像
@@ -33,32 +34,32 @@ const state = {
 }
 
 const mutations = {
-  SET_TOKEN (state, data) {
+  SET_TOKEN(state, data) {
     state.token = data
   },
-  SET_ROLES (state, data) {
+  SET_ROLES(state, data) {
     state.roles = data
   },
-  SET_USERNAME (state, data) {
+  SET_USERNAME(state, data) {
     state.username = data
   },
-  SET_AVATAR (state, data) {
+  SET_AVATAR(state, data) {
     state.avatar = data
   },
-  SET_USERID (state, data) {
+  SET_USERID(state, data) {
     state.userId = data
   },
-  SET_ROLEID (state, data) {
+  SET_ROLEID(state, data) {
     state.roleId = data
   },
-  SET_USERINFO (state, data) {
+  SET_USERINFO(state, data) {
     state.userInfo = data
   },
-  SET_SYSTEMINFO (state, data) {
+  SET_SYSTEMINFO(state, data) {
     state.systemLogo = data.front_system_inside_logo
     state.systemName = data.front_system_name
   },
-  SET_COMPANYNAME (state, data) {
+  SET_COMPANYNAME(state, data) {
     state.companyName = data
   },
   SET_COMPANYLOGO(state, data) {
@@ -80,11 +81,11 @@ const mutations = {
 
 const actions = {
   // 登录
-  login ({ commit }, data) {
+  login({ commit }, data) {
     const { username, pwd, company } = data
     return new Promise((resolve, reject) => {
       loginApi(qs.stringify({ name: username.trim(), password: pwd })).then(response => {
-        if(response&&response.meta.code=="RESP_OKAY"){
+        if (response && response.meta.code == "RESP_OKAY") {
           const { data: { token } } = response
           commit('SET_TOKEN', token)
           setToken(token)
@@ -95,12 +96,16 @@ const actions = {
       })
     })
   },
+  //初始化token
+  setInitToken({ commit }, data) {
+    commit('SET_TOKEN', data)
+  },
   // 第三方登录
-  otherLogin ({ commit }, data) {
+  otherLogin({ commit }, data) {
     const { code, state, appid } = data
     return new Promise((resolve, reject) => {
       qyWechatLoginApi({ appid, code }).then(response => {
-        if(response&&response.meta.code=="RESP_OKAY"){
+        if (response && response.meta.code == "RESP_OKAY") {
           const { data: { userinfo: { token } } } = response
           /* cookie保存 */
           commit('SET_TOKEN', token)
@@ -113,7 +118,7 @@ const actions = {
     })
   },
   // 获取用户个人信息
-  getInfo ({ commit }) {
+  getInfo({ commit }) {
     return new Promise((resolve, reject) => {
       // 获取个人信息
       getInfoApi().then(response => {
@@ -121,7 +126,7 @@ const actions = {
         if (!user) {
           reject('需要重新登录')
         }
-        const { nickname, group, id, thumb_avatar, pc_permissions} = user
+        const { nickname, group, id, thumb_avatar, pc_permissions } = user
         pc_permissions['is_belong_user'] = id === 1 ? 0 : 1 // 超级管理员登录时无个人中心页面
         commit('SET_PERMISSIONS', pc_permissions)
         commit('SET_ROLES', group.permissions)
@@ -137,8 +142,8 @@ const actions = {
   // 获取系统前台信息
   getSystemInfo({ commit }) {
     return new Promise((resolve, reject) => {
-      getSystemInfoApi().then(res=>{
-        if(res&&res.meta.code=="RESP_OKAY"){
+      getSystemInfoApi().then(res => {
+        if (res && res.meta.code == "RESP_OKAY") {
           let setInfo = res.data.front_system_setting
           let { front_system_name, front_system_title_logo } = setInfo
           commit('SET_SYSTEMINFO', setInfo)
@@ -152,7 +157,7 @@ const actions = {
     })
   },
   // 设置ico, 登录页公司名称，logo
-  icoSetting ({ commit, dispatch }, data) {
+  icoSetting({ commit, dispatch }, data) {
     return new Promise((resolve, reject) => {
       getWebInfoApi().then(res => {
         resolve(res.data.info)
@@ -161,7 +166,7 @@ const actions = {
       })
     })
   },
-  getQywechatConfig({ commit }, data){
+  getQywechatConfig({ commit }, data) {
     return new Promise((resolve, reject) => {
       getQywechatConfigApi().then(res => {
         resolve(res)
@@ -171,15 +176,15 @@ const actions = {
     })
   },
   // 登录方式
-  getCode ({ commit }, data) {
+  getCode({ commit }, data) {
     return new Promise((resolve, reject) => {
-      getCodeApi({code: data}).then(response => {
+      getCodeApi({ code: data }).then(response => {
         resolve(response)
       })
     })
   },
   // 登出
-  logout ({ commit, dispatch }) {
+  logout({ commit, dispatch }) {
     return new Promise((resolve, reject) => {
       logoutApi().then((response) => {
         commit('SET_TOKEN', '')
@@ -194,7 +199,7 @@ const actions = {
     })
   },
   // 重置所有token标识
-  resetToken ({ commit }) {
+  resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', '')
@@ -203,9 +208,9 @@ const actions = {
     })
   },
   // 存储需缓存的ID
-  setEditId ({ commit }, data) {
+  setEditId({ commit }, data) {
     return new Promise(resolve => {
-      switch(data.type){
+      switch (data.type) {
         case 'edit':
           commit('SET_EDITKEY', data.id)
           break;
@@ -213,14 +218,14 @@ const actions = {
           commit('SET_REPEATKEY', data.id)
           break;
         case 'conflict':
-            commit('SET_CONFKEY', data.id)
+          commit('SET_CONFKEY', data.id)
           break;
       }
       resolve()
     })
   },
   // 动态修改角色权限
-  changeRoles ({ commit, dispatch }, role) {
+  changeRoles({ commit, dispatch }, role) {
     // eslint-disable-next-line
     return new Promise(async resolve => {
       const token = role + '-token'

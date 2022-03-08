@@ -12,7 +12,7 @@ const defaultSettings = require('./src/settings.js') // 默认设置
 // 获取tab的title
 const name = defaultSettings.title || 'Auralabs数字办公空间'
 // 获取文件地址
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
@@ -38,7 +38,7 @@ module.exports = {
     proxy: {
       '/api': {
         // 本地
-        target: 'https://alc01.aa-iot.com/api',//'http://192.168.5.8',
+        target: 'http://sp-admin.test/api',//'http://192.168.5.8',
         // 如果要代理 websockets
         ws: true,
         changeOrigin: true,

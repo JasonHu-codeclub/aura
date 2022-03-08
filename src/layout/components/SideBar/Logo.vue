@@ -4,18 +4,22 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
 <template>
   <div class="sidebar-logo-container" :class="{ collapse: collapse }">
     <transition name="sidebarLogoFade">
-      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
+      <!-- <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/"> -->
+      <div v-if="collapse" class="sidebar-logo-link" @click="goToHome()">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
         <h1 v-else class="sidebar-title">{{ title }}</h1>
-      </router-link>
-      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
+      </div>
+      <!-- </router-link> -->
+      <!-- <router-link v-else key="expand" class="sidebar-logo-link" to="/"> -->
+      <div v-else class="sidebar-logo-link" @click="goToHome()">
         <img
           v-if="systemLogo"
           :src="baseURL + systemLogo + '?time=' + new Date().getTime()"
           class="sidebar-logo"
         />
-        <!-- <h1 class="sidebar-title">{{ systemName }}</h1> -->
-      </router-link>
+      </div>
+      <!-- <h1 class="sidebar-title">{{ systemName }}</h1> -->
+      <!-- </router-link> -->
     </transition>
   </div>
 </template>
@@ -28,24 +32,35 @@ export default {
   props: {
     collapse: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       baseURL: imgBaseUrl,
       title: defaultSettings.title,
       // logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
-      logo: require("@/assets/logo.png")
+      logo: require("@/assets/logo.png"),
     };
   },
   computed: {
-    ...mapGetters(["systemLogo"])
+    ...mapGetters(["systemLogo"]),
   },
   watch: {},
-  methods: {},
+  methods: {
+    goToHome() {
+      let host = null;
+      let url = window.location.href;
+      const regex = /(\w+):\/\/([^/:]+)(:\d*)?/;
+      const match = url.match(regex);
+      if (typeof match !== "undefined" && match !== null) {
+        host = match[0];
+      }
+      window.location.href = host + "/sp-home/";
+    },
+  },
   created() {},
-  mounted() {}
+  mounted() {},
 };
 </script>
 <style lang="less" scoped>

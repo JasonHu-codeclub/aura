@@ -14,7 +14,7 @@ const service = axios.create({
   baseURL: process.env.NODE_ENV === 'development' ? process.env.VUE_APP_BASE_API : getHost() + '/api', // api的基本URL
   // baseURL: process.env.VUE_APP_BASE_API, // api的基本URL
   // timeout: 5000, // 请求超时时间
-  headers: { 'LANG':Cookies.get('language') ||'zh_CN'  },
+  headers: { 'LANG': Cookies.get('language') || 'zh_CN' },
   // withCredentials: true // send cookies when cross-domain requests
 })
 
@@ -39,7 +39,7 @@ service.interceptors.response.use(
     // return response.data
     /* 常规请求 */
     const { data, meta: { code, message } } = response.data
-    
+
     if (code !== 'RESP_OKAY') {
       return Promise.reject('error')
     } else {
@@ -54,8 +54,8 @@ service.interceptors.response.use(
       duration: 3 * 1000
     });
     // 未经授权,回到登录页
-    if (error.response.data&&error.response.data.meta.code === 'SECU_0001') {
-      
+    if (error.response.data && error.response.data.meta.code === 'SECU_0001') {
+
       return
       store.dispatch('user/resetToken').then(() => {
         location.reload()

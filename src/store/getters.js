@@ -7,6 +7,7 @@
  */
 
 const getters = {
+  isAutoLogin: state => state.user.isAutoLogin,
   roles: state => state.user.roles,
   token: state => state.user.token,
   name: state => state.user.username,
