@@ -68,7 +68,7 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
 
-    if (store.getters.isAutoLogin) {
+    if (store.getters.isAutoLogin === '1') {
       console.log('自动登录')
       // 初次进入,无token
 

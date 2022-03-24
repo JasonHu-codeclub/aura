@@ -38,7 +38,7 @@ module.exports = {
     proxy: {
       '/api': {
         // 本地
-        target: 'http://sp-admin.test/api',//'http://192.168.5.8',
+        target: 'https://jctest.iot-oa.com/api',//'http://192.168.5.8',
         // 如果要代理 websockets
         ws: true,
         changeOrigin: true,

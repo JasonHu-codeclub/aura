@@ -5,6 +5,6 @@
  * Modified By: Jan
  * Copyright (c) 2019. ���ڰ��������ܿƼ����޹�˾. All Rights Reserved.
  */
-
-export const imgBaseUrl = process.env.NODE_ENV === 'development' ? 'https://alc01.iot-oa.com' : ''
+import { getHost } from './tool'
+export const imgBaseUrl = process.env.NODE_ENV === 'development' ? getHost() : ''
 export const initToken = '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF'
