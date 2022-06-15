@@ -129,9 +129,10 @@
             v-loading="addLoading"
             element-loading-spinner="el-icon-loading"
             class="add-dropdown"
-            :disabled="true"
+         
             trigger="click"
           >
+             <!-- :disabled="true" -->
             {{ $t("button.reservationSingle") }}
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="handleClick(2)">{{

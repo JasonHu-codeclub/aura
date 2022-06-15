@@ -14,7 +14,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
       <div v-else class="sidebar-logo-link" @click="goToHome()">
         <img
           v-if="systemLogo"
-          :src="baseURL + systemLogo + '?time=' + new Date().getTime()"
+          :src="baseURL + systemLogo "
           class="sidebar-logo"
         />
       </div>
