@@ -551,6 +551,6 @@ export default {
 
 
  /deep/ .fc-button-primary {
-    margin-right: 2px;
+    margin-right: 3px;
 }
 </style>
