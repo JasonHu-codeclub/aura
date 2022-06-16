@@ -548,4 +548,9 @@ export default {
   border-radius: 0;
   background: #fff;
 }
+
+
+ /deep/ .fc-button-primary {
+    margin-right: 2px;
+}
 </style>
