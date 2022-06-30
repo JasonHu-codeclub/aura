@@ -3,7 +3,11 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
 
 <template>
   <div id="tags-view-container" class="tags-view-container">
-    <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
+    <scroll-pane
+      ref="scrollPane"
+      class="tags-view-wrapper"
+      @scroll="handleScroll"
+    >
       <router-link
         v-for="tag in visitedViews"
         ref="tag"
@@ -54,7 +58,7 @@ export default {
       top: 0,
       left: 0,
       selectedTag: {},
-      affixTags: []
+      affixTags: [],
     };
   },
   computed: {
@@ -63,7 +67,7 @@ export default {
     },
     routes() {
       return this.$store.state.permission.routes;
-    }
+    },
   },
   watch: {
     $route() {
@@ -76,7 +80,7 @@ export default {
       } else {
         document.body.removeEventListener("click", this.closeMenu);
       }
-    }
+    },
   },
   mounted() {
     // bus.$on("closeTagHanld", this.closeTags);
@@ -91,7 +95,7 @@ export default {
       // 监听页面刷新
       window.addEventListener("beforeunload", () => {
         // 转换tabViews数据
-        const tabViews = this.visitedViews.map(item => {
+        const tabViews = this.visitedViews.map((item) => {
           return {
             fullPath: item.fullPath,
             hash: item.hash,
@@ -100,13 +104,14 @@ export default {
             params: { ...item.params },
             path: item.path,
             query: { ...item.query },
-            title: item.title
+            title: item.title,
           };
         });
-        sessionStorage.setItem("tabViews", JSON.stringify(tabViews));
+        sessionStorage.setItem("tabViewsPcmeet", JSON.stringify(tabViews));
       });
       // 页面初始化加载判断缓存中是否有数据
-      const oldViews = JSON.parse(sessionStorage.getItem("tabViews")) || [];
+      const oldViews =
+        JSON.parse(sessionStorage.getItem("tabViewsPcmeet")) || [];
       if (oldViews.length > 0) {
         this.$store.state.tagsView.visitedViews = oldViews;
         // 赋值后清除数据
@@ -121,14 +126,14 @@ export default {
     },
     filterAffixTags(routes, basePath = "/") {
       let tags = [];
-      routes.forEach(route => {
+      routes.forEach((route) => {
         if (route.meta && route.meta.affix) {
           const tagPath = path.resolve(basePath, route.path);
           tags.push({
             fullPath: tagPath,
             path: tagPath,
             name: route.name,
-            meta: { ...route.meta }
+            meta: { ...route.meta },
           });
         }
         if (route.children) {
@@ -178,7 +183,7 @@ export default {
         console.log("view", view);
         this.$nextTick(() => {
           this.$router.replace({
-            path: "/redirect" + fullPath
+            path: "/redirect" + fullPath,
           });
         });
       });
@@ -188,11 +193,13 @@ export default {
       // let view = this.viewData;
       // this.$refs.dialogPage.dialogVisibleLive = false;
       this.$store.dispatch("tagsView/setCloseTagView", true); // 标记关闭方式
-      this.$store.dispatch("tagsView/delView", view).then(({ visitedViews }) => {
-        if (this.isActive(view)) {
-          this.toLastView(visitedViews, view);
-        }
-      });
+      this.$store
+        .dispatch("tagsView/delView", view)
+        .then(({ visitedViews }) => {
+          if (this.isActive(view)) {
+            this.toLastView(visitedViews, view);
+          }
+        });
     },
 
     // 关闭当前tag的页面
@@ -224,14 +231,16 @@ export default {
     // 关闭其他页面
     closeOthersTags() {
       this.$router.push(this.selectedTag);
-      this.$store.dispatch("tagsView/delOthersViews", this.selectedTag).then(() => {
-        this.moveToCurrentTag();
-      });
+      this.$store
+        .dispatch("tagsView/delOthersViews", this.selectedTag)
+        .then(() => {
+          this.moveToCurrentTag();
+        });
     },
     // 关闭所有
     closeAllTags(view) {
       this.$store.dispatch("tagsView/delAllViews").then(({ visitedViews }) => {
-        if (this.affixTags.some(tag => tag.path === view.path)) {
+        if (this.affixTags.some((tag) => tag.path === view.path)) {
           return;
         }
         this.toLastView(visitedViews, view);
@@ -276,12 +285,12 @@ export default {
     },
     handleScroll() {
       this.closeMenu();
-    }
+    },
   },
   beforeDestroy() {
     //组件销毁前需要解绑事件。否则会出现重复触发事件的问题
     // bus.$off("closeTagHanld");
-  }
+  },
 };
 </script>
 <style lang="less" scoped>
