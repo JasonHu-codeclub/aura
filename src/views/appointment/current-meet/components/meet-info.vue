@@ -1104,12 +1104,15 @@ export default {
             }
             if (item.phone != "" && item.phone != null) {
               let phonereg = /^[1][3,4,5,7,8][0-9]{9}$/;
-              if (phonereg.test(item.phone)) {
-                item.phoneError = false;
-              } else {
-                flag = true;
-                item.phoneError = true;
-              }
+              // if (phonereg.test(item.phone)) {
+              //   item.phoneError = false;
+              // } else {
+              //   flag = true;
+              //   item.phoneError = true;
+              // }
+         
+               item.phoneError = false;
+              
             } else {
               item.phoneError = false;
             }
