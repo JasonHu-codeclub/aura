@@ -1,3 +1,4 @@
+
 /*
  * Created: 2021-03-02 11:06:37
  * Author : Jan
@@ -9,6 +10,7 @@
 const getters = {
   isAutoLogin: state => state.user.isAutoLogin,
   roles: state => state.user.roles,
+  appointment: state => state.user.canAppointment,
   token: state => state.user.token,
   name: state => state.user.username,
   userId: state => state.user.userId,

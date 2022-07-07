@@ -1,3 +1,4 @@
+
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -16,6 +17,17 @@ Vue.config.productionTip = false;
 Object.keys(filter).forEach(key => {
   Vue.filter(key, filter[key])
 })
+
+
+Vue.directive("canAppointment", {
+  bind: function (el) {
+    let appointment = store.getters.appointment;
+    if (appointment == false) {
+      el.style.display = "none";
+    }
+  }
+});
+
 Vue.mixin(tableAutoHeight)
 new Vue({
   router,

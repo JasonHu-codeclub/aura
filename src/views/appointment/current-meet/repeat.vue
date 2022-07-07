@@ -104,6 +104,7 @@
             <el-button
               v-if="!isInvitation"
               type="text"
+              v-can-appointment
               :disabled="scope.row.status == 1 || scope.row.can_release == 0"
               @click="deleteMeeting(scope.row)"
             >

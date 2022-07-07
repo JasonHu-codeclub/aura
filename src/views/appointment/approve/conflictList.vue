@@ -142,16 +142,18 @@
             <!-- 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批 -->
             <el-button
               type="text"
+              v-can-appointment
               :disabled="scope.row.status == 1"
               @click="agreeRefuseMeeting(scope.row, 1)"
             >
               {{ $t("button.agree") }}
             </el-button>
-            <el-button type="text" @click="detailsMeet(scope.row)">
+            <el-button type="text" @click="detailsMeet(scope.row)" v-can-appointment>
               {{ $t("button.details") }}
             </el-button>
             <el-button
               type="text"
+              v-can-appointment
               :disabled="scope.row.status == 1"
               @click="agreeRefuseMeeting(scope.row, 2)"
             >

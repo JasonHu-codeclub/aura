@@ -162,14 +162,16 @@
               type="text"
               :disabled="!!scope.row.status || scope.row.conflict_number > 1"
               @click="agreeRefuseMeeting(scope.row, 1)"
+              v-can-appointment
             >
               {{ $t("button.agree") }}
             </el-button>
-            <el-button type="text" @click="detailsMeet(scope.row)">
+            <el-button type="text" @click="detailsMeet(scope.row)" v-can-appointment>
               {{ $t("button.details") }}
             </el-button>
             <el-button
               type="text"
+              v-can-appointment
               :disabled="!!scope.row.status || scope.row.conflict_number > 1"
               @click="agreeRefuseMeeting(scope.row, 2)"
             >

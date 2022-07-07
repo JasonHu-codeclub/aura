@@ -120,7 +120,7 @@
           >
         </div>
         <!-- 添加预约 -->
-        <div class="filter-item-box">
+        <div class="filter-item-box" v-can-appointment>
           <el-dropdown
             size="medium"
             split-button

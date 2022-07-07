@@ -26,6 +26,7 @@ const state = {
   systemName: '',  // 系统名称 
   companyName: '', // 公司名称
   companyLogo: '', // 公司logo
+  canAppointment: '', // 是否可以预约
   is_auth: '', // 公司logo
   editId: '',
   repeatId: '',
@@ -58,6 +59,7 @@ const mutations = {
   SET_SYSTEMINFO(state, data) {
     state.systemLogo = data.front_system_inside_logo
     state.systemName = data.front_system_name
+    state.canAppointment = data.appointment
   },
   SET_COMPANYNAME(state, data) {
     state.companyName = data
@@ -145,7 +147,7 @@ const actions = {
       getSystemInfoApi().then(res => {
         if (res && res.meta.code == "RESP_OKAY") {
           let setInfo = res.data.front_system_setting
-          let { front_system_name, front_system_title_logo } = setInfo
+          let { front_system_name, front_system_title_logo,appointment } = setInfo
           commit('SET_SYSTEMINFO', setInfo)
           commit('SET_COMPANYNAME', front_system_name)
           setIcon(front_system_title_logo)// 设置icon

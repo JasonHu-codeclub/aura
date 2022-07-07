@@ -176,6 +176,7 @@
             <!-- 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批 -->
             <el-button
               type="text"
+              v-can-appointment
               v-if="dataType == 1"
               :disabled="scope.row.status == 1 || scope.row.can_release == 0"
               @click="deleteMeeting(scope.row)"
@@ -187,6 +188,7 @@
             </el-button>
             <el-button
               type="text"
+              v-can-appointment
               v-if="dataType == 1"
               :disabled="scope.row.status == 1 || scope.row.can_update == 0"
               @click="editMeetingInfo(scope.row)"
