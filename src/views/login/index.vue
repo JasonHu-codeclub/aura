@@ -39,13 +39,14 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
               class="login-content-type-icon login-content-type-weixin-2"
               @click="handleLoginType('qiye')"
               :title="$t('tip.enterprise')"
+              style="margin-right: 30px"
             ></span>
             <!-- 微信登录 -->
-            <!-- <span
-              class="login-content-type-icon login-content-type-weixin-1 "
+            <span
+              class="login-content-type-icon login-content-type-weixin-1"
               @click="handleLoginType('wechat')"
               :title="$t('tip.wechat')"
-            ></span> -->
+            ></span>
           </div>
           <div class="login-content-divider">
             <span class="divider-text">{{ $t("accountLogin") }}</span>
@@ -64,7 +65,9 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
                   v-model="ruleForm.username"
                   clearable
                 >
-                  <template slot="prepend"><svg-icon icon-class="username" slot="label"/></template>
+                  <template slot="prepend"
+                    ><svg-icon icon-class="username" slot="label"
+                  /></template>
                 </el-input>
               </el-form-item>
               <el-form-item label="" prop="password">
@@ -75,7 +78,9 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
                   v-model="ruleForm.password"
                   clearable
                 >
-                  <template slot="prepend"><svg-icon icon-class="password" slot="label"/></template>
+                  <template slot="prepend"
+                    ><svg-icon icon-class="password" slot="label"
+                  /></template>
                 </el-input>
               </el-form-item>
               <div class="submit-btn">
@@ -106,32 +111,32 @@ export default {
       loginLoading: false,
       ruleForm: {
         username: "",
-        password: ""
+        password: "",
       },
       rules: {
         username: [
           {
             required: true,
             message: this.$t("tip.userNameNotEmpty"),
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         password: [
           {
             required: true,
             message: this.$t("tip.pwdNotEmpty"),
-            trigger: "blur"
-          }
-        ]
+            trigger: "blur",
+          },
+        ],
       },
       redirect: undefined,
       appid: "", // 企业号
       agentid: "", // 自建应用ID
-      wxAppid: "", // 微信开放平台appid
+      wxAppid: "wx633cde8a865d394e", // 微信开放平台appid
       AppSecret: "", // 应用密钥AppSecret
       otherQuery: {}, // 回调参数
       companyLogo: "", // 公司logo
-      companyName: "" // 公司名称
+      companyName: "", // 公司名称
     };
   },
   computed: {},
@@ -144,7 +149,7 @@ export default {
   mounted() {
     // 回车键
     let _this = this;
-    document.onkeydown = function(e) {
+    document.onkeydown = function (e) {
       if (e.keyCode === 13) {
         _this.handleLogin();
       }
@@ -152,20 +157,20 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         const query = route.query;
         if (query) {
           this.redirect = query.redirect;
           this.otherQuery = this.getOtherQuery(query);
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     // 获取企业号appid,agentid
     getAppidInfo() {
-      this.$store.dispatch("user/getQywechatConfig").then(res => {
+      this.$store.dispatch("user/getQywechatConfig").then((res) => {
         if (res && res.meta.code == "RESP_OKAY") {
           let dataJson = decrypt(res.data.code, initToken);
           let appidInfo = JSON.parse(dataJson);
@@ -184,15 +189,15 @@ export default {
         .dispatch("user/otherLogin", {
           appid: appid,
           code: this.otherQuery.code,
-          state: this.otherQuery.state
+          state: this.otherQuery.state,
         })
-        .then(res => {
+        .then((res) => {
           this.loginLoading = false;
           if (res.meta.code == "RESP_OKAY") {
             this.$message({
               message: this.$t("tip.loginSuccess"),
               type: "success",
-              duration: 3 * 1000
+              duration: 3 * 1000,
             });
             this.$router.replace("/");
             // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
@@ -200,14 +205,14 @@ export default {
             this.$message({
               message: res.meta.message,
               type: "error",
-              duration: 3 * 1000
+              duration: 3 * 1000,
             });
           }
         });
     },
     // 获取公司信息
     getSystemInfo() {
-      this.$store.dispatch("user/icoSetting").then(res => {
+      this.$store.dispatch("user/icoSetting").then((res) => {
         let { front_system_inside_logo, front_system_name, front_system_title_logo } = res;
         this.companyLogo = front_system_inside_logo; // 公司logo
         this.companyName = front_system_name; // 公司名称
@@ -217,16 +222,16 @@ export default {
     },
     // 登录
     handleLogin() {
-      this.$refs.ruleForm.validate(valid => {
+      this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.loginLoading = true;
           this.$store
             .dispatch("user/login", {
               username: this.ruleForm.username,
               pwd: this.ruleForm.password,
-              company: ""
+              company: "",
             })
-            .then(res => {
+            .then((res) => {
               this.loginLoading = false;
               if (res.meta.code == "RESP_OKAY") {
                 this.$router.replace("/");
@@ -241,7 +246,7 @@ export default {
       if (this.appid == "" || this.agentid == "") {
         this.$message({
           message: "未设置企业微信登录",
-          type: "error"
+          type: "error",
         });
         return false;
       }
@@ -256,8 +261,9 @@ export default {
         window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${
           this.wxAppid
         }&redirect_uri=${encodeURIComponent(
-          "http://www.iot-oa.com/#/login"
+          "https://jctest.iot-oa.com/#/login"
         )}&response_type=code&scope=snsapi_login&state=wechat#wechat_redirect`;
+
       }
     },
     getOtherQuery(query) {
@@ -273,8 +279,8 @@ export default {
       this.$store.dispatch("app/setLanguage", lang);
       // 重新刷新页面
       window.location.reload();
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
