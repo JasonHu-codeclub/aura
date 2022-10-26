@@ -83,3 +83,15 @@ export function serviceCenterApi (data, id) {
       data
   })
 }
+
+
+
+// 微信扫码授权code登录
+export function authAppletLoginApi (data) {
+  return request({
+    url: "/auth/open_platform/login",
+    method: "post",
+     data,
+     headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
+  })
+}

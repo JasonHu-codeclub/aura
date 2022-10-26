@@ -96,16 +96,33 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
         </div>
       </div>
       <div class="login-content-name">{{ companyName }}</div>
+
+      <wxlogin
+        v-if="isWxin"
+        :appid="wxAppid"
+        :scope="scope"
+        :redirect_uri="redirect_uri"
+        :theme="'black'"
+        :href="
+            'data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlIHsNCiAgZGlzcGxheTogbm9uZTsNCn0NCi5pbXBvd2VyQm94IC5zdGF0dXMuc3RhdHVzX2Jyb3dzZXIgew0KICBkaXNwbGF5OiBub25lOw0KfQ0KLmltcG93ZXJCb3ggLnFyY29kZSB7DQogIGJvcmRlcjogbm9uZTsNCiAgd2lkdGg6IDIwMHB4Ow0KICBoZWlnaHQ6IDIwMHB4Ow0KfQ0KLmltcG93ZXJCb3ggLnN0YXR1c3sNCiAgZGlzcGxheTogbm9uZQ0KfQ=='
+          "
+        rel="external nofollow" 
+        ></wxlogin>
     </div>
   </div>
 </template>
 <script>
 import { imgBaseUrl, initToken } from "@/utils/varible";
 import { getHost, decrypt, setIcon } from "@/utils/tool";
+import { authAppletLoginApi } from "@/api/user";
+import wxlogin from "vue-wxlogin";
 export default {
-  components: {},
+  components: { wxlogin },
   data() {
     return {
+      redirect_uri: "",
+      scope: "snsapi_login",
+      isWxin: false,
       host: imgBaseUrl,
       baseImg: require("../../assets/logo.png"),
       loginLoading: false,
@@ -132,7 +149,7 @@ export default {
       redirect: undefined,
       appid: "", // 企业号
       agentid: "", // 自建应用ID
-      wxAppid: "wx633cde8a865d394e", // 微信开放平台appid
+      wxAppid: "wx85a71682d259d702", // 微信开放平台appid
       AppSecret: "", // 应用密钥AppSecret
       otherQuery: {}, // 回调参数
       companyLogo: "", // 公司logo
@@ -141,6 +158,7 @@ export default {
   },
   computed: {},
   created() {
+     this.redirect_uri = getHost() + "/sp-pcmeet/#/login";
     // 获取企业号appid,agentid
     this.getAppidInfo();
     // 获取公司信息
@@ -159,15 +177,51 @@ export default {
     $route: {
       handler: function (route) {
         const query = route.query;
+        console.log(query);
         if (query) {
-          this.redirect = query.redirect;
-          this.otherQuery = this.getOtherQuery(query);
+          if (query.state == "wechat" && query.code) {
+            this.getAuthAppletLogin(query.code);
+          } else {
+            this.redirect = query.redirect;
+            this.otherQuery = this.getOtherQuery(query);
+          }
         }
       },
       immediate: true,
     },
+    //   $route: {
+    //     handler: function(val, oldVal) {
+    //       console.log(val,oldVal)
+    //     },
+    //     immediate: true,
+    //      deep:true,
+
+    // },
   },
   methods: {
+    //code登入
+    getAuthAppletLogin(code) {
+      this.loginLoading = true;
+      authAppletLoginApi({ code: code }).then((res) => {
+        this.loginLoading = false;
+        if (res.meta.code == "RESP_OKAY") {
+          this.$message({
+            message: this.$t("tip.loginSuccess"),
+            type: "success",
+            duration: 3 * 1000,
+          });
+          this.$router.replace("/");
+          // this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
+        } else {
+          this.$message({
+            message: res.meta.message,
+            type: "error",
+            duration: 3 * 1000,
+          });
+        }
+      });
+    },
+
     // 获取企业号appid,agentid
     getAppidInfo() {
       this.$store.dispatch("user/getQywechatConfig").then((res) => {
@@ -250,20 +304,20 @@ export default {
         });
         return false;
       }
-      const redirect_uri = getHost() + "/sp-pcmeet/#/login";
+
       if (type === "qiye") {
         // 企业微信
         window.location.href = `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${
           this.appid
-        }&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(redirect_uri)}&state=qiye`;
+        }&agentid=${this.agentid}&redirect_uri=${encodeURIComponent(this.redirect_uri)}&state=qiye`;
       } else if (type === "wechat") {
+        // this.isWxin = true;
         // 微信登录
-        window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${
-          this.wxAppid
-        }&redirect_uri=${encodeURIComponent(
-          "https://jctest.iot-oa.com/#/login"
-        )}&response_type=code&scope=snsapi_login&state=wechat#wechat_redirect`;
-
+          window.location.href = `https://open.weixin.qq.com/connect/qrconnect?appid=${
+            this.wxAppid
+          }&scope=snsapi_login&redirect_uri=${encodeURIComponent(
+            this.redirect_uri
+          )}&response_type=code&state=wechat#wechat_redirect`;
       }
     },
     getOtherQuery(query) {
@@ -463,5 +517,32 @@ export default {
       }
     }
   }
+}
+
+
+// 自定义二维码样式
+
+// .impowerBox .title {
+//  display: none;
+//  color: red;
+//  content: '微信扫一扫登录'
+// }
+// .impowerBox .status.status_browser {
+//  display: none;
+// }
+// .impowerBox .qrcode {
+//  border: none;
+//  width: 200px;
+//  height: 200px;
+// }
+// .impowerBox .status{
+//  display: none
+// }
+
+
+
+.title {
+ display: none;
+ color: red;
 }
 </style>
