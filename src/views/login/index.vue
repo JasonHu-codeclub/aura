@@ -91,6 +91,15 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
                   >{{ $t("login") }}</el-button
                 >
               </div>
+
+              <div class="submit-btn" v-if="false">
+                <el-button
+                  type="primary"
+                  @click.native.prevent="handleLogin2()"
+                  :loading="loginLoading"
+                  >{{ $t("login") }}</el-button
+                >
+              </div>
             </el-form>
           </div>
         </div>
@@ -156,8 +165,8 @@ export default {
   },
   computed: {},
   created() {
-    this.redirect_uri = "https://jctest.iot-oa.com" + "/sp-pcmeet/#/login";
-    //  this.redirect_uri = getHost() + "/sp-pcmeet/#/login";
+    // this.redirect_uri = "https://jctest.iot-oa.com" + "/sp-pcmeet/#/login";
+     this.redirect_uri = getHost() + "/sp-pcmeet/#/login";
     // 获取企业号appid,agentid
     this.getAppidInfo();
     // 获取公司信息
@@ -221,6 +230,15 @@ export default {
               type: "error",
               duration: 3 * 1000,
             });
+            //跳转至验证码登入页面
+            if (res.meta.code == "AUTH_0010") {
+              this.$router.push({
+                path: "message",
+                query: {
+                  unionid: res.data.unionid,
+                },
+              });
+            }
           }
         });
     },
@@ -297,6 +315,11 @@ export default {
             });
         }
       });
+    },
+
+    // 登录
+    handleLogin2() {
+      this.$router.push("/message");
     },
     // 第三方登录
     handleLoginType(type) {

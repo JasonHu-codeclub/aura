@@ -29,10 +29,20 @@ export const constantRoutes = [
   // 登录
   {
     path: '/login',
-    component: () => import('@views/login'),
+    component: () => import('@views/login/index'),
     name: 'Login',
     hidden: true
   },
+
+  // 登录
+  {
+    path: '/message',
+    component: () => import('@views/login/message'),
+    name: 'Message',
+    hidden: true
+  },
+
+
   {
     path: '/profile',
     component: Layout,

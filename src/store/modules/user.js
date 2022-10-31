@@ -6,7 +6,7 @@
  * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Reserved.
  */
 import { getSystemInfoApi, getWebInfoApi, getQywechatConfigApi } from '@/api/appoint'
-import { loginApi, logoutApi, getInfoApi, getCodeApi, qyWechatLoginApi , authAppletLoginApi } from '@api/user'
+import { loginApi, logoutApi, getInfoApi, getCodeApi, qyWechatLoginApi , authAppletLoginApi,authOpenPlatformValidationLoginApi } from '@api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { setIcon } from '@/utils/tool'
 import router, { resetRouter } from '@/router'
@@ -139,6 +139,27 @@ const actions = {
     })
   },
 
+
+    // 短信登录 
+    messageLogin({ commit }, data) {
+     
+      return new Promise((resolve, reject) => {
+        authOpenPlatformValidationLoginApi(data).then(response => {
+          if (response && response.meta.code == "RESP_OKAY") {
+            // const { data: { userinfo: { token } } } = response
+            let token=response.data.token;
+            /* cookie保存 */
+            commit('SET_TOKEN', token)
+            setToken(token)
+          }
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+  
+  
 
 
   // 获取用户个人信息

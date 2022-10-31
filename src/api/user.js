@@ -9,7 +9,7 @@ import request from "@utils/request.js"
 
 
 // 登录
-export function loginApi (data) {
+export function loginApi(data) {
   return request({
     url: "/auth/sign-in",
     method: "post",
@@ -20,7 +20,7 @@ export function loginApi (data) {
 
 
 // 获取系统前台信息
-export function getSystemInfoApi (data) {
+export function getSystemInfoApi(data) {
   return request({
     url: "/get-front-system-info",
     method: "get",
@@ -30,7 +30,7 @@ export function getSystemInfoApi (data) {
 }
 
 // 获取用户信息
-export function qyWechatLoginApi (data) {
+export function qyWechatLoginApi(data) {
   return request({
     url: "/wechat/login",
     method: "get",
@@ -39,7 +39,7 @@ export function qyWechatLoginApi (data) {
 }
 
 // 登出
-export function logoutApi (data) {
+export function logoutApi(data) {
   return request({
     url: "/auth/sign-out",
     method: "post",
@@ -49,7 +49,7 @@ export function logoutApi (data) {
 
 
 // 获取用户信息
-export function getInfoApi (data) {
+export function getInfoApi(data) {
   return request({
     url: "/user/get-me",
     method: "get",
@@ -58,7 +58,7 @@ export function getInfoApi (data) {
 }
 
 // 获取是否已经登录凭证
-export function getCodeApi (data) {
+export function getCodeApi(data) {
   return request({
     url: "/user/get_code",
     method: "get",
@@ -67,7 +67,7 @@ export function getCodeApi (data) {
 }
 
 // 确认密码
-export function resetPassApi (data) {
+export function resetPassApi(data) {
   return request({
     url: "/personal-center/password",
     method: "put",
@@ -76,22 +76,65 @@ export function resetPassApi (data) {
 }
 
 // 个人中心修改
-export function serviceCenterApi (data, id) {
+export function serviceCenterApi(data, id) {
   return request({
-      url: "/personal-center/" + id,
-      method: "post",
-      data
+    url: "/personal-center/" + id,
+    method: "post",
+    data
   })
 }
 
 
 
 // 微信扫码授权code登录
-export function authAppletLoginApi (data) {
+export function authAppletLoginApi(data) {
   return request({
     url: "/auth/open_platform/login",
     method: "post",
-     data,
-     headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
+    data,
+    headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
+  })
+}
+
+
+
+
+
+// 微信开放平台登录-发送验证码
+export function authOpenPlatformCodeApi(data) {
+  return request({
+    url: "/auth/open_platform/code",
+    method: "post",
+    data,
+    headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
+  })
+}
+
+
+
+
+
+// 微信开房平台登录-短信验证登录
+export function authOpenPlatformValidationLoginApi(data) {
+  return request({
+    url: "/auth/open_platform/validation/login",
+    method: "post",
+    data,
+    headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
+  })
+}
+
+
+
+
+
+// 小程序邀请码
+export function getAuthInviteSmallProgramCodeApi(data) {
+  return request({
+    url: "/auth/invite/small_program_code",
+    method: "get",
+    params: data || {},
+    headers: { 'X-USER-TOKEN': '8ISrMLiQiPS6fqEculxFwJjcMMtIjvbDTblLoRSaAZlTF3Mf8jmSFKS2wqa8tU7KvZPuTzAhDan3FiVqNNrSbCvfWmRRKmAguE84rF7G1wK2pztasFQYVHEEXdEz3jsF' },
+
   })
 }

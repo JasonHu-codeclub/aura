@@ -12,7 +12,7 @@ import i18n from './lang'
 import 'nprogress/nprogress.css' // progress bar style
 
 // 白名单,不需要登录的路由路径
-const whiteList = ['/login']
+const whiteList = ['/login','/message']
 router.beforeEach(async (to, from, next) => {
   // 进度条开始
   NProgress.start()
