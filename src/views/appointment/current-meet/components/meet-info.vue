@@ -24,10 +24,7 @@
     </div>
 
     <div class="meeting-edit-wrap">
-      <div
-        v-if="ruleForm.approve_msg"
-        :class="['meeting-edit-conflict', bgclass]"
-      >
+      <div v-if="ruleForm.approve_msg" :class="['meeting-edit-conflict', bgclass]">
         {{ ruleForm.approve_msg }}
       </div>
       <!-- 会议信息 -->
@@ -47,11 +44,7 @@
           <div class="edit-box-item">
             <div class="edit-box-label">{{ $t("labe.equipmentOfroom") }}：</div>
             <div class="edit-box-value">
-              {{
-                ruleForm.is_secret
-                  ? "*"
-                  : ruleForm.meeting_room_equipment || "--"
-              }}
+              {{ ruleForm.is_secret ? "*" : ruleForm.meeting_room_equipment || "--" }}
             </div>
           </div>
           <!-- 预约类型 -->
@@ -67,11 +60,7 @@
         <template v-if="ruleForm.is_need_sign">
           <div
             class="edit-sign_in"
-            v-if="
-              ruleForm.status == 1 ||
-              ruleForm.status == 2 ||
-              ruleForm.status == 3
-            "
+            v-if="ruleForm.status == 1 || ruleForm.status == 2 || ruleForm.status == 3"
           >
             <span v-if="ruleForm.is_sign == 1" class="sign_item-in"
               ><i class="el-icon-circle-check"></i>{{ $t("tip.signIn") }}</span
@@ -91,9 +80,7 @@
         <div class="edit-box-list">
           <!-- 会议信息 -->
           <div class="edit-box-item">
-            <div class="edit-box-label">
-              {{ $t("placeholder.conferenceInfor") }}：
-            </div>
+            <div class="edit-box-label">{{ $t("placeholder.conferenceInfor") }}：</div>
             <div class="edit-box-value">
               <span v-if="dataType === 1 || ruleForm.can_update == 0">{{
                 ruleForm.is_secrecy ? $t("public.secret") : $t("public.public")
@@ -111,9 +98,7 @@
           </div>
           <!-- 会议主题 -->
           <div class="edit-box-item">
-            <div class="edit-box-label">
-              <i class="warring">*</i>{{ $t("message.theme") }}：
-            </div>
+            <div class="edit-box-label"><i class="warring">*</i>{{ $t("message.theme") }}：</div>
             <div class="edit-box-value">
               <el-input
                 class="input edit-box-input"
@@ -133,15 +118,9 @@
           <template v-if="ruleForm.category == 2">
             <!-- 重复开始时间 -->
             <div class="edit-box-item">
-              <div class="edit-box-label">
-                {{ $t("message.repeatStartTime") }}：
-              </div>
+              <div class="edit-box-label">{{ $t("message.repeatStartTime") }}：</div>
               <div class="edit-box-value">
-                <el-input
-                  class="input edit-box-input"
-                  v-model="ruleForm.date"
-                  disabled
-                ></el-input>
+                <el-input class="input edit-box-input" v-model="ruleForm.date" disabled></el-input>
               </div>
             </div>
             <!-- 重复截止时间 -->
@@ -153,9 +132,7 @@
                   v-model="ruleForm.repetition_end_date"
                   disabled
                 ></el-input>
-                <span class="edit-box-total">{{
-                  ruleForm.repetition_count
-                }}</span>
+                <span class="edit-box-total">{{ ruleForm.repetition_count }}</span>
               </div>
               <div class="edit-box-repeat_time">{{ $t("message.term") }}</div>
             </div>
@@ -164,11 +141,7 @@
           <div class="edit-box-item">
             <div class="edit-box-label">{{ $t("message.meetingTime") }}：</div>
             <div class="edit-box-value">
-              <el-input
-                class="input edit-box-input"
-                v-model="meetTime"
-                disabled
-              ></el-input>
+              <el-input class="input edit-box-input" v-model="meetTime" disabled></el-input>
             </div>
           </div>
           <!-- 会议类型 -->
@@ -193,9 +166,7 @@
 
           <!-- 内部参会人 -->
           <div class="edit-box-item">
-            <div class="edit-box-label">
-              {{ $t("message.internalParticipants") }}：
-            </div>
+            <div class="edit-box-label">{{ $t("message.internalParticipants") }}：</div>
             <div class="edit-box-value">
               <span
                 class="edit-box-value border"
@@ -210,13 +181,8 @@
             </div>
           </div>
           <!-- 外部参会人 -->
-          <div
-            class="edit-box-item"
-            v-if="ruleForm.external_participants_show == 1"
-          >
-            <div class="edit-box-label">
-              {{ $t("message.externalParticipants") }}：
-            </div>
+          <div class="edit-box-item" v-if="ruleForm.external_participants_show == 1">
+            <div class="edit-box-label">{{ $t("message.externalParticipants") }}：</div>
             <div class="edit-box-value">
               <span
                 class="edit-box-value border"
@@ -239,10 +205,7 @@
       </div>
 
       <!-- 会议服务 -->
-      <div
-        class="edit-box"
-        v-if="ruleForm.service_show == 1 || ruleForm.equipment_show == 1"
-      >
+      <div class="edit-box" v-if="ruleForm.service_show == 1 || ruleForm.equipment_show == 1">
         <div class="edit-box-title">{{ $t("route.service") }}</div>
         <div
           class="edit-box-list"
@@ -252,9 +215,7 @@
         >
           <!-- 茶点服务 -->
           <div class="edit-box-item f-start" v-if="ruleForm.service_show == 1">
-            <div class="edit-box-label margin-top-10">
-              {{ $t("message.Refreshment") }}：
-            </div>
+            <div class="edit-box-label margin-top-10">{{ $t("message.Refreshment") }}：</div>
             <div class="edit-box-value">
               <el-select
                 v-model="ruleForm.serviceId"
@@ -282,9 +243,7 @@
                   v-for="(item, index) in serveListArr"
                   :key="index"
                 >
-                  <span
-                    class="edit-refreshment-label"
-                    :class="{ highlight: item.value > 0 }"
+                  <span class="edit-refreshment-label" :class="{ highlight: item.value > 0 }"
                     >{{ item.name }}：</span
                   >
                   <el-input
@@ -308,9 +267,7 @@
             class="edit-box-item"
             v-if="ruleForm.equipment_show == 1 && equipmentList.length != 0"
           >
-            <div class="edit-box-label">
-              {{ $t("message.equipmentServices") }}：
-            </div>
+            <div class="edit-box-label">{{ $t("message.equipmentServices") }}：</div>
             <div class="edit-box-value">
               <el-select
                 v-model="checkListEquipment"
@@ -345,9 +302,7 @@
         <div class="edit-box-list">
           <!-- 备注 -->
           <div class="edit-box-item f-start">
-            <span class="edit-box-label margin-top-10"
-              >{{ $t("message.remarks2") }}：</span
-            >
+            <span class="edit-box-label margin-top-10">{{ $t("message.remarks2") }}：</span>
             <el-input
               type="textarea"
               class="input edit-box-input"
@@ -361,9 +316,7 @@
           </div>
           <!-- 拒绝原因 -->
           <div class="edit-box-item" v-if="ruleForm.refuse_reason">
-            <div class="edit-box-label rejections">
-              {{ $t("labe.rejection") }}：
-            </div>
+            <div class="edit-box-label rejections">{{ $t("labe.rejection") }}：</div>
             <div class="edit-box-value refuse_reason">
               {{ ruleForm.refuse_reason || "--" }}
             </div>
@@ -436,22 +389,13 @@
               ></el-button>
             </div>
             <div class="error-box">
-              <div
-                class="error-box-item nameError"
-                v-if="item.nameError && !item.isEqual"
-              >
+              <div class="error-box-item nameError" v-if="item.nameError && !item.isEqual">
                 {{ $t("message.nameError") }}
               </div>
-              <div
-                class="error-box-item emailError"
-                v-if="item.mailError && !item.isEqual"
-              >
+              <div class="error-box-item emailError" v-if="item.mailError && !item.isEqual">
                 {{ $t("message.mailError") }}
               </div>
-              <div
-                class="error-box-item phoneError"
-                v-if="item.phoneError && !item.isEqual"
-              >
+              <div class="error-box-item phoneError" v-if="item.phoneError && !item.isEqual">
                 {{ $t("message.phoneError") }}
               </div>
               <div class="error-box-item mailPhoneError" v-if="item.error">
@@ -471,32 +415,19 @@
               align="center"
             ></el-table-column>
             <!-- 姓名 -->
-            <el-table-column
-              prop="name"
-              :label="$t('message.fullName')"
-              align="center"
-              width="120"
-            >
+            <el-table-column prop="name" :label="$t('message.fullName')" align="center" width="120">
               <template slot-scope="scope">
                 <span>{{ scope.row.name || "/" }}</span>
               </template>
             </el-table-column>
             <!-- 邮箱 -->
-            <el-table-column
-              prop="email"
-              :label="$t('message.mailbox')"
-              align="center"
-            >
+            <el-table-column prop="email" :label="$t('message.mailbox')" align="center">
               <template slot-scope="scope">
                 <span>{{ scope.row.email || "/" }}</span>
               </template>
             </el-table-column>
             <!-- 电话 -->
-            <el-table-column
-              prop="phone"
-              :label="$t('labe.Telephone')"
-              align="center"
-            >
+            <el-table-column prop="phone" :label="$t('labe.Telephone')" align="center">
               <template slot-scope="scope">
                 <span>{{ scope.row.phone || "/" }}</span>
               </template>
@@ -507,20 +438,15 @@
       <div slot="footer" class="dialog-footer">
         <div v-show="dataType === 2" class="footer-tips">
           {{ $t("message.tips") }}：<span class="footer-tips-item"
-            >{{ $t("message.phoneEmailTips") }}<br />{{
-              $t("message.receiving")
-            }}</span
+            >{{ $t("message.phoneEmailTips") }}<br />{{ $t("message.receiving") }}</span
           >
         </div>
         <el-button style="margin-right: 20px" @click="extVisible = false">{{
           $t("button.cancel")
         }}</el-button>
-        <el-button
-          v-show="dataType === 2"
-          type="primary"
-          @click="addExtMeetPeople"
-          >{{ $t("button.confirm") }}</el-button
-        >
+        <el-button v-show="dataType === 2" type="primary" @click="addExtMeetPeople">{{
+          $t("button.confirm")
+        }}</el-button>
       </div>
     </el-dialog>
 
@@ -582,12 +508,7 @@
               align="center"
             ></el-table-column>
             <!-- 姓名 -->
-            <el-table-column
-              prop="name"
-              :label="$t('message.fullName')"
-              align="center"
-              width="120"
-            >
+            <el-table-column prop="name" :label="$t('message.fullName')" align="center" width="120">
               <template slot-scope="scope">
                 <span>{{ scope.row.name || "/" }}</span>
               </template>
@@ -628,12 +549,9 @@
         <el-button style="margin-right: 20px" @click="innerVisible = false">{{
           $t("button.cancel")
         }}</el-button>
-        <el-button
-          v-show="dataType === 2"
-          type="primary"
-          @click="addMeetingPeople"
-          >{{ $t("button.confirm") }}</el-button
-        >
+        <el-button v-show="dataType === 2" type="primary" @click="addMeetingPeople">{{
+          $t("button.confirm")
+        }}</el-button>
       </div>
     </el-dialog>
     <!-- /选择参会人员 -->
@@ -974,9 +892,7 @@ export default {
         case 3:
           dec += parseInt(step / month); // 重复每月
           let dates = parseFloat(start_time[0].split("-")[2]);
-          weekDec = `（${this.$t("repeatTypeList.month")}${dates}${this.$t(
-            "public.date"
-          )}）`;
+          weekDec = `（${this.$t("repeatTypeList.month")}${dates}${this.$t("public.date")}）`;
           break;
       }
       this.reapSessions = dec
@@ -987,13 +903,8 @@ export default {
     // 获取周
     getWeek(dateString) {
       let dateArray = dateString.split("-");
-      let dates = new Date(
-        dateArray[0],
-        parseInt(dateArray[1] - 1),
-        dateArray[2]
-      );
-      let week =
-        this.$t("public.weeks") + this.$t("public.week").charAt(dates.getDay());
+      let dates = new Date(dateArray[0], parseInt(dateArray[1] - 1), dateArray[2]);
+      let week = this.$t("public.weeks") + this.$t("public.week").charAt(dates.getDay());
       return week;
     },
     //  添加外部参会人弹窗
@@ -1110,9 +1021,8 @@ export default {
               //   flag = true;
               //   item.phoneError = true;
               // }
-         
-               item.phoneError = false;
-              
+
+              item.phoneError = false;
             } else {
               item.phoneError = false;
             }
@@ -1137,9 +1047,7 @@ export default {
         });
         return false;
       }
-      this.ruleForm.out_participant = JSON.parse(
-        JSON.stringify(this.outParticipantGuids)
-      );
+      this.ruleForm.out_participant = JSON.parse(JSON.stringify(this.outParticipantGuids));
       this.outParticipantHandle();
       this.extVisible = false;
     },
@@ -1150,18 +1058,17 @@ export default {
       for (var i = newArr.length - 1; i >= 0; i--) {
         var targetNode = newArr[i];
         for (var j = 0; j < i; j++) {
-          if (
-            targetNode["email"] == newArr[j]["email"] &&
-            targetNode["email"] !== ""
-          ) {
+          //邮箱或手机号码只有一个不为空，并且不重复
+          if (targetNode["email"] == "" && targetNode["phone"] == "") {
+            continue;
+          }
+
+          if (targetNode["email"] == newArr[j]["email"] && targetNode["email"] !== "") {
             targetNode["isEmailEqual"] = true;
             newArr[j]["isEmailEqual"] = true;
             same = false;
           }
-          if (
-            targetNode["phone"] == newArr[j]["phone"] &&
-            targetNode["phone"] !== ""
-          ) {
+          if (targetNode["phone"] == newArr[j]["phone"] && targetNode["phone"] !== "") {
             targetNode["isPhoneEqual"] = true;
             newArr[j]["isPhoneEqual"] = true;
             same = false;
@@ -1260,9 +1167,7 @@ export default {
       arr.forEach((item) => {
         if (item.children) {
           if (item.children.length !== 0) {
-            let names1 = depName
-              ? `${depName} / ${item["name"]}`
-              : item["name"];
+            let names1 = depName ? `${depName} / ${item["name"]}` : item["name"];
             this.transformDatabase(item.children, names1);
           } else {
             let names = depName ? `${depName}` : "";
@@ -1307,9 +1212,7 @@ export default {
         });
         return;
       }
-      let insidePar = JSON.parse(
-        JSON.stringify(this.ruleForm.inside_participant)
-      );
+      let insidePar = JSON.parse(JSON.stringify(this.ruleForm.inside_participant));
       // 内部参会人
       insidePar.map((res) => {
         delete res.department_name;
@@ -1317,9 +1220,7 @@ export default {
 
       // 外部参会人
       let outPar = JSON.parse(JSON.stringify(this.ruleForm.out_participant));
-      let outParArr = outPar.filter(
-        (res) => res.name || res.email || res.phone
-      );
+      let outParArr = outPar.filter((res) => res.name || res.email || res.phone);
       outParArr.map((res) => {
         delete res.error;
         delete res.nameError;
@@ -1397,10 +1298,7 @@ export default {
     },
 
     setMeetTime(start, end, type) {
-      let time =
-        type === 2
-          ? `${start.split(" ")[1]} - ${end.split(" ")[1]}`
-          : `${start} - ${end}`;
+      let time = type === 2 ? `${start.split(" ")[1]} - ${end.split(" ")[1]}` : `${start} - ${end}`;
       return time;
     },
     // 获取会议类型
