@@ -2,6 +2,7 @@ import zhLocale from "element-ui/lib/locale/lang/zh-CN"
 export default {
   thirdPartyAccount:'第三方账号登录',
   accountLogin:'使用账号密码登录',
+  codeLogin:'短信验证码登录',
   login:'登录',
   route: {
     home: '会议预约',
@@ -341,6 +342,13 @@ export default {
     alreadyExists: '参会人已存在',
     enterprise: '企业微信',
     wechat: '微信',
+    phoneNotEmpty: '请输入手机号',
+    codesNotEmpty: '请输入验证码',
+    reacquire:'重新获取',
+    getVerificationCode:'获取验证码',
+    remark1:'1.使用微信扫小程序码授权手机号',
+    remark2:'2.返回登录页选择微信扫一扫登录',
+    remark3:'所输入手机号需与智慧访客系统用户手机号保持一致'
   },
   weeks: {
     Monday: '周一',

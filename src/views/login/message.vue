@@ -14,7 +14,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
       <img v-else src="../../assets/type_phone.png" class="image2" alt="" @click="falg = true" />
       <div class="login-content-form" v-if="falg">
         <div class="login-content-divider">
-          <span class="divider-text"> 使用账号密码登录</span>
+          <span class="divider-text"> {{ $t("codeLogin") }}</span>
         </div>
         <div class="login-form">
           <el-form
@@ -25,11 +25,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
             hide-required-asterisk
           >
             <el-form-item label="" prop="phone">
-              <el-input
-                :placeholder="$t('tip.userNameNotEmpty')"
-                v-model="ruleForm.phone"
-                clearable
-              >
+              <el-input :placeholder="$t('tip.phoneNotEmpty')" v-model="ruleForm.phone" clearable>
                 <template slot="prepend"
                   ><img src="../../assets/phone.png" alt="" class="image1"
                 /></template>
@@ -38,7 +34,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
             <el-form-item label="" prop="code">
               <el-input
                 show-code
-                :placeholder="$t('tip.pwdNotEmpty')"
+                :placeholder="$t('tip.codesNotEmpty')"
                 v-model="ruleForm.code"
                 clearable
                 style="position: relative"
@@ -59,7 +55,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
                 @click="goCode()"
                 :loading="loginLoading"
               >
-                {{ isCode ? (second > 0 ? second + "S" : "重新获取") : "获取验证码" }}
+                {{ isCode ? (second > 0 ? second + "S" : $t("tip.reacquire")) :$t("tip.getVerificationCode")   }}
               </div>
             </el-form-item>
             <div class="submit-btn">
@@ -72,13 +68,14 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
             </div>
           </el-form>
 
-          <div class="remark">所输入手机号需与智慧访客系统用户手机号保持一致</div>
+          <div class="remark"> {{ $t("tip.remark3") }}</div>
         </div>
       </div>
 
       <div class="login-content-form" v-else>
-        <img :src="imgBase" class="image3"/>
-        <div class="remark">请使用微信扫一扫登录</div>
+        <img :src="imgBase" class="image3" />
+        <div class="remark">{{ $t("tip.remark1") }}</div>
+        <div class="remark" style="margin-top:15px;">{{ $t("tip.remark2")}}</div>
       </div>
     </div>
   </div>
@@ -109,14 +106,14 @@ export default {
         phone: [
           {
             required: true,
-            message: this.$t("tip.userNameNotEmpty"),
+            message: this.$t("tip.phoneNotEmpty"),
             trigger: "blur",
           },
         ],
         code: [
           {
             required: true,
-            message: this.$t("tip.pwdNotEmpty"),
+            message: this.$t("tip.codesNotEmpty"),
             trigger: "blur",
           },
         ],
@@ -134,7 +131,7 @@ export default {
   },
   computed: {},
   created() {
-     this.unionid = this.$route.query.unionid;
+    this.unionid = this.$route.query.unionid;
     // this.unionid = "osYXI55P_dh53Pq10a-y_pHP8I5s";
     this.getAuthInviteSmallProgramCode();
   },
@@ -274,7 +271,7 @@ export default {
         color: #333333;
         line-height: 70px;
       }
-      .image3{
+      .image3 {
         width: 300px;
         height: 300px;
       }

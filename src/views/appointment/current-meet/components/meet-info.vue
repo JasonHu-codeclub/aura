@@ -1059,20 +1059,34 @@ export default {
         var targetNode = newArr[i];
         for (var j = 0; j < i; j++) {
           //邮箱或手机号码只有一个不为空，并且不重复
-          if (targetNode["email"] == "" && targetNode["phone"] == "") {
+          if (  !targetNode["email"] &&  !targetNode["phone"]) {
             continue;
           }
 
-          if (targetNode["email"] == newArr[j]["email"] && targetNode["email"] !== "") {
+          // if (targetNode["email"] == newArr[j]["email"] && targetNode["email"] !== "") {
+          //   targetNode["isEmailEqual"] = true;
+          //   newArr[j]["isEmailEqual"] = true;
+          //   same = false;
+          // }
+          // if (targetNode["phone"] == newArr[j]["phone"] && targetNode["phone"] !== "") {
+          //   targetNode["isPhoneEqual"] = true;
+          //   newArr[j]["isPhoneEqual"] = true;
+          //   same = false;
+          // }
+
+
+          if (  targetNode["email"] && targetNode["email"] == newArr[j]["email"]) {
             targetNode["isEmailEqual"] = true;
             newArr[j]["isEmailEqual"] = true;
             same = false;
           }
-          if (targetNode["phone"] == newArr[j]["phone"] && targetNode["phone"] !== "") {
+          if (  targetNode["phone"] &&  targetNode["phone"] == newArr[j]["phone"] ) {
             targetNode["isPhoneEqual"] = true;
             newArr[j]["isPhoneEqual"] = true;
             same = false;
           }
+
+
         }
       }
       return same;

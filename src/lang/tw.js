@@ -2,6 +2,7 @@ import twLocale from "element-ui/lib/locale/lang/zh-TW"
 export default {
   thirdPartyAccount:'第三方賬號登錄',
   accountLogin:'使用賬號密碼登錄',
+  codeLogin:'簡訊驗證碼登入',
   login:'登錄',
     route: {
       home: '會議預約',
@@ -340,6 +341,13 @@ export default {
       alreadyExists: '參會人已存在',
       enterprise: '企業微信',
       wechat: '微信',
+      phoneNotEmpty: '請輸入手機號',
+      codesNotEmpty: '請輸入驗證碼',
+      reacquire:'重新獲取',
+      getVerificationCode:'獲取驗證碼',
+      remark1:'1.使用微信掃小程式碼授權手機號',
+      remark2:'2.返回登入頁選擇微信掃一掃登入',
+      remark3:'所輸入手機號需與智慧訪客系統用戶手機號保持一致'
     },
     weeks: {
       Monday: '周一',
