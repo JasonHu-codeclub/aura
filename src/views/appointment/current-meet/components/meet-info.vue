@@ -399,7 +399,7 @@
                 {{ $t("message.phoneError") }}
               </div>
               <div class="error-box-item mailPhoneError" v-if="item.error">
-                {{ $t("message.mailPhoneError") }}
+                {{ $t("message.phoneError2") }}
               </div>
             </div>
           </div>
@@ -436,7 +436,9 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <div v-show="dataType === 2" class="footer-tips">
+        <!-- <div v-show="dataType === 2" class="footer-tips"> -->
+
+          <div v-if="false"  class="footer-tips">
           {{ $t("message.tips") }}：<span class="footer-tips-item"
             >{{ $t("message.phoneEmailTips") }}<br />{{ $t("message.receiving") }}</span
           >
@@ -959,6 +961,9 @@ export default {
       }
       this.outParticipantGuids = arrExt;
       this.outParticipantVal = this.ruleForm.is_secret ? "*" : strExt;
+
+
+
     },
     // 选择外部参会人回调
     callbackForExtDialogOpen() {},
@@ -982,6 +987,10 @@ export default {
     },
     // 确认外部参会人员
     addExtMeetPeople() {
+
+
+
+        
       // 参会人名字 邮箱检验
       let flag = false;
       let other = this.outParticipantGuids.map((item) => {
@@ -995,7 +1004,8 @@ export default {
           } else {
             item.nameError = false;
           }
-          if (item.phone == "" && item.email == "") {
+          // if (item.phone == "" && item.email == "") {
+            if (item.phone == "" ) {
             flag = true;
             item.error = true;
             item.mailError = false;
@@ -1050,6 +1060,21 @@ export default {
       this.ruleForm.out_participant = JSON.parse(JSON.stringify(this.outParticipantGuids));
       this.outParticipantHandle();
       this.extVisible = false;
+
+
+      console.log("  this.outParticipantGuids",  this.outParticipantGuids)
+
+
+      if( this.outParticipantGuids[0].phone){
+      this.$alert(this.$t("tip.remark4") , this.$t("message.tips"), {
+          confirmButtonText: this.$t("button.confirm") ,
+          callback: action => {
+       
+          }
+        });
+      }
+
+
     },
     // 外部参会人校验
     checkSame(arr) {

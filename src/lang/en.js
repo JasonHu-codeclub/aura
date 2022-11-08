@@ -343,7 +343,8 @@ export default {
     getVerificationCode:'Get verification code',
     remark1:'1.Use WeChat to scan the applet code to authorize the phone number',
     remark2:'2.Return to the login page and select WeChat Scan to login',
-    remark3:"The mobile phone number entered must be consistent with the smart visitor system user's mobile phone number"
+    remark3:"The mobile phone number entered must be consistent with the smart visitor system user's mobile phone number",
+    remark4:'External visitors need to go to the Visitor Pass applet for confirmation !'
   },
   weeks: {
     Monday: 'Monday',

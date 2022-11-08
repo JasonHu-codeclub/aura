@@ -152,6 +152,7 @@ export default {
     mailError: '邮箱格式错误',
     phoneError: '电话格式错误',
     mailPhoneError: '邮箱/电话其中一个不能为空',
+    phoneError2: '电话不能为空',
     fullName: '姓名',
     mailbox: '邮箱',
     subsidiaries: '下属公司',
@@ -348,7 +349,8 @@ export default {
     getVerificationCode:'获取验证码',
     remark1:'1.使用微信扫小程序码授权手机号',
     remark2:'2.返回登录页选择微信扫一扫登录',
-    remark3:'所输入手机号需与智慧访客系统用户手机号保持一致'
+    remark3:'所输入手机号需与智慧访客系统用户手机号保持一致',
+    remark4:'外部访客需要到访客通小程序进行确认！'
   },
   weeks: {
     Monday: '周一',

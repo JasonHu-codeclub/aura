@@ -347,7 +347,8 @@ export default {
       getVerificationCode:'獲取驗證碼',
       remark1:'1.使用微信掃小程式碼授權手機號',
       remark2:'2.返回登入頁選擇微信掃一掃登入',
-      remark3:'所輸入手機號需與智慧訪客系統用戶手機號保持一致'
+      remark3:'所輸入手機號需與智慧訪客系統用戶手機號保持一致',
+      remark4:'外部訪客需要到訪客通小程式進行確認！'
     },
     weeks: {
       Monday: '周一',
