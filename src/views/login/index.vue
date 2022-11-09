@@ -43,6 +43,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
             ></span>
             <!-- 微信登录 -->
             <span
+              v-if="false"
               class="login-content-type-icon login-content-type-weixin-1"
               @click="handleLoginType('wechat')"
               :title="$t('tip.wechat')"
@@ -166,7 +167,7 @@ export default {
   computed: {},
   created() {
     // this.redirect_uri = "https://jctest.iot-oa.com" + "/sp-pcmeet/#/login";
-     this.redirect_uri = getHost() + "/sp-pcmeet/#/login";
+    this.redirect_uri = getHost() + "/sp-pcmeet/#/login";
     // 获取企业号appid,agentid
     this.getAppidInfo();
     // 获取公司信息

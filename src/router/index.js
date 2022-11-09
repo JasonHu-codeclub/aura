@@ -34,7 +34,7 @@ export const constantRoutes = [
     hidden: true
   },
 
-  // 登录
+  // 短信登录
   {
     path: '/message',
     component: () => import('@views/login/message'),
