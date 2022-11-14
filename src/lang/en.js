@@ -444,6 +444,7 @@ export default {
     week: 'day one two three four five six',
     to: 'To'
   },
+  Mettingstatus: ['To be confirmed', 'agree to attend', 'refuse to attend'],
   ...enLocale
 
 }

@@ -448,5 +448,6 @@ export default {
       week:'日一二三四五六',
       to:'至'
     },
+    mettingStatus:['待確認','同意參會','拒絕參會'],
     ...twLocale
   }

@@ -179,7 +179,10 @@
                 {{ participantVal || $t("message.promptInternalParticipants") }}
               </span>
             </div>
+       
           </div>
+          <div class="mettingStatus"> <div>   {{ $t("mettingStatus")[0] }}: </div>  <div>   {{ $t("mettingStatus")[1] }} : </div>  <div>   {{ $t("mettingStatus")[2] }} :</div> </div>
+          
           <!-- 外部参会人 -->
           <div class="edit-box-item" v-if="ruleForm.external_participants_show == 1">
             <div class="edit-box-label">{{ $t("message.externalParticipants") }}：</div>
@@ -452,10 +455,11 @@
       </div>
     </el-dialog>
 
-    <!-- 内部参会人弹窗 -->
+    <!-- 内部参会人弹窗  -->
+    <!-- :title="dataType ==2 ? $t('message.addInteParticipants') : $t("message.internalParticipants")" -->
     <el-dialog
       :width="dataType === 2 ? '890px' : '640px'"
-      :title="$t('message.addInteParticipants')"
+      :title="dataType==2?$t('message.addInteParticipants'):$t('message.internalParticipants') "
       :visible.sync="innerVisible"
       append-to-body
       :close-on-click-modal="false"
@@ -513,6 +517,26 @@
             <el-table-column prop="name" :label="$t('message.fullName')" align="center" width="120">
               <template slot-scope="scope">
                 <span>{{ scope.row.name || "/" }}</span>
+
+                <div
+                  class="button1"
+                  style="background-color: #45b574"
+                  v-if="scope.row.is_agree == 1"
+                >
+                  {{ $t("mettingStatus")[1] }}
+                </div>
+                <div
+                  class="button1"
+                  style="background-color: #f46e5c"
+                  v-if="scope.row.is_agree == 2"
+                >
+                  {{ $t("mettingStatus")[2] }}
+                </div>
+                <!--v-if="scope.row.is_agree == 0" -->
+                <div class="button1"   >
+                  {{ $t("mettingStatus")[0] }}
+                </div>
+
               </template>
             </el-table-column>
             <!-- 部门 -->
@@ -2051,7 +2075,30 @@ export default {
 /deep/.warning .el-input__inner {
   border: red 1px solid !important;
 }
+.mettingStatus{
+  padding-left: 140px;
+  width: 45%;
+  margin-bottom: 20px;
+  display: flex;
+  div{
+   width: 33%;
+    font-size: 12px;
+    color: #606266;
+  }
+}
+.button1 {
+  width: 66px;
+  height: 24px;
+  background: #2285fb;
+  border-radius: 7px;
+  font-size: 9px;
+  line-height: 24px;
+  text-align: center;
+  color: #ffffff;
+  margin: 5px 18px;
+}
 </style>
+
 <style>
 .z_index {
   z-index: 3000 !important;

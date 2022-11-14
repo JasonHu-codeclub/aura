@@ -452,6 +452,8 @@ export default {
     to:'至'
   },
 
+
+  mettingStatus:['待确认','同意参会','拒绝参会'],
   ...zhLocale
   
 
