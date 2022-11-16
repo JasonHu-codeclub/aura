@@ -195,6 +195,33 @@
             >
               {{ $t("button.edit") }}
             </el-button>
+            <el-button
+              v-if="dataType == 1"
+              :style="scope.row.can_over == 0 ? 'color:#ACBBCA' : ''"
+              type="text"
+              @click="overMeeting(scope.row)"
+              :disabled="scope.row.can_over == 0"
+            >
+              {{ $t("button.meetingClosed") }}
+            </el-button>
+            <el-button
+              type="text"
+              v-if="dataType == 1"
+              :style="scope.row.is_agree > 0 ? 'color:#ACBBCA' : ''"
+              @click="agreeMeetingInfo(scope.row)"
+              :disabled="scope.row.is_agree > 0"
+            >
+              {{ $t("button.agree") }}
+            </el-button>
+            <el-button
+              v-if="dataType == 1"
+              :style="scope.row.is_agree > 0 ? 'color:#ACBBCA' : 'color:#F78776'"
+              :disabled="scope.row.is_agree > 0"
+              type="text"
+              @click="refuseMeetingInfo(scope.row)"
+            >
+              {{ $t("button.refuse") }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -215,10 +242,44 @@
       @handleClose="handleClose"
       @hanldConfirm="hanldDeleteMeeting"
     ></dialog-cancel>
+
+    <!-- 结束 -->
+    <dialog-cancel
+      ref="over"
+      :content="cancelContent"
+      :title="cancelTitle"
+      :btnLoading="deleteBtnLoading"
+      @handleClose="handleClose"
+      @hanldConfirm="meetingSignMeeting"
+    ></dialog-cancel>
+    <!-- 同意 -->
+    <dialog-cancel
+      ref="agree"
+      :content="cancelContent"
+      :title="cancelTitle"
+      :btnLoading="deleteBtnLoading"
+      @handleClose="handleClose"
+      @hanldConfirm="meetingAgreeAttendMeeting"
+    ></dialog-cancel>
+    <!-- 拒绝 -->
+    <dialog-cancel
+      ref="refuse"
+      :content="cancelContent"
+      :title="cancelTitle"
+      :btnLoading="deleteBtnLoading"
+      @handleClose="handleClose"
+      @hanldConfirm="meetingRefushAttendMeeting"
+    ></dialog-cancel>
   </div>
 </template>
 <script>
-import { myMeetingListApi, meetCancelApi } from "@/api/currentMeet";
+import {
+  myMeetingListApi,
+  meetCancelApi,
+  meetingAgreeAttendApi,
+  meetingRefushAttendApi,
+  meetingOverApi,
+} from "@/api/currentMeet";
 import Pagination from "@/components/Pagination";
 import dialogCancel from "./dialogCancel";
 import qs from "querystring";
@@ -231,7 +292,7 @@ export default {
       searchForm: {
         user_type: "", // 用户类型
         status: [], // 状态
-        keyword: "" // 会议名称
+        keyword: "", // 会议名称
       },
       chooseDate: null, // 日期
       statusList: [], // 会议状态 0=>审批中 1=》会议中，2=》未开始，3=》已结束，4=》已拒绝,5=》已取消，6=》过期未审批
@@ -239,14 +300,14 @@ export default {
         // 当前会议状态
         { key: 1, name: this.$t("statusList.meeting") },
         { key: 0, name: this.$t("statusList.pending") },
-        { key: 2, name: this.$t("statusList.noStart") }
+        { key: 2, name: this.$t("statusList.noStart") },
       ],
       historyStatus: [
         // 历史会议状态
         { key: 3, name: this.$t("statusList.hasEnded") },
         { key: 6, name: this.$t("statusList.noApproval") },
         { key: 4, name: this.$t("statusList.hasRefused") },
-        { key: 5, name: this.$t("statusList.hasCancel") }
+        { key: 5, name: this.$t("statusList.hasCancel") },
       ],
       listStatus: [
         // 表格列表状态
@@ -256,31 +317,31 @@ export default {
         { key: 3, name: this.$t("statusList.hasEnded") },
         { key: 4, name: this.$t("statusList.hasRefused") },
         { key: 5, name: this.$t("statusList.hasCancel") },
-        { key: 6, name: this.$t("statusList.noApproval") }
+        { key: 6, name: this.$t("statusList.noApproval") },
       ],
       userList: [
         { key: 1, name: this.$t("userList.initiate") },
-        { key: 2, name: this.$t("userList.byInvitation") }
+        { key: 2, name: this.$t("userList.byInvitation") },
       ],
       paginationQuery: {
         page: 1, // 当前页
-        limit: 10 // 每页显示条目个数
+        limit: 10, // 每页显示条目个数
       },
       pickerOptions: {
         // 控制日期选择
         disabledDate(time) {
           // return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
-        }
+        },
       },
       categoryList: {
         1: this.$t("categoryList.singleAppointment"),
         2: this.$t("categoryList.repeatAppointment"),
-        3: this.$t("categoryList.crossAppointment")
+        3: this.$t("categoryList.crossAppointment"),
       },
       repetitionType: {
         1: this.$t("repeatTypeList.daily"),
         2: this.$t("repeatTypeList.weeks"),
-        3: this.$t("repeatTypeList.month")
+        3: this.$t("repeatTypeList.month"),
       },
       total: 0, // 总页数
       searchBtnStatus: false, // 查询loading
@@ -290,14 +351,14 @@ export default {
       dataLoading: false, // 列表loading
       cancelTitle: "", // 弹窗title
       cancelContent: "", // 弹窗内容
-      deleteBtnLoading: false // 弹窗确认loading
+      deleteBtnLoading: false, // 弹窗确认loading
     };
   },
   props: {
     dataType: {
       require: true,
-      type: Number
-    }
+      type: Number,
+    },
   },
   mounted() {
     // 获取数据
@@ -312,6 +373,113 @@ export default {
     this.getMyMeetingInfo();
   },
   methods: {
+    // 会议结束
+    meetingSignMeeting() {
+      let data = this.selectCurrentRowData;
+      let params = { id: data.id };
+
+      this.deleteBtnLoading = true; // 确认按钮loading
+      meetingOverApi(params).then((res) => {
+        this.deleteBtnLoading = false;
+        this.$refs.over.dialogVisible = false; // 弹框
+        if (res.meta.code == "RESP_OKAY") {
+          this.$message({
+            message: this.$t("tip.infoEditSuccess"),
+            type: "success",
+          });
+          if (this.myMeetingInfo.length == 1 && this.paginationQuery.page > 1) {
+            this.paginationQuery.page--;
+          }
+          this.getMyMeetingInfo();
+        } else {
+          this.$message({
+            message: res.meta.message,
+            type: "error",
+          });
+        }
+      });
+    },
+
+    // 会议同意请求
+    meetingAgreeAttendMeeting() {
+      let data = this.selectCurrentRowData;
+      // data.category：2 重复预约、1 单次预约
+      let params = { id: data.id };
+
+      // 取消/结束会议成功提示
+      this.deleteBtnLoading = true; // 确认按钮loading
+      meetingAgreeAttendApi(params).then((res) => {
+        this.deleteBtnLoading = false; // 确认按钮loading
+        this.$refs.agree.dialogVisible = false; // 弹框
+        if (res.meta.code == "RESP_OKAY") {
+          this.$message({
+            message: res.meta.message,
+            type: "success",
+          });
+
+          this.getMyMeetingInfo();
+        } else {
+          this.$message({
+            message: res.meta.message,
+            type: "error",
+          });
+        }
+      });
+    },
+
+    // 会议拒绝请求
+    meetingRefushAttendMeeting() {
+      let data = this.selectCurrentRowData;
+      // data.category：2 重复预约、1 单次预约
+      let params = { id: data.id };
+
+      // 取消/结束会议成功提示
+      this.deleteBtnLoading = true; // 确认按钮loading
+      meetingRefushAttendApi(params).then((res) => {
+        this.deleteBtnLoading = false; // 确认按钮loading
+        this.$refs.refuse.dialogVisible = false; // 弹框
+        if (res.meta.code == "RESP_OKAY") {
+          this.$message({
+            message: res.meta.message,
+            type: "success",
+          });
+
+          this.getMyMeetingInfo();
+        } else {
+          this.$message({
+            message: res.meta.message,
+            type: "error",
+          });
+        }
+      });
+    },
+
+    //会议结束
+    overMeeting(data) {
+      // status: 0审批中 1会议中 2未开始
+      this.$refs.over.dialogVisible = true;
+      this.selectCurrentRowData = data;
+      this.cancelTitle = this.$t("message.tips");
+
+      this.cancelContent = `确认要结束吗？`;
+    },
+
+    agreeMeetingInfo(data) {
+      this.$refs.agree.dialogVisible = true;
+      this.selectCurrentRowData = data;
+      this.cancelTitle = this.$t("message.tips");
+
+      this.cancelContent = `确认同意预约吗？`;
+    },
+    refuseMeetingInfo(data) {
+      // status: 0审批中 1会议中 2未开始
+      this.$refs.refuse.dialogVisible = true;
+      this.selectCurrentRowData = data;
+      this.cancelTitle = this.$t("message.tips");
+
+      this.cancelContent = `确认拒绝预约吗？`;
+    },
+
     // 选择日期
     inputChange() {
       this.paginationQuery.page = 1; // 当前页
@@ -325,19 +493,19 @@ export default {
         type: this.dataType,
         start_date: this.chooseDate ? this.chooseDate[0] : "",
         end_date: this.chooseDate ? this.chooseDate[1] : "",
-        ...this.searchForm
+        ...this.searchForm,
       };
       this.dataLoading = true;
       const result = await myMeetingListApi(params);
       let meetings = result.data.meetings;
-      meetings.map(v => {
+      meetings.map((v) => {
         v.satrtTime = `${v.date} ${v.start}`;
         v.endTime = `${v.end_date} ${v.end}`;
         v.categoryStr =
           v.category == 2
             ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）`
             : this.categoryList[v.category];
-        v.participant_users.map(item => {
+        v.participant_users.map((item) => {
           v.personnel = v.personnel ? v.personnel + "，" + item.nickname : item.nickname;
         });
       });
@@ -354,8 +522,8 @@ export default {
         path: meetType,
         query: {
           menu: this.dataType === 1 ? "current" : "history",
-          id: row.id
-        }
+          id: row.id,
+        },
       });
     },
     // 编辑会议
@@ -363,7 +531,7 @@ export default {
       if (row.status === 1) {
         // 会议中提示
         this.$alert(this.$t("message.meetingProgress"), this.$t("message.tips"), {
-          confirmButtonText: this.$t("button.confirm")
+          confirmButtonText: this.$t("button.confirm"),
         }).catch(() => {});
         return false;
       }
@@ -372,8 +540,8 @@ export default {
         path: "edit",
         query: {
           menu: "current",
-          id: row.id
-        }
+          id: row.id,
+        },
       });
     },
     // 取消会议
@@ -400,12 +568,12 @@ export default {
       }
       // 取消/结束会议成功提示
       this.deleteBtnLoading = true; // 确认按钮loading
-      meetCancelApi(params).then(res => {
+      meetCancelApi(params).then((res) => {
         this.deleteBtnLoading = false; // 确认按钮loading
         if (res.meta.code == "RESP_OKAY") {
           this.$message({
             message: this.$t("tip.meetCancelled"),
-            type: "success"
+            type: "success",
           });
           if (this.myMeetingInfo.length == 1 && this.paginationQuery.page > 1) {
             this.paginationQuery.page--;
@@ -419,12 +587,12 @@ export default {
     resetMeetingInfo() {
       this.paginationQuery = {
         page: 1, // 当前页
-        limit: 10 // 每页显示条目个数
+        limit: 10, // 每页显示条目个数
       };
       this.searchForm = {
         user_type: "", // 用户类型
         status: [], // 状态
-        keyword: "" // 会议名称
+        keyword: "", // 会议名称
       };
       (this.chooseDate = null), // 日期
         this.getMyMeetingInfo();
@@ -432,7 +600,7 @@ export default {
     handleClose() {
       this.cancelTitle = "";
       this.cancelContent = "";
-    }
+    },
   },
   beforeDestroy() {
     // 注销onresizes事件
@@ -442,7 +610,7 @@ export default {
   beforeCreate() {},
   beforeMount() {},
   beforeUpdate() {},
-  updated() {}
+  updated() {},
 };
 </script>
 <style lang="less" scoped>

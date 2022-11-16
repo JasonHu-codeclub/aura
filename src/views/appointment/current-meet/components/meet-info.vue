@@ -179,10 +179,13 @@
                 {{ participantVal || $t("message.promptInternalParticipants") }}
               </span>
             </div>
-       
           </div>
-          <div class="mettingStatus"> <div>   {{ $t("mettingStatus")[0] }}: </div>  <div>   {{ $t("mettingStatus")[1] }} : </div>  <div>   {{ $t("mettingStatus")[2] }} :</div> </div>
-          
+          <div class="mettingStatus" v-if="participant_confirm == '1'">
+            <div>{{ $t("mettingStatus")[0] }}: {{ mettingStatusNum0 }}</div>
+            <div>{{ $t("mettingStatus")[1] }} : {{ mettingStatusNum1 }}</div>
+            <div>{{ $t("mettingStatus")[2] }} : {{ mettingStatusNum2 }}</div>
+          </div>
+
           <!-- 外部参会人 -->
           <div class="edit-box-item" v-if="ruleForm.external_participants_show == 1">
             <div class="edit-box-label">{{ $t("message.externalParticipants") }}：</div>
@@ -441,7 +444,7 @@
       <div slot="footer" class="dialog-footer">
         <!-- <div v-show="dataType === 2" class="footer-tips"> -->
 
-          <div v-if="false"  class="footer-tips">
+        <div v-if="false" class="footer-tips">
           {{ $t("message.tips") }}：<span class="footer-tips-item"
             >{{ $t("message.phoneEmailTips") }}<br />{{ $t("message.receiving") }}</span
           >
@@ -459,7 +462,9 @@
     <!-- :title="dataType ==2 ? $t('message.addInteParticipants') : $t("message.internalParticipants")" -->
     <el-dialog
       :width="dataType === 2 ? '890px' : '640px'"
-      :title="dataType==2?$t('message.addInteParticipants'):$t('message.internalParticipants') "
+      :title="
+        dataType == 2 ? $t('message.addInteParticipants') : $t('message.internalParticipants')
+      "
       :visible.sync="innerVisible"
       append-to-body
       :close-on-click-modal="false"
@@ -517,26 +522,26 @@
             <el-table-column prop="name" :label="$t('message.fullName')" align="center" width="120">
               <template slot-scope="scope">
                 <span>{{ scope.row.name || "/" }}</span>
-
-                <div
-                  class="button1"
-                  style="background-color: #45b574"
-                  v-if="scope.row.is_agree == 1"
-                >
-                  {{ $t("mettingStatus")[1] }}
-                </div>
-                <div
-                  class="button1"
-                  style="background-color: #f46e5c"
-                  v-if="scope.row.is_agree == 2"
-                >
-                  {{ $t("mettingStatus")[2] }}
-                </div>
-                <!--v-if="scope.row.is_agree == 0" -->
-                <div class="button1"   >
-                  {{ $t("mettingStatus")[0] }}
-                </div>
-
+                <span v-if="participant_confirm == '1'">
+                  <div
+                    class="button1"
+                    style="background-color: #45b574"
+                    v-if="scope.row.is_agree == 1"
+                  >
+                    {{ $t("mettingStatus")[1] }}
+                  </div>
+                  <div
+                    class="button1"
+                    style="background-color: #f46e5c"
+                    v-if="scope.row.is_agree == 2"
+                  >
+                    {{ $t("mettingStatus")[2] }}
+                  </div>
+                  <!---->
+                  <div class="button1" v-if="scope.row.is_agree == 0">
+                    {{ $t("mettingStatus")[0] }}
+                  </div>
+                </span>
               </template>
             </el-table-column>
             <!-- 部门 -->
@@ -592,6 +597,7 @@ import {
   getServiceApi,
   getRoomEquipmentApi,
   saveMeetEditApi,
+  getSettingAppointmentConfigApi,
 } from "@/api/currentMeet";
 import bus from "@/utils/bus";
 import dayjs from "dayjs";
@@ -659,6 +665,7 @@ export default {
       },
       menuStr: "",
       bgclass: "",
+      participant_confirm: "0",
     };
   },
   props: {
@@ -679,6 +686,41 @@ export default {
         return this.ruleForm.service;
       }
     },
+
+    mettingStatusNum0() {
+      let num = 0;
+      if (this.ruleForm.inside_participant) {
+        this.ruleForm.inside_participant.map((item) => {
+          if (item.is_agree == 0) {
+            num++;
+          }
+        });
+      }
+      return num;
+    },
+
+    mettingStatusNum1() {
+      let num = 0;
+      if (this.ruleForm.inside_participant) {
+        this.ruleForm.inside_participant.map((item) => {
+          if (item.is_agree == 1) {
+            num++;
+          }
+        });
+      }
+      return num;
+    },
+    mettingStatusNum2() {
+      let num = 0;
+      if (this.ruleForm.inside_participant) {
+        this.ruleForm.inside_participant.map((item) => {
+          if (item.is_agree == 2) {
+            num++;
+          }
+        });
+      }
+      return num;
+    },
   },
 
   activated() {
@@ -694,6 +736,8 @@ export default {
   mounted() {
     // 活动菜单
     let query = this.$route.query;
+
+    this.getSettingAppointmentConfig();
     // 获取详情信息
     this.getDateilsInfo(query.id);
     this.$store.dispatch("user/setEditId", {
@@ -723,6 +767,15 @@ export default {
     bus.$on("saveInfo", this.save);
   },
   methods: {
+    //获取预约配置
+    getSettingAppointmentConfig() {
+      this.pageLoading = true;
+      getSettingAppointmentConfigApi().then(({ data }) => {
+        this.participant_confirm = data.participant_confirm == "0" ? false : true;
+        console.log(data);
+        this.pageLoading = false;
+      });
+    },
     // 获取详情
     getDateilsInfo(id) {
       let that = this;
@@ -814,6 +867,7 @@ export default {
               id: item.id,
               name: item.name,
               department_name: item.department_name,
+              is_agree: item.is_agree,
             });
             str = str ? str + "，" + item.name : item.name;
           });
@@ -985,9 +1039,6 @@ export default {
       }
       this.outParticipantGuids = arrExt;
       this.outParticipantVal = this.ruleForm.is_secret ? "*" : strExt;
-
-
-
     },
     // 选择外部参会人回调
     callbackForExtDialogOpen() {},
@@ -1011,10 +1062,6 @@ export default {
     },
     // 确认外部参会人员
     addExtMeetPeople() {
-
-
-
-        
       // 参会人名字 邮箱检验
       let flag = false;
       let other = this.outParticipantGuids.map((item) => {
@@ -1029,7 +1076,7 @@ export default {
             item.nameError = false;
           }
           // if (item.phone == "" && item.email == "") {
-            if (item.phone == "" ) {
+          if (item.phone == "") {
             flag = true;
             item.error = true;
             item.mailError = false;
@@ -1085,20 +1132,14 @@ export default {
       this.outParticipantHandle();
       this.extVisible = false;
 
+      console.log("  this.outParticipantGuids", this.outParticipantGuids);
 
-      console.log("  this.outParticipantGuids",  this.outParticipantGuids)
-
-
-      if( this.outParticipantGuids[0].phone){
-      this.$alert(this.$t("tip.remark4") , this.$t("message.tips"), {
-          confirmButtonText: this.$t("button.confirm") ,
-          callback: action => {
-       
-          }
+      if (this.outParticipantGuids[0].phone) {
+        this.$alert(this.$t("tip.remark4"), this.$t("message.tips"), {
+          confirmButtonText: this.$t("button.confirm"),
+          callback: (action) => {},
         });
       }
-
-
     },
     // 外部参会人校验
     checkSame(arr) {
@@ -1108,7 +1149,7 @@ export default {
         var targetNode = newArr[i];
         for (var j = 0; j < i; j++) {
           //邮箱或手机号码只有一个不为空，并且不重复
-          if (  !targetNode["email"] &&  !targetNode["phone"]) {
+          if (!targetNode["email"] && !targetNode["phone"]) {
             continue;
           }
 
@@ -1123,19 +1164,16 @@ export default {
           //   same = false;
           // }
 
-
-          if (  targetNode["email"] && targetNode["email"] == newArr[j]["email"]) {
+          if (targetNode["email"] && targetNode["email"] == newArr[j]["email"]) {
             targetNode["isEmailEqual"] = true;
             newArr[j]["isEmailEqual"] = true;
             same = false;
           }
-          if (  targetNode["phone"] &&  targetNode["phone"] == newArr[j]["phone"] ) {
+          if (targetNode["phone"] && targetNode["phone"] == newArr[j]["phone"]) {
             targetNode["isPhoneEqual"] = true;
             newArr[j]["isPhoneEqual"] = true;
             same = false;
           }
-
-
         }
       }
       return same;
@@ -1152,6 +1190,7 @@ export default {
           department_name: item.department_name,
           name: item.name,
           id: item.id,
+          is_agree: item.is_agree,
         };
       });
     },
@@ -1170,6 +1209,15 @@ export default {
       let arr = [];
       nodes.forEach((item, index) => {
         if (!item.children) {
+          let is_agree=0;
+      
+          this.participantGuids.forEach((ele) => {
+            if (ele.id == item.id) {
+              console.log(ele.is_agree);
+              is_agree=ele.is_agree
+            }
+          });
+          item.is_agree =is_agree ;
           arr.push(item);
         }
       });
@@ -1179,12 +1227,14 @@ export default {
       queryArr.push(...this.transformDeepArr(this.queryPeople));
       this.participantGuids.forEach((ele) => {
         const filterArr = queryArr.filter((e) => e.id === ele.id);
+
         if (filterArr.length === 0) {
           extraPeople.push(ele);
         }
       });
 
       this.participantGuids = extraPeople.concat(arr);
+      console.log(this.participantGuids);
     },
     //  删除参会人
     deleteDep(index) {
@@ -1212,6 +1262,7 @@ export default {
           id: item.id,
           name: item.name,
           department_name: item.department_name,
+          is_agree: item.is_agree,
         };
       });
       if (arr && arr.length == 0) {
@@ -2075,13 +2126,12 @@ export default {
 /deep/.warning .el-input__inner {
   border: red 1px solid !important;
 }
-.mettingStatus{
+.mettingStatus {
   padding-left: 140px;
-  width: 45%;
   margin-bottom: 20px;
   display: flex;
-  div{
-   width: 33%;
+  div {
+    width: 150px;
     font-size: 12px;
     color: #606266;
   }
