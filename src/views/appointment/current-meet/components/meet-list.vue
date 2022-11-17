@@ -206,7 +206,7 @@
             </el-button>
             <el-button
               type="text"
-              v-if="dataType == 1"
+              v-if="dataType == 1 && participant_confirm == '1'"
               :style="scope.row.is_agree > 0 ? 'color:#ACBBCA' : ''"
               @click="agreeMeetingInfo(scope.row)"
               :disabled="scope.row.is_agree > 0"
@@ -214,7 +214,7 @@
               {{ $t("button.agree") }}
             </el-button>
             <el-button
-              v-if="dataType == 1"
+              v-if="dataType == 1  && participant_confirm == '1'"
               :style="scope.row.is_agree > 0 ? 'color:#ACBBCA' : 'color:#F78776'"
               :disabled="scope.row.is_agree > 0"
               type="text"
@@ -279,6 +279,7 @@ import {
   meetingAgreeAttendApi,
   meetingRefushAttendApi,
   meetingOverApi,
+  getSettingAppointmentConfigApi
 } from "@/api/currentMeet";
 import Pagination from "@/components/Pagination";
 import dialogCancel from "./dialogCancel";
@@ -288,6 +289,7 @@ export default {
   components: { Pagination, dialogCancel }, // 分页
   data() {
     return {
+      participant_confirm: "0",
       isCurrent: 1,
       searchForm: {
         user_type: "", // 用户类型
@@ -361,6 +363,7 @@ export default {
     },
   },
   mounted() {
+    this.getSettingAppointmentConfig();
     // 获取数据
     this.getMyMeetingInfo();
     // 状态查询
@@ -373,6 +376,15 @@ export default {
     this.getMyMeetingInfo();
   },
   methods: {
+        //获取预约配置
+        getSettingAppointmentConfig() {
+      this.pageLoading = true;
+      getSettingAppointmentConfigApi().then(({ data }) => {
+        this.participant_confirm = data.participant_confirm == "0" ? false : true;
+        console.log(data);
+        this.pageLoading = false;
+      });
+    },
     // 会议结束
     meetingSignMeeting() {
       let data = this.selectCurrentRowData;
@@ -522,7 +534,8 @@ export default {
         path: meetType,
         query: {
           menu: this.dataType === 1 ? "current" : "history",
-          id: row.id,
+          id: row.id, 
+          is_agree:row.is_agree
         },
       });
     },
@@ -541,6 +554,7 @@ export default {
         query: {
           menu: "current",
           id: row.id,
+          is_agree:row.is_agree
         },
       });
     },

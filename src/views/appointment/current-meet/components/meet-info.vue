@@ -29,9 +29,42 @@
       </div>
       <!-- 会议信息 -->
       <div class="edit-box">
-        <div class="edit-box-title">
+        <!-- <div class="edit-box-title">
           {{ $t("placeholder.conferenceInfor") }}
+        </div> -->
+
+        <div class="edit-box-title">
+          <div>
+            {{ $t("placeholder.conferenceInfor") }}
+          </div>
+          <div>
+            <div v-if="ruleForm.is_need_sign === 1">
+              <img
+                class="sign-icon"
+                v-if="(ruleForm.is_sign === 1) == 1"
+                src="@/assets/icon_sign3.png"
+              />
+              <img
+                v-if="(ruleForm.is_sign === 1) != 1"
+                class="sign-icon"
+                src="@/assets/icon_sign4.png"
+              />
+              <div v-if="ruleForm.is_sign === 1" style="color: #41b172">
+                {{ $t("tip.signIn") }}
+              </div>
+              <div style="color: #fa715a" v-else>{{ $t("tip.notSignIn") }}</div>
+            </div>
+
+            <div v-if="is_agree > 0 && participant_confirm == '1'" style="margin-left: 20px">
+              <img class="sign-icon" v-if="is_agree == 1" src="@/assets/icon_sign3.png" />
+              <img v-if="is_agree != 1" class="sign-icon" src="@/assets/icon_sign4.png" />
+              <div :style="is_agree == 1 ? 'color: #41B172' : 'color: #FA715A'">
+                {{ $t("mettingStatus")[is_agree] }}
+              </div>
+            </div>
+          </div>
         </div>
+
         <div class="edit-box-list">
           <!-- 会议地点 -->
           <div class="edit-box-item">
@@ -57,7 +90,7 @@
         </div>
 
         <!-- 签到标签 -->
-        <template v-if="ruleForm.is_need_sign">
+        <!-- <template v-if="ruleForm.is_need_sign">
           <div
             class="edit-sign_in"
             v-if="ruleForm.status == 1 || ruleForm.status == 2 || ruleForm.status == 3"
@@ -69,7 +102,7 @@
               ><i class="el-icon-warning"></i>{{ $t("tip.notSignIn") }}</span
             >
           </div>
-        </template>
+        </template> -->
       </div>
 
       <!-- 基本信息 -->
@@ -666,6 +699,7 @@ export default {
       menuStr: "",
       bgclass: "",
       participant_confirm: "0",
+      is_agree: 0,
     };
   },
   props: {
@@ -727,6 +761,8 @@ export default {
     // 活动菜单
     let query = this.$route.query;
     const id = Number(query.id);
+    this.is_agree = Number(query.is_agree);
+    console.log(" this.is_agree", this.is_agree)
     if (this.dataType === 1 || id !== this.editId) {
       // 获取详情信息
       this.getDateilsInfo(id);
@@ -788,6 +824,8 @@ export default {
           return;
         }
         this.ruleForm = res.data.meeting;
+        // 等接口加上
+        // this. is_agree= this.ruleFormis_agree
         // 会议审批描述
         switch (this.ruleForm.status) {
           case 0:
@@ -1209,15 +1247,15 @@ export default {
       let arr = [];
       nodes.forEach((item, index) => {
         if (!item.children) {
-          let is_agree=0;
-      
+          let is_agree = 0;
+
           this.participantGuids.forEach((ele) => {
             if (ele.id == item.id) {
               console.log(ele.is_agree);
-              is_agree=ele.is_agree
+              is_agree = ele.is_agree;
             }
           });
-          item.is_agree =is_agree ;
+          item.is_agree = is_agree;
           arr.push(item);
         }
       });
@@ -1495,6 +1533,16 @@ export default {
       font-size: 14px;
       font-weight: 700;
       color: @textColor;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding-right: 20%;
+    }
+    .edit-box-title div {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
     }
     .edit-box-list {
       position: relative;
@@ -2146,6 +2194,12 @@ export default {
   text-align: center;
   color: #ffffff;
   margin: 5px 18px;
+}
+
+.sign-icon {
+  margin-right: 6px;
+  width: 20px;
+  height: 20px;
 }
 </style>
 
