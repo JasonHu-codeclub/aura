@@ -473,7 +473,7 @@ export default {
       this.selectCurrentRowData = data;
       this.cancelTitle = this.$t("message.tips");
 
-      this.cancelContent = `确认要结束吗？`;
+      this.cancelContent = this.$t("tip.approvalOver");
     },
 
     agreeMeetingInfo(data) {

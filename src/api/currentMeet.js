@@ -83,7 +83,7 @@ export function meetCancelApi (data) {
 
 
 
-// 会议签到
+// 结束会议
 export function meetingOverApi (data) {
   return request({
     url: "/meeting/over/"+ data.id,
