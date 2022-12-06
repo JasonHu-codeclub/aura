@@ -1173,10 +1173,10 @@ export default {
       console.log("  this.outParticipantGuids", this.outParticipantGuids);
 
       if (this.outParticipantGuids[0].phone) {
-        this.$alert(this.$t("tip.remark4"), this.$t("message.tips"), {
-          confirmButtonText: this.$t("button.confirm"),
-          callback: (action) => {},
-        });
+        // this.$alert(this.$t("tip.remark4"), this.$t("message.tips"), {
+        //   confirmButtonText: this.$t("button.confirm"),
+        //   callback: (action) => {},
+        // });
       }
     },
     // 外部参会人校验
