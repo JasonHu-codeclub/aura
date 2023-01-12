@@ -6,7 +6,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
     <transition name="sidebarLogoFade">
       <!-- <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/"> -->
       <div v-if="collapse" class="sidebar-logo-link" @click="goToHome()">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <img v-if="logo" :src="logo + '?time=' + new Date().getTime()" class="sidebar-logo" />
         <h1 v-else class="sidebar-title">{{ title }}</h1>
       </div>
       <!-- </router-link> -->
@@ -14,7 +14,7 @@ Jan * Copyright (c) 2019. 深圳奥雅纳智能科技有限公司. All Rights Re
       <div v-else class="sidebar-logo-link" @click="goToHome()">
         <img
           v-if="systemLogo"
-          :src="baseURL + systemLogo "
+          :src="baseURL + systemLogo  + '?time=' + new Date().getTime()"
           class="sidebar-logo"
         />
       </div>
