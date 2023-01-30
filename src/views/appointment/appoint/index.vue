@@ -240,7 +240,7 @@
               </div>
             </template>
             <template slot-scope="scope">
-              <time-table-cell :recordSelectTime="recordSelectTime" :scope="scope" />
+              <time-table-cell :recordSelectTime="recordSelectTime" :scope="scope"   :schedule_time_lattice="schedule_time_lattice"/>
             </template>
           </el-table-column>
         </el-table>
@@ -461,6 +461,7 @@ export default {
   },
   data() {
     return {
+      schedule_time_lattice:15,
       dialogVisible: false, // 会议室信息弹窗
       repeatNexdayDialog: false, // 重复,跨日预约弹窗
       approveDialog: false, // 冲突预约提示
@@ -1071,6 +1072,9 @@ export default {
       this.searchBtnStatus = true;
       const result = await getAppointmentApi(params);
       this.meetingRooms = result.data.meeting_rooms;
+      this.schedule_time_lattice=result.data.schedule_time_lattice;
+      console.log( this.schedule_time_lattice)
+
       // 清除选择的时间印记
       this.selectRowTime.time.startIndex = null;
       this.selectRowTime.time.endIndex = null;
