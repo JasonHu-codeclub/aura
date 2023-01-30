@@ -348,7 +348,8 @@ export default {
       remark1:'1.使用微信掃小程式碼授權手機號',
       remark2:'2.返回登入頁選擇微信掃一掃登入',
       remark3:'所輸入手機號需與智慧訪客系統用戶手機號保持一致',
-      remark4:'外部訪客需要到訪客通小程式進行確認！'
+      remark4:'外部訪客需要到訪客通小程式進行確認！',
+      approvalOver :'確認結束會議嗎?',
     },
     weeks: {
       Monday: '周一',
@@ -448,5 +449,6 @@ export default {
       week:'日一二三四五六',
       to:'至'
     },
+    mettingStatus:['待確認','同意參會','拒絕參會'],
     ...twLocale
   }

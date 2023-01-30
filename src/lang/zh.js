@@ -350,7 +350,8 @@ export default {
     remark1:'1.使用微信扫小程序码授权手机号',
     remark2:'2.返回登录页选择微信扫一扫登录',
     remark3:'所输入手机号需与智慧访客系统用户手机号保持一致',
-    remark4:'外部访客需要到访客通小程序进行确认！'
+    remark4:'外部访客需要到访客通小程序进行确认！',
+    approvalOver :'确认结束会议吗?', 
   },
   weeks: {
     Monday: '周一',
@@ -452,6 +453,8 @@ export default {
     to:'至'
   },
 
+
+  mettingStatus:['待确认','同意参会','拒绝参会'],
   ...zhLocale
   
 

@@ -79,3 +79,39 @@ export function meetCancelApi (data) {
     data
   })
 }
+
+
+
+
+// 结束会议
+export function meetingOverApi (data) {
+  return request({
+    url: "/meeting/over/"+ data.id,
+    method: "post",
+    params:  data 
+  })
+}
+// 同意参会
+export function meetingAgreeAttendApi (data) {
+  return request({
+    url: "/meeting/agree_attend/"+ data.id,
+    method: "post",
+    params:  data 
+  })
+}
+// 拒绝参会
+export function meetingRefushAttendApi (data) {
+  return request({
+    url: "/meeting/refush_attend/"+ data.id,
+    method: "post",
+    params:  data 
+  })
+}
+
+//获取预约配置
+export function getSettingAppointmentConfigApi() {
+  return request({
+    url: "/setting/appointment_config",
+    method: "get",
+  })
+}

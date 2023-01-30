@@ -29,9 +29,42 @@
       </div>
       <!-- 会议信息 -->
       <div class="edit-box">
-        <div class="edit-box-title">
+        <!-- <div class="edit-box-title">
           {{ $t("placeholder.conferenceInfor") }}
+        </div> -->
+
+        <div class="edit-box-title">
+          <div>
+            {{ $t("placeholder.conferenceInfor") }}
+          </div>
+          <div>
+            <div v-if="ruleForm.is_need_sign === 1">
+              <img
+                class="sign-icon"
+                v-if="(ruleForm.is_sign === 1) == 1"
+                src="@/assets/icon_sign3.png"
+              />
+              <img
+                v-if="(ruleForm.is_sign === 1) != 1"
+                class="sign-icon"
+                src="@/assets/icon_sign4.png"
+              />
+              <div v-if="ruleForm.is_sign === 1" style="color: #41b172">
+                {{ $t("tip.signIn") }}
+              </div>
+              <div style="color: #fa715a" v-else>{{ $t("tip.notSignIn") }}</div>
+            </div>
+
+            <div v-if="is_agree > 0 && participant_confirm == '1'" style="margin-left: 20px">
+              <img class="sign-icon" v-if="is_agree == 1" src="@/assets/icon_sign3.png" />
+              <img v-if="is_agree != 1" class="sign-icon" src="@/assets/icon_sign4.png" />
+              <div :style="is_agree == 1 ? 'color: #41B172' : 'color: #FA715A'">
+                {{ $t("mettingStatus")[is_agree] }}
+              </div>
+            </div>
+          </div>
         </div>
+
         <div class="edit-box-list">
           <!-- 会议地点 -->
           <div class="edit-box-item">
@@ -57,7 +90,7 @@
         </div>
 
         <!-- 签到标签 -->
-        <template v-if="ruleForm.is_need_sign">
+        <!-- <template v-if="ruleForm.is_need_sign">
           <div
             class="edit-sign_in"
             v-if="ruleForm.status == 1 || ruleForm.status == 2 || ruleForm.status == 3"
@@ -69,7 +102,7 @@
               ><i class="el-icon-warning"></i>{{ $t("tip.notSignIn") }}</span
             >
           </div>
-        </template>
+        </template> -->
       </div>
 
       <!-- 基本信息 -->
@@ -180,6 +213,12 @@
               </span>
             </div>
           </div>
+          <div class="mettingStatus" v-if="participant_confirm == '1'">
+            <div>{{ $t("mettingStatus")[0] }}: {{ mettingStatusNum0 }}</div>
+            <div>{{ $t("mettingStatus")[1] }} : {{ mettingStatusNum1 }}</div>
+            <div>{{ $t("mettingStatus")[2] }} : {{ mettingStatusNum2 }}</div>
+          </div>
+
           <!-- 外部参会人 -->
           <div class="edit-box-item" v-if="ruleForm.external_participants_show == 1">
             <div class="edit-box-label">{{ $t("message.externalParticipants") }}：</div>
@@ -438,7 +477,7 @@
       <div slot="footer" class="dialog-footer">
         <!-- <div v-show="dataType === 2" class="footer-tips"> -->
 
-          <div v-if="false"  class="footer-tips">
+        <div v-if="false" class="footer-tips">
           {{ $t("message.tips") }}：<span class="footer-tips-item"
             >{{ $t("message.phoneEmailTips") }}<br />{{ $t("message.receiving") }}</span
           >
@@ -452,10 +491,13 @@
       </div>
     </el-dialog>
 
-    <!-- 内部参会人弹窗 -->
+    <!-- 内部参会人弹窗  -->
+    <!-- :title="dataType ==2 ? $t('message.addInteParticipants') : $t("message.internalParticipants")" -->
     <el-dialog
       :width="dataType === 2 ? '890px' : '640px'"
-      :title="$t('message.addInteParticipants')"
+      :title="
+        dataType == 2 ? $t('message.addInteParticipants') : $t('message.internalParticipants')
+      "
       :visible.sync="innerVisible"
       append-to-body
       :close-on-click-modal="false"
@@ -513,6 +555,26 @@
             <el-table-column prop="name" :label="$t('message.fullName')" align="center" width="120">
               <template slot-scope="scope">
                 <span>{{ scope.row.name || "/" }}</span>
+                <span v-if="participant_confirm == '1'">
+                  <div
+                    class="button1"
+                    style="background-color: #45b574"
+                    v-if="scope.row.is_agree == 1"
+                  >
+                    {{ $t("mettingStatus")[1] }}
+                  </div>
+                  <div
+                    class="button1"
+                    style="background-color: #f46e5c"
+                    v-if="scope.row.is_agree == 2"
+                  >
+                    {{ $t("mettingStatus")[2] }}
+                  </div>
+                  <!---->
+                  <div class="button1" v-if="scope.row.is_agree == 0">
+                    {{ $t("mettingStatus")[0] }}
+                  </div>
+                </span>
               </template>
             </el-table-column>
             <!-- 部门 -->
@@ -568,6 +630,7 @@ import {
   getServiceApi,
   getRoomEquipmentApi,
   saveMeetEditApi,
+  getSettingAppointmentConfigApi,
 } from "@/api/currentMeet";
 import bus from "@/utils/bus";
 import dayjs from "dayjs";
@@ -635,6 +698,8 @@ export default {
       },
       menuStr: "",
       bgclass: "",
+      participant_confirm: "0",
+      is_agree: 0,
     };
   },
   props: {
@@ -655,12 +720,49 @@ export default {
         return this.ruleForm.service;
       }
     },
+
+    mettingStatusNum0() {
+      let num = 0;
+      if (this.ruleForm.inside_participant) {
+        this.ruleForm.inside_participant.map((item) => {
+          if (item.is_agree == 0) {
+            num++;
+          }
+        });
+      }
+      return num;
+    },
+
+    mettingStatusNum1() {
+      let num = 0;
+      if (this.ruleForm.inside_participant) {
+        this.ruleForm.inside_participant.map((item) => {
+          if (item.is_agree == 1) {
+            num++;
+          }
+        });
+      }
+      return num;
+    },
+    mettingStatusNum2() {
+      let num = 0;
+      if (this.ruleForm.inside_participant) {
+        this.ruleForm.inside_participant.map((item) => {
+          if (item.is_agree == 2) {
+            num++;
+          }
+        });
+      }
+      return num;
+    },
   },
 
   activated() {
     // 活动菜单
     let query = this.$route.query;
     const id = Number(query.id);
+    this.is_agree = Number(query.is_agree);
+    console.log(" this.is_agree", this.is_agree)
     if (this.dataType === 1 || id !== this.editId) {
       // 获取详情信息
       this.getDateilsInfo(id);
@@ -670,6 +772,8 @@ export default {
   mounted() {
     // 活动菜单
     let query = this.$route.query;
+
+    this.getSettingAppointmentConfig();
     // 获取详情信息
     this.getDateilsInfo(query.id);
     this.$store.dispatch("user/setEditId", {
@@ -699,6 +803,15 @@ export default {
     bus.$on("saveInfo", this.save);
   },
   methods: {
+    //获取预约配置
+    getSettingAppointmentConfig() {
+      this.pageLoading = true;
+      getSettingAppointmentConfigApi().then(({ data }) => {
+        this.participant_confirm = data.participant_confirm == "0" ? false : true;
+        console.log(data);
+        this.pageLoading = false;
+      });
+    },
     // 获取详情
     getDateilsInfo(id) {
       let that = this;
@@ -711,6 +824,8 @@ export default {
           return;
         }
         this.ruleForm = res.data.meeting;
+        // 等接口加上
+        // this. is_agree= this.ruleFormis_agree
         // 会议审批描述
         switch (this.ruleForm.status) {
           case 0:
@@ -790,6 +905,7 @@ export default {
               id: item.id,
               name: item.name,
               department_name: item.department_name,
+              is_agree: item.is_agree,
             });
             str = str ? str + "，" + item.name : item.name;
           });
@@ -961,9 +1077,6 @@ export default {
       }
       this.outParticipantGuids = arrExt;
       this.outParticipantVal = this.ruleForm.is_secret ? "*" : strExt;
-
-
-
     },
     // 选择外部参会人回调
     callbackForExtDialogOpen() {},
@@ -987,10 +1100,6 @@ export default {
     },
     // 确认外部参会人员
     addExtMeetPeople() {
-
-
-
-        
       // 参会人名字 邮箱检验
       let flag = false;
       let other = this.outParticipantGuids.map((item) => {
@@ -1005,7 +1114,7 @@ export default {
             item.nameError = false;
           }
           // if (item.phone == "" && item.email == "") {
-            if (item.phone == "" ) {
+          if (item.phone == "") {
             flag = true;
             item.error = true;
             item.mailError = false;
@@ -1061,20 +1170,14 @@ export default {
       this.outParticipantHandle();
       this.extVisible = false;
 
+      console.log("  this.outParticipantGuids", this.outParticipantGuids);
 
-      console.log("  this.outParticipantGuids",  this.outParticipantGuids)
-
-
-      if( this.outParticipantGuids[0].phone){
-      this.$alert(this.$t("tip.remark4") , this.$t("message.tips"), {
-          confirmButtonText: this.$t("button.confirm") ,
-          callback: action => {
-       
-          }
-        });
+      if (this.outParticipantGuids[0].phone) {
+        // this.$alert(this.$t("tip.remark4"), this.$t("message.tips"), {
+        //   confirmButtonText: this.$t("button.confirm"),
+        //   callback: (action) => {},
+        // });
       }
-
-
     },
     // 外部参会人校验
     checkSame(arr) {
@@ -1084,7 +1187,7 @@ export default {
         var targetNode = newArr[i];
         for (var j = 0; j < i; j++) {
           //邮箱或手机号码只有一个不为空，并且不重复
-          if (  !targetNode["email"] &&  !targetNode["phone"]) {
+          if (!targetNode["email"] && !targetNode["phone"]) {
             continue;
           }
 
@@ -1099,19 +1202,16 @@ export default {
           //   same = false;
           // }
 
-
-          if (  targetNode["email"] && targetNode["email"] == newArr[j]["email"]) {
+          if (targetNode["email"] && targetNode["email"] == newArr[j]["email"]) {
             targetNode["isEmailEqual"] = true;
             newArr[j]["isEmailEqual"] = true;
             same = false;
           }
-          if (  targetNode["phone"] &&  targetNode["phone"] == newArr[j]["phone"] ) {
+          if (targetNode["phone"] && targetNode["phone"] == newArr[j]["phone"]) {
             targetNode["isPhoneEqual"] = true;
             newArr[j]["isPhoneEqual"] = true;
             same = false;
           }
-
-
         }
       }
       return same;
@@ -1128,6 +1228,7 @@ export default {
           department_name: item.department_name,
           name: item.name,
           id: item.id,
+          is_agree: item.is_agree,
         };
       });
     },
@@ -1146,6 +1247,15 @@ export default {
       let arr = [];
       nodes.forEach((item, index) => {
         if (!item.children) {
+          let is_agree = 0;
+
+          this.participantGuids.forEach((ele) => {
+            if (ele.id == item.id) {
+              console.log(ele.is_agree);
+              is_agree = ele.is_agree;
+            }
+          });
+          item.is_agree = is_agree;
           arr.push(item);
         }
       });
@@ -1155,12 +1265,14 @@ export default {
       queryArr.push(...this.transformDeepArr(this.queryPeople));
       this.participantGuids.forEach((ele) => {
         const filterArr = queryArr.filter((e) => e.id === ele.id);
+
         if (filterArr.length === 0) {
           extraPeople.push(ele);
         }
       });
 
       this.participantGuids = extraPeople.concat(arr);
+      console.log(this.participantGuids);
     },
     //  删除参会人
     deleteDep(index) {
@@ -1188,6 +1300,7 @@ export default {
           id: item.id,
           name: item.name,
           department_name: item.department_name,
+          is_agree: item.is_agree,
         };
       });
       if (arr && arr.length == 0) {
@@ -1420,6 +1533,16 @@ export default {
       font-size: 14px;
       font-weight: 700;
       color: @textColor;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding-right: 20%;
+    }
+    .edit-box-title div {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
     }
     .edit-box-list {
       position: relative;
@@ -2051,7 +2174,35 @@ export default {
 /deep/.warning .el-input__inner {
   border: red 1px solid !important;
 }
+.mettingStatus {
+  padding-left: 140px;
+  margin-bottom: 20px;
+  display: flex;
+  div {
+    width: 150px;
+    font-size: 12px;
+    color: #606266;
+  }
+}
+.button1 {
+  width: 66px;
+  height: 24px;
+  background: #2285fb;
+  border-radius: 7px;
+  font-size: 9px;
+  line-height: 24px;
+  text-align: center;
+  color: #ffffff;
+  margin: 5px 18px;
+}
+
+.sign-icon {
+  margin-right: 6px;
+  width: 20px;
+  height: 20px;
+}
 </style>
+
 <style>
 .z_index {
   z-index: 3000 !important;
