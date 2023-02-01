@@ -167,9 +167,11 @@ export default {
           num += minute > 30 ? 1 : minute == "00" && hour != minHorr ? -1 : 0;
         } else {
           num = (hour - minHorr) * 4;
-          num += minute > 15 ? 1 : minute == "00" && hour != minHorr ? -1 : 0;
+          let count=parseInt(minute/15) ;
+          num += minute > 15 ? count: minute == "00" && hour != minHorr ? -1 : 0;
         }
 
+     
         return String(num);
       } else {
         return false;
