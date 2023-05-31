@@ -1,4 +1,5 @@
 import request from "@utils/request.js"
+import mockRequest from "@utils/mockRequest.js"
 
 // 我的会议/历史会议
 export function myMeetingListApi (data) {
@@ -112,6 +113,38 @@ export function meetingRefushAttendApi (data) {
 export function getSettingAppointmentConfigApi() {
   return request({
     url: "/setting/appointment_config",
+    method: "get",
+  })
+}
+
+// 获取软件资源信息
+export function getResourceApi() {
+  return mockRequest({
+    url: "/resource",
+    method: "get",
+  })
+}
+
+// 获取学生层次信息
+export function getStudentDegreeApi() {
+  return mockRequest({
+    url: "/studentDegree",
+    method: "get",
+  })
+}
+
+// 获取实验类型信息
+export function getActionTypeApi() {
+  return mockRequest({
+    url: "/actionType",
+    method: "get",
+  })
+}
+
+// 获取课程称号信息
+export function getCourseApi() {
+  return mockRequest({
+    url: "/course",
     method: "get",
   })
 }

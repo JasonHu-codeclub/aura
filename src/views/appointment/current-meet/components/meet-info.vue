@@ -1,96 +1,123 @@
 /* * 会议详情 */
 <template>
-  <div
-    class="app-wrap no-padding detail-wrap no-bg"
-    v-loading="formLoading"
-    :element-loading-text="$t('public.loading')"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.38)"
-  >
-    <!-- 保存 -->
+  <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules">
     <div
-      class="save-submit"
-      v-show="dataType === 2 && ruleForm.can_update != 0"
-      :style="{ top: ruleForm.approve_msg ? '38.5px' : '18.5px' }"
+      class="app-wrap no-padding detail-wrap no-bg"
+      v-loading="formLoading"
+      :element-loading-text="$t('public.loading')"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.38)"
     >
-      <el-button
-        type="button"
-        class="reservation-submit el-button--primary"
-        @click="save"
-        :loading="saveLoading"
-        round
-        >{{ $t("button.save") }}</el-button
+      <!-- 保存 -->
+      <div
+        class="save-submit"
+        v-show="dataType === 2 && ruleForm.can_update != 0"
+        :style="{ top: ruleForm.approve_msg ? '38.5px' : '18.5px' }"
       >
-    </div>
-
-    <div class="meeting-edit-wrap">
-      <div v-if="ruleForm.approve_msg" :class="['meeting-edit-conflict', bgclass]">
-        {{ ruleForm.approve_msg }}
+        <el-button
+          type="button"
+          class="reservation-submit el-button--primary"
+          @click="save(ruleFormRef)"
+          :loading="saveLoading"
+          round
+          >{{ $t("button.save") }}</el-button
+        >
       </div>
-      <!-- 会议信息 -->
-      <div class="edit-box">
-        <!-- <div class="edit-box-title">
+
+      <div class="meeting-edit-wrap">
+        <div
+          v-if="ruleForm.approve_msg"
+          :class="['meeting-edit-conflict', bgclass]"
+        >
+          {{ ruleForm.approve_msg }}
+        </div>
+        <!-- 教室信息 -->
+        <div class="edit-box">
+          <!-- <div class="edit-box-title">
           {{ $t("placeholder.conferenceInfor") }}
         </div> -->
 
-        <div class="edit-box-title">
-          <div>
-            {{ $t("placeholder.conferenceInfor") }}
-          </div>
-          <div>
-            <div v-if="ruleForm.is_need_sign === 1">
-              <img
-                class="sign-icon"
-                v-if="(ruleForm.is_sign === 1) == 1"
-                src="@/assets/icon_sign3.png"
-              />
-              <img
-                v-if="(ruleForm.is_sign === 1) != 1"
-                class="sign-icon"
-                src="@/assets/icon_sign4.png"
-              />
-              <div v-if="ruleForm.is_sign === 1" style="color: #41b172">
-                {{ $t("tip.signIn") }}
+          <div class="edit-box-title">
+            <div>
+              {{ $t("placeholder.conferenceInfor") }}
+            </div>
+            <div>
+              <div v-if="ruleForm.is_need_sign === 1">
+                <img
+                  class="sign-icon"
+                  v-if="(ruleForm.is_sign === 1) == 1"
+                  src="@/assets/icon_sign3.png"
+                />
+                <img
+                  v-if="(ruleForm.is_sign === 1) != 1"
+                  class="sign-icon"
+                  src="@/assets/icon_sign4.png"
+                />
+                <div v-if="ruleForm.is_sign === 1" style="color: #41b172">
+                  {{ $t("tip.signIn") }}
+                </div>
+                <div style="color: #fa715a" v-else>
+                  {{ $t("tip.notSignIn") }}
+                </div>
               </div>
-              <div style="color: #fa715a" v-else>{{ $t("tip.notSignIn") }}</div>
-            </div>
 
-            <div v-if="is_agree > 0 && participant_confirm == '1'" style="margin-left: 20px">
-              <img class="sign-icon" v-if="is_agree == 1" src="@/assets/icon_sign3.png" />
-              <img v-if="is_agree != 1" class="sign-icon" src="@/assets/icon_sign4.png" />
-              <div :style="is_agree == 1 ? 'color: #41B172' : 'color: #FA715A'">
-                {{ $t("mettingStatus")[is_agree] }}
+              <div
+                v-if="is_agree > 0 && participant_confirm == '1'"
+                style="margin-left: 20px"
+              >
+                <img
+                  class="sign-icon"
+                  v-if="is_agree == 1"
+                  src="@/assets/icon_sign3.png"
+                />
+                <img
+                  v-if="is_agree != 1"
+                  class="sign-icon"
+                  src="@/assets/icon_sign4.png"
+                />
+                <div
+                  :style="is_agree == 1 ? 'color: #41B172' : 'color: #FA715A'"
+                >
+                  {{ $t("mettingStatus")[is_agree] }}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="edit-box-list">
-          <!-- 会议地点 -->
-          <div class="edit-box-item">
-            <div class="edit-box-label">{{ $t("labe.meetAddress") }}：</div>
-            <div class="edit-box-value">
-              {{ ruleForm.meeting_room_name || "--" }}
+          <div class="edit-box-list">
+            <!-- 教室地址 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">{{ $t("labe.meetAddress") }}：</div>
+              <div class="edit-box-value">
+                {{ ruleForm.meeting_room_name || "--" }}
+              </div>
+            </div>
+            <!-- 教室设备 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">
+                {{ $t("labe.equipmentOfroom") }}：
+              </div>
+              <div class="edit-box-value">
+                {{
+                  ruleForm.is_secret
+                    ? "*"
+                    : ruleForm.meeting_room_equipment || "--"
+                }}
+              </div>
+            </div>
+            <!-- 预约类型 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">
+                {{ $t("labe.AppointmentType") }}：
+              </div>
+              <div class="edit-box-value">
+                {{ ruleForm.is_secret ? "*" : categoryStr || "--" }}
+              </div>
             </div>
           </div>
-          <!-- 会议设备 -->
-          <div class="edit-box-item">
-            <div class="edit-box-label">{{ $t("labe.equipmentOfroom") }}：</div>
-            <div class="edit-box-value">
-              {{ ruleForm.is_secret ? "*" : ruleForm.meeting_room_equipment || "--" }}
-            </div>
-          </div>
-          <!-- 预约类型 -->
-          <div class="edit-box-item">
-            <div class="edit-box-label">{{ $t("labe.AppointmentType") }}：</div>
-            <div class="edit-box-value">
-              {{ ruleForm.is_secret ? "*" : categoryStr || "--" }}
-            </div>
-          </div>
-        </div>
 
-        <!-- 签到标签 -->
-        <!-- <template v-if="ruleForm.is_need_sign">
+          <!-- 签到标签 -->
+          <!-- <template v-if="ruleForm.is_need_sign">
           <div
             class="edit-sign_in"
             v-if="ruleForm.status == 1 || ruleForm.status == 2 || ruleForm.status == 3"
@@ -103,523 +130,618 @@
             >
           </div>
         </template> -->
-      </div>
-
-      <!-- 基本信息 -->
-      <div class="edit-box">
-        <div class="edit-box-title">
-          {{ $t("message.essentialInformation") }}
         </div>
-        <div class="edit-box-list">
-          <!-- 会议信息 -->
-          <div class="edit-box-item">
-            <div class="edit-box-label">{{ $t("placeholder.conferenceInfor") }}：</div>
-            <div class="edit-box-value">
-              <span v-if="dataType === 1 || ruleForm.can_update == 0">{{
-                ruleForm.is_secrecy ? $t("public.secret") : $t("public.public")
-              }}</span>
-              <el-radio-group
-                v-if="dataType === 2 && ruleForm.can_update == 1"
-                v-model="ruleForm.is_secrecy"
-              >
-                <el-radio :label="0">{{ $t("message.open") }}</el-radio>
-                <el-radio v-if="ruleForm.is_secret_group" :label="1">{{
-                  $t("message.private")
-                }}</el-radio>
-              </el-radio-group>
-            </div>
+
+        <!-- 基本信息 -->
+        <div class="edit-box">
+          <div class="edit-box-title">
+            {{ $t("message.essentialInformation") }}
           </div>
-          <!-- 会议主题 -->
-          <div class="edit-box-item">
-            <div class="edit-box-label"><i class="warring">*</i>{{ $t("message.theme") }}：</div>
-            <div class="edit-box-value">
-              <el-input
-                class="input edit-box-input"
-                v-model="ruleForm.title"
-                :placeholder="$t('placeholder.theme')"
-                :class="error.title.isFocus ? 'inputError' : ''"
-                :disabled="dataType === 1 || ruleForm.can_update == 0"
-                maxlength="40"
-                show-word-limit
-                clearable
-              ></el-input>
-            </div>
-            <div class="error" v-if="error.title.isFocus">
-              {{ $t("placeholder.validateTheme") }}
-            </div>
-          </div>
-          <template v-if="ruleForm.category == 2">
-            <!-- 重复开始时间 -->
+          <div class="edit-box-list">
+            <!-- 教室信息 -->
             <div class="edit-box-item">
-              <div class="edit-box-label">{{ $t("message.repeatStartTime") }}：</div>
+              <div class="edit-box-label">
+                {{ $t("placeholder.conferenceInfor") }}：
+              </div>
               <div class="edit-box-value">
-                <el-input class="input edit-box-input" v-model="ruleForm.date" disabled></el-input>
+                <span v-if="dataType === 1 || ruleForm.can_update == 0">{{
+                  ruleForm.is_secrecy
+                    ? $t("public.secret")
+                    : $t("public.public")
+                }}</span>
+                <el-radio-group
+                  v-if="dataType === 2 && ruleForm.can_update == 1"
+                  v-model="ruleForm.is_secrecy"
+                >
+                  <el-radio :label="0">{{ $t("message.open") }}</el-radio>
+                  <el-radio v-if="ruleForm.is_secret_group" :label="1">{{
+                    $t("message.private")
+                  }}</el-radio>
+                </el-radio-group>
               </div>
             </div>
-            <!-- 重复截止时间 -->
+            <!-- 课程(项目|活动)名称 -->
             <div class="edit-box-item">
-              <div class="edit-box-label">{{ $t("message.repeatTime") }}：</div>
+              <div class="edit-box-label">
+                <i class="warring">*</i>{{ $t("message.theme") }}：
+              </div>
               <div class="edit-box-value">
                 <el-input
                   class="input edit-box-input"
-                  v-model="ruleForm.repetition_end_date"
+                  v-model="ruleForm.title"
+                  :placeholder="$t('placeholder.theme')"
+                  :class="error.title.isFocus ? 'inputError' : ''"
+                  :disabled="dataType === 1 || ruleForm.can_update == 0"
+                  maxlength="40"
+                  show-word-limit
+                  clearable
+                ></el-input>
+              </div>
+              <div class="error" v-if="error.title.isFocus">
+                {{ $t("placeholder.validateTheme") }}
+              </div>
+            </div>
+            <template v-if="ruleForm.category == 2">
+              <!-- 重复开始时间 -->
+              <div class="edit-box-item">
+                <div class="edit-box-label">
+                  {{ $t("message.repeatStartTime") }}：
+                </div>
+                <div class="edit-box-value">
+                  <el-input
+                    class="input edit-box-input"
+                    v-model="ruleForm.date"
+                    disabled
+                  ></el-input>
+                </div>
+              </div>
+              <!-- 重复截止时间 -->
+              <div class="edit-box-item">
+                <div class="edit-box-label">
+                  {{ $t("message.repeatTime") }}：
+                </div>
+                <div class="edit-box-value">
+                  <el-input
+                    class="input edit-box-input"
+                    v-model="ruleForm.repetition_end_date"
+                    disabled
+                  ></el-input>
+                  <span class="edit-box-total">{{
+                    ruleForm.repetition_count
+                  }}</span>
+                </div>
+                <div class="edit-box-repeat_time">{{ $t("message.term") }}</div>
+              </div>
+            </template>
+            <!-- 预约时间 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">
+                {{ $t("message.meetingTime") }}：
+              </div>
+              <div class="edit-box-value">
+                <el-input
+                  class="input edit-box-input"
+                  v-model="meetTime"
                   disabled
                 ></el-input>
-                <span class="edit-box-total">{{ ruleForm.repetition_count }}</span>
               </div>
-              <div class="edit-box-repeat_time">{{ $t("message.term") }}</div>
             </div>
-          </template>
-          <!-- 会议时间 -->
-          <div class="edit-box-item">
-            <div class="edit-box-label">{{ $t("message.meetingTime") }}：</div>
-            <div class="edit-box-value">
-              <el-input class="input edit-box-input" v-model="meetTime" disabled></el-input>
+            <!-- 课程性质 -->
+            <div class="edit-box-item" v-if="ruleForm.meeting_type_show == 1">
+              <div class="edit-box-label">{{ $t("message.courseType") }}：</div>
+              <div class="edit-box-value">
+                <el-select
+                  v-model="ruleForm.meeting_type_id"
+                  class="edit-box-input"
+                  :disabled="dataType === 1 || ruleForm.can_update == 0"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in meetTypeList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </div>
             </div>
-          </div>
-          <!-- 会议类型 -->
-          <div class="edit-box-item" v-if="ruleForm.meeting_type_show == 1">
-            <div class="edit-box-label">{{ $t("message.meetType") }}：</div>
-            <div class="edit-box-value">
-              <el-select
-                v-model="ruleForm.meeting_type_id"
-                class="edit-box-input"
-                :disabled="dataType === 1 || ruleForm.can_update == 0"
-                clearable
-              >
-                <el-option
-                  v-for="item in meetTypeList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
-            </div>
-          </div>
 
-          <!-- 内部参会人 -->
-          <div class="edit-box-item">
-            <div class="edit-box-label">{{ $t("message.internalParticipants") }}：</div>
-            <div class="edit-box-value">
-              <span
-                class="edit-box-value border"
-                :class="{
-                  disabled_edit: dataType === 1 || ruleForm.can_update == 0,
-                  not_allowed: ruleForm.is_secret,
-                }"
-                @click="showInnerDialog"
-              >
-                {{ participantVal || $t("message.promptInternalParticipants") }}
-              </span>
+            <!-- 内部参会人 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">
+                {{ $t("message.internalParticipants") }}：
+              </div>
+              <div class="edit-box-value">
+                <span
+                  class="edit-box-value border"
+                  :class="{
+                    disabled_edit: dataType === 1 || ruleForm.can_update == 0,
+                    not_allowed: ruleForm.is_secret,
+                  }"
+                  @click="showInnerDialog"
+                >
+                  {{
+                    participantVal || $t("message.promptInternalParticipants")
+                  }}
+                </span>
+              </div>
             </div>
-          </div>
-          <div class="mettingStatus" v-if="participant_confirm == '1'">
-            <div>{{ $t("mettingStatus")[0] }}: {{ mettingStatusNum0 }}</div>
-            <div>{{ $t("mettingStatus")[1] }} : {{ mettingStatusNum1 }}</div>
-            <div>{{ $t("mettingStatus")[2] }} : {{ mettingStatusNum2 }}</div>
-          </div>
+            <span class="booker-info">
+              {{ $t("message.departmentOfBooker") }}：
+            </span>
+            <!-- <div class="mettingStatus" v-if="participant_confirm == '1'">
+              <div>{{ $t("mettingStatus")[0] }}: {{ mettingStatusNum0 }}</div>
+              <div>{{ $t("mettingStatus")[1] }} : {{ mettingStatusNum1 }}</div>
+              <div>{{ $t("mettingStatus")[2] }} : {{ mettingStatusNum2 }}</div>
+          </div> -->
 
-          <!-- 外部参会人 -->
-          <div class="edit-box-item" v-if="ruleForm.external_participants_show == 1">
-            <div class="edit-box-label">{{ $t("message.externalParticipants") }}：</div>
-            <div class="edit-box-value">
-              <span
-                class="edit-box-value border"
-                :class="{
-                  disabled_edit: dataType === 1 || ruleForm.can_update == 0,
-                  not_allowed: ruleForm.is_secret,
-                }"
-                @click="showExtDialog"
-              >
-                {{ outParticipantVal || $t("message.addExtParticipants") }}
-              </span>
-              <!-- <el-input
+            <!-- 外部参会人 -->
+            <div
+              class="edit-box-item"
+              v-if="ruleForm.external_participants_show == 1"
+            >
+              <div class="edit-box-label">
+                {{ $t("message.externalParticipants") }}：
+              </div>
+              <div class="edit-box-value">
+                <span
+                  class="edit-box-value border"
+                  :class="{
+                    disabled_edit: dataType === 1 || ruleForm.can_update == 0,
+                    not_allowed: ruleForm.is_secret,
+                  }"
+                  @click="showExtDialog"
+                >
+                  {{ outParticipantVal || $t("message.addExtParticipants") }}
+                </span>
+                <!-- <el-input
                      class="input edit-box-input"
                      v-model="ruleForm.title"
                      :disabled="dataType===1"
                   ></el-input> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 课程(项目|活动)简况 -->
+        <div class="edit-box">
+          <div class="edit-box-title">
+            {{ $t("message.profile") }}
+          </div>
+          <div class="edit-box-list">
+            <!-- 软件资源 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">{{ $t("message.resources") }}：</div>
+              <div class="edit-box-value">
+                <el-select
+                  v-model="resourceValue"
+                  multiple
+                  class="edit-box-input"
+                  value-key="id"
+                >
+                  <el-option
+                    v-for="item in resourceList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </div>
+            </div>
+            <!-- 授课年级 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">{{ $t("message.grades") }}：</div>
+              <div class="edit-box-value">
+                <el-input
+                  v-model="ruleForm.gradesInput"
+                  maxlength="100"
+                  show-word-limit
+                  class="edit-box-input"
+                  @change="validateField('gradesInput')"
+                />
+              </div>
+            </div>
+            <!-- 所在专业 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">{{ $t("message.majors") }}：</div>
+              <div class="edit-box-value">
+                <el-input
+                  v-model="ruleForm.majorsInput"
+                  maxlength="100"
+                  show-word-limit
+                  class="edit-box-input"
+                  @change="validateField('majorsInput')"
+                />
+              </div>
+            </div>
+            <!-- 学生层次 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">
+                {{ $t("message.studentDegrees") }}：
+              </div>
+              <div class="edit-box-value">
+                <el-select
+                  v-model="ruleForm.degreeValue"
+                  placeholder="请选择学历"
+                  class="edit-box-input"
+                  @change="validateField('degreeValue')"
+                >
+                  <el-option
+                    v-for="item in studentDegreeList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  />
+                </el-select>
+              </div>
+            </div>
+            <!-- 实验类型 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">
+                {{ $t("message.actionTypes") }}：
+              </div>
+              <div class="edit-box-value">
+                <el-select
+                  v-model="actionValue"
+                  placeholder="请选择活动"
+                  class="edit-box-input"
+                >
+                  <el-option
+                    v-for="item in actionTypeList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  />
+                </el-select>
+              </div>
+            </div>
+            <!-- 课程称号 -->
+            <div class="edit-box-item">
+              <div class="edit-box-label">{{ $t("message.course") }}：</div>
+              <div class="edit-box-value">
+                <el-select v-model="courseValue" class="edit-box-input">
+                  <el-option
+                    v-for="item in courseList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  />
+                </el-select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 其他信息 -->
+        <div class="edit-box">
+          <div class="edit-box-title">{{ $t("message.otherInformation") }}</div>
+          <div class="edit-box-list">
+            <!-- 备注 -->
+            <div class="edit-box-item f-start">
+              <span class="edit-box-label margin-top-10"
+                >{{ $t("message.remarks2") }}：</span
+              >
+              <el-input
+                type="textarea"
+                class="input edit-box-input"
+                v-model="ruleForm.remark"
+                :autosize="{ minRows: 4, maxRows: 20 }"
+                :placeholder="$t('message.EnterComments')"
+                maxlength="500"
+                show-word-limit
+              ></el-input>
+            </div>
+            <!-- 拒绝原因 -->
+            <div class="edit-box-item" v-if="ruleForm.refuse_reason">
+              <div class="edit-box-label rejections">
+                {{ $t("labe.rejection") }}：
+              </div>
+              <div class="edit-box-value refuse_reason">
+                {{ ruleForm.refuse_reason || "--" }}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 会议服务 -->
-      <div class="edit-box" v-if="ruleForm.service_show == 1 || ruleForm.equipment_show == 1">
-        <div class="edit-box-title">{{ $t("route.service") }}</div>
-        <div
-          class="edit-box-list"
-          :class="{
-            'disabled_edit-box': dataType === 1 || ruleForm.can_update == 0,
-          }"
-        >
-          <!-- 茶点服务 -->
-          <div class="edit-box-item f-start" v-if="ruleForm.service_show == 1">
-            <div class="edit-box-label margin-top-10">{{ $t("message.Refreshment") }}：</div>
-            <div class="edit-box-value">
-              <el-select
-                v-model="ruleForm.serviceId"
-                multiple
-                filterable
-                allow-create
-                default-first-option
-                class="input edit-box-input"
-                @change="selectServeChange"
-                :placeholder="$t('placeholder.selectServe')"
-                :disabled="dataType === 1 || ruleForm.can_update == 0"
-                clearable
-              >
-                <el-option
-                  v-for="item in serviceList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                >
-                </el-option>
-              </el-select>
-              <div class="edit-box-service">
+      <!-- 外部参会人 -->
+      <el-dialog
+        width="700px"
+        :title="$t('message.addExtParticipants')"
+        :visible.sync="extVisible"
+        append-to-body
+        custom-class="res-dialog"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        @open="callbackForExtDialogOpen"
+      >
+        <div class="ext-content">
+          <div v-show="dataType === 2">
+            <div
+              class="item margin-bottom-10"
+              v-for="(item, index) in outParticipantGuids"
+              :key="index"
+            >
+              <div class="df ac">
+                <!-- 序号 -->
+                <span class="ext-content-num">{{ index + 1 }}.</span>
+                <!-- 名称 -->
+                <el-input
+                  :placeholder="$t('message.fullName')"
+                  class="input1"
+                  v-model="item.name"
+                  clearable
+                ></el-input>
+                <!-- 邮箱 -->
+                <el-input
+                  :placeholder="$t('message.mailbox')"
+                  class="input2"
+                  :class="{ warning: item.isEmailEqual }"
+                  v-model="item.email"
+                  clearable
+                ></el-input>
+                <!-- 电话 -->
+                <el-input
+                  :placeholder="$t('placeholder.phone')"
+                  class="input2"
+                  :class="{ warning: item.isPhoneEqual }"
+                  v-model="item.phone"
+                  oninput="value=value.replace(/^\.+|[^\d.]/g,'')"
+                  maxlength="11"
+                  clearable
+                ></el-input>
+                <!-- 新增 -->
+                <el-button
+                  type="text"
+                  class="plus-btn"
+                  icon="el-icon-circle-plus-outline"
+                  v-if="index === 0"
+                  @click="editOtherParticipant()"
+                ></el-button>
+                <!-- 删除 -->
+                <el-button
+                  type="text"
+                  class="remove-btn"
+                  icon="el-icon-remove-outline"
+                  v-else
+                  @click="editOtherParticipant(index)"
+                ></el-button>
+              </div>
+              <div class="error-box">
                 <div
-                  class="edit-box-refreshment"
-                  v-for="(item, index) in serveListArr"
-                  :key="index"
+                  class="error-box-item nameError"
+                  v-if="item.nameError && !item.isEqual"
                 >
-                  <span class="edit-refreshment-label" :class="{ highlight: item.value > 0 }"
-                    >{{ item.name }}：</span
-                  >
-                  <el-input
-                    :class="{ highlight: item.value > 0 }"
-                    v-model="item.value"
-                    controls-position="right"
-                    :min="0"
-                    :disabled="dataType === 1 || ruleForm.can_update == 0"
-                    clearable
-                    @blur="blurHandle(item)"
-                    @input="changeValueHandle(item)"
-                  >
-                    <!-- (/^[0]+[0-9]*$/gi,"") 不能以0开头-->
-                  </el-input>
+                  {{ $t("message.nameError") }}
+                </div>
+                <div
+                  class="error-box-item emailError"
+                  v-if="item.mailError && !item.isEqual"
+                >
+                  {{ $t("message.mailError") }}
+                </div>
+                <div
+                  class="error-box-item phoneError"
+                  v-if="item.phoneError && !item.isEqual"
+                >
+                  {{ $t("message.phoneError") }}
+                </div>
+                <div class="error-box-item mailPhoneError" v-if="item.error">
+                  {{ $t("message.phoneError2") }}
                 </div>
               </div>
             </div>
           </div>
-          <!-- 设备服务 -->
-          <div
-            class="edit-box-item"
-            v-if="ruleForm.equipment_show == 1 && equipmentList.length != 0"
-          >
-            <div class="edit-box-label">{{ $t("message.equipmentServices") }}：</div>
-            <div class="edit-box-value">
-              <el-select
-                v-model="checkListEquipment"
-                multiple
-                filterable
-                allow-create
-                default-first-option
-                class="input edit-box-input"
-                :placeholder="$t('placeholder.selectEquipment')"
-                :disabled="dataType === 1 || ruleForm.can_update == 0"
-                clearable
+
+          <div class="out_part" v-if="dataType === 1">
+            <el-table
+              :data="ruleForm.out_participant"
+              border
+              style="width: 100%"
+            >
+              <!-- 序号 -->
+              <el-table-column
+                :label="$t('message.serial')"
+                type="index"
+                width="60"
+                align="center"
+              ></el-table-column>
+              <!-- 姓名 -->
+              <el-table-column
+                prop="name"
+                :label="$t('message.fullName')"
+                align="center"
+                width="120"
               >
-                <el-option
-                  v-for="item in equipmentList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                >
-                </el-option>
-              </el-select>
-            </div>
-          </div>
-          <div v-if="dataType === 2" class="edit-service-tips">
-            （ {{ $t("message.serveTips") }} ）
+                <template slot-scope="scope">
+                  <span>{{ scope.row.name || "/" }}</span>
+                </template>
+              </el-table-column>
+              <!-- 邮箱 -->
+              <el-table-column
+                prop="email"
+                :label="$t('message.mailbox')"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.email || "/" }}</span>
+                </template>
+              </el-table-column>
+              <!-- 电话 -->
+              <el-table-column
+                prop="phone"
+                :label="$t('labe.Telephone')"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.phone || "/" }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
         </div>
-      </div>
+        <div slot="footer" class="dialog-footer">
+          <!-- <div v-show="dataType === 2" class="footer-tips"> -->
 
-      <!-- 其他信息 -->
-      <div class="edit-box">
-        <div class="edit-box-title">{{ $t("message.otherInformation") }}</div>
-        <div class="edit-box-list">
-          <!-- 备注 -->
-          <div class="edit-box-item f-start">
-            <span class="edit-box-label margin-top-10">{{ $t("message.remarks2") }}：</span>
+          <div v-if="false" class="footer-tips">
+            {{ $t("message.tips") }}：<span class="footer-tips-item"
+              >{{ $t("message.phoneEmailTips") }}<br />{{
+                $t("message.receiving")
+              }}</span
+            >
+          </div>
+          <el-button style="margin-right: 20px" @click="extVisible = false">{{
+            $t("button.cancel")
+          }}</el-button>
+          <el-button
+            v-show="dataType === 2"
+            type="primary"
+            @click="addExtMeetPeople"
+            >{{ $t("button.confirm") }}</el-button
+          >
+        </div>
+      </el-dialog>
+
+      <!-- 内部参会人弹窗  -->
+      <!-- :title="dataType ==2 ? $t('message.addInteParticipants') : $t("message.internalParticipants")" -->
+      <el-dialog
+        :width="dataType === 2 ? '890px' : '640px'"
+        :title="
+          dataType == 2
+            ? $t('message.addInteParticipants')
+            : $t('message.internalParticipants')
+        "
+        :visible.sync="innerVisible"
+        append-to-body
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        custom-class="res-dialog"
+        @open="callbackForInnerDialogOpen"
+      >
+        <div class="search-group" v-show="dataType === 2">
+          <div class="search-group-item">
+            {{ $t("labe.keyword") }}：
             <el-input
-              type="textarea"
-              class="input edit-box-input"
-              v-model="ruleForm.remark"
-              :autosize="{ minRows: 4, maxRows: 4 }"
-              :placeholder="$t('message.EnterComments')"
-              :disabled="dataType === 1 || ruleForm.can_update == 0"
-              maxlength="150"
-              show-word-limit
+              class="inline-input"
+              v-model="searchName"
+              clearable
+              :placeholder="$t('placeholder.departmentName')"
+              @keyup.enter.native="searchHandle"
+              @clear="clearHandle"
             ></el-input>
           </div>
-          <!-- 拒绝原因 -->
-          <div class="edit-box-item" v-if="ruleForm.refuse_reason">
-            <div class="edit-box-label rejections">{{ $t("labe.rejection") }}：</div>
-            <div class="edit-box-value refuse_reason">
-              {{ ruleForm.refuse_reason || "--" }}
-            </div>
-          </div>
+          <el-button class="search-btn" type="primary" @click="searchHandle">{{
+            $t("button.search")
+          }}</el-button>
         </div>
-      </div>
-    </div>
-
-    <!-- 外部参会人 -->
-    <el-dialog
-      width="700px"
-      :title="$t('message.addExtParticipants')"
-      :visible.sync="extVisible"
-      append-to-body
-      custom-class="res-dialog"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      @open="callbackForExtDialogOpen"
-    >
-      <div class="ext-content">
-        <div v-show="dataType === 2">
-          <div
-            class="item margin-bottom-10"
-            v-for="(item, index) in outParticipantGuids"
-            :key="index"
-          >
-            <div class="df ac">
+        <div class="df join-content">
+          <div class="left" v-show="dataType === 2">
+            <el-tree
+              class="f1"
+              :data="queryPeople"
+              :props="defaultProps"
+              show-checkbox
+              :default-expand-all="isExpand"
+              :filter-node-method="filterNode"
+              :default-expanded-keys="defaultChecked"
+              ref="tree"
+              node-key="id"
+              @check="handleNodeClick"
+              highlight-current
+            >
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <i class="el-icon-folder-opened" v-if="!node.isLeaf"></i>
+                <span>{{ node.label }}</span>
+              </span>
+            </el-tree>
+          </div>
+          <div class="right">
+            <el-table :data="participantGuids" border style="width: 100%">
               <!-- 序号 -->
-              <span class="ext-content-num">{{ index + 1 }}.</span>
-              <!-- 名称 -->
-              <el-input
-                :placeholder="$t('message.fullName')"
-                class="input1"
-                v-model="item.name"
-                clearable
-              ></el-input>
-              <!-- 邮箱 -->
-              <el-input
-                :placeholder="$t('message.mailbox')"
-                class="input2"
-                :class="{ warning: item.isEmailEqual }"
-                v-model="item.email"
-                clearable
-              ></el-input>
-              <!-- 电话 -->
-              <el-input
-                :placeholder="$t('placeholder.phone')"
-                class="input2"
-                :class="{ warning: item.isPhoneEqual }"
-                v-model="item.phone"
-                oninput="value=value.replace(/^\.+|[^\d.]/g,'')"
-                maxlength="11"
-                clearable
-              ></el-input>
-              <!-- 新增 -->
-              <el-button
-                type="text"
-                class="plus-btn"
-                icon="el-icon-circle-plus-outline"
-                v-if="index === 0"
-                @click="editOtherParticipant()"
-              ></el-button>
-              <!-- 删除 -->
-              <el-button
-                type="text"
-                class="remove-btn"
-                icon="el-icon-remove-outline"
-                v-else
-                @click="editOtherParticipant(index)"
-              ></el-button>
-            </div>
-            <div class="error-box">
-              <div class="error-box-item nameError" v-if="item.nameError && !item.isEqual">
-                {{ $t("message.nameError") }}
-              </div>
-              <div class="error-box-item emailError" v-if="item.mailError && !item.isEqual">
-                {{ $t("message.mailError") }}
-              </div>
-              <div class="error-box-item phoneError" v-if="item.phoneError && !item.isEqual">
-                {{ $t("message.phoneError") }}
-              </div>
-              <div class="error-box-item mailPhoneError" v-if="item.error">
-                {{ $t("message.phoneError2") }}
-              </div>
-            </div>
+              <el-table-column
+                :label="$t('message.serial')"
+                type="index"
+                width="60"
+                align="center"
+              ></el-table-column>
+              <!-- 姓名 -->
+              <el-table-column
+                prop="name"
+                :label="$t('message.fullName')"
+                align="center"
+                width="120"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.name || "/" }}</span>
+                  <span v-if="participant_confirm == '1'">
+                    <div
+                      class="button1"
+                      style="background-color: #45b574"
+                      v-if="scope.row.is_agree == 1"
+                    >
+                      {{ $t("mettingStatus")[1] }}
+                    </div>
+                    <div
+                      class="button1"
+                      style="background-color: #f46e5c"
+                      v-if="scope.row.is_agree == 2"
+                    >
+                      {{ $t("mettingStatus")[2] }}
+                    </div>
+                    <!---->
+                    <div class="button1" v-if="scope.row.is_agree == 0">
+                      {{ $t("mettingStatus")[0] }}
+                    </div>
+                  </span>
+                </template>
+              </el-table-column>
+              <!-- 部门 -->
+              <el-table-column
+                prop="department_name"
+                :label="$t('labe.Department')"
+                align="center"
+                show-overflow-tooltip
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.department_name || "/" }}</span>
+                </template>
+              </el-table-column>
+              <!-- 操作 -->
+              <el-table-column
+                v-if="dataType === 2"
+                :label="$t('message.operation')"
+                align="center"
+                width="80"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    class="right-delete"
+                    @click="deleteDep(scope.$index)"
+                    :disabled="dataType === 1"
+                  >
+                    {{ $t("button.delete") }}
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
         </div>
-
-        <div class="out_part" v-if="dataType === 1">
-          <el-table :data="ruleForm.out_participant" border style="width: 100%">
-            <!-- 序号 -->
-            <el-table-column
-              :label="$t('message.serial')"
-              type="index"
-              width="60"
-              align="center"
-            ></el-table-column>
-            <!-- 姓名 -->
-            <el-table-column prop="name" :label="$t('message.fullName')" align="center" width="120">
-              <template slot-scope="scope">
-                <span>{{ scope.row.name || "/" }}</span>
-              </template>
-            </el-table-column>
-            <!-- 邮箱 -->
-            <el-table-column prop="email" :label="$t('message.mailbox')" align="center">
-              <template slot-scope="scope">
-                <span>{{ scope.row.email || "/" }}</span>
-              </template>
-            </el-table-column>
-            <!-- 电话 -->
-            <el-table-column prop="phone" :label="$t('labe.Telephone')" align="center">
-              <template slot-scope="scope">
-                <span>{{ scope.row.phone || "/" }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <!-- <div v-show="dataType === 2" class="footer-tips"> -->
-
-        <div v-if="false" class="footer-tips">
-          {{ $t("message.tips") }}：<span class="footer-tips-item"
-            >{{ $t("message.phoneEmailTips") }}<br />{{ $t("message.receiving") }}</span
+        <div slot="footer" class="dialog-footer">
+          <el-button style="margin-right: 20px" @click="innerVisible = false">{{
+            $t("button.cancel")
+          }}</el-button>
+          <el-button
+            v-show="dataType === 2"
+            type="primary"
+            @click="addMeetingPeople"
+            >{{ $t("button.confirm") }}</el-button
           >
         </div>
-        <el-button style="margin-right: 20px" @click="extVisible = false">{{
-          $t("button.cancel")
-        }}</el-button>
-        <el-button v-show="dataType === 2" type="primary" @click="addExtMeetPeople">{{
-          $t("button.confirm")
-        }}</el-button>
-      </div>
-    </el-dialog>
-
-    <!-- 内部参会人弹窗  -->
-    <!-- :title="dataType ==2 ? $t('message.addInteParticipants') : $t("message.internalParticipants")" -->
-    <el-dialog
-      :width="dataType === 2 ? '890px' : '640px'"
-      :title="
-        dataType == 2 ? $t('message.addInteParticipants') : $t('message.internalParticipants')
-      "
-      :visible.sync="innerVisible"
-      append-to-body
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      custom-class="res-dialog"
-      @open="callbackForInnerDialogOpen"
-    >
-      <div class="search-group" v-show="dataType === 2">
-        <div class="search-group-item">
-          {{ $t("labe.keyword") }}：
-          <el-input
-            class="inline-input"
-            v-model="searchName"
-            clearable
-            :placeholder="$t('placeholder.departmentName')"
-            @keyup.enter.native="searchHandle"
-            @clear="clearHandle"
-          ></el-input>
-        </div>
-        <el-button class="search-btn" type="primary" @click="searchHandle">{{
-          $t("button.search")
-        }}</el-button>
-      </div>
-      <div class="df join-content">
-        <div class="left" v-show="dataType === 2">
-          <el-tree
-            class="f1"
-            :data="queryPeople"
-            :props="defaultProps"
-            show-checkbox
-            :default-expand-all="isExpand"
-            :filter-node-method="filterNode"
-            :default-expanded-keys="defaultChecked"
-            ref="tree"
-            node-key="id"
-            @check="handleNodeClick"
-            highlight-current
-          >
-            <span class="custom-tree-node" slot-scope="{ node, data }">
-              <i class="el-icon-folder-opened" v-if="!node.isLeaf"></i>
-              <span>{{ node.label }}</span>
-            </span>
-          </el-tree>
-        </div>
-        <div class="right">
-          <el-table :data="participantGuids" border style="width: 100%">
-            <!-- 序号 -->
-            <el-table-column
-              :label="$t('message.serial')"
-              type="index"
-              width="60"
-              align="center"
-            ></el-table-column>
-            <!-- 姓名 -->
-            <el-table-column prop="name" :label="$t('message.fullName')" align="center" width="120">
-              <template slot-scope="scope">
-                <span>{{ scope.row.name || "/" }}</span>
-                <span v-if="participant_confirm == '1'">
-                  <div
-                    class="button1"
-                    style="background-color: #45b574"
-                    v-if="scope.row.is_agree == 1"
-                  >
-                    {{ $t("mettingStatus")[1] }}
-                  </div>
-                  <div
-                    class="button1"
-                    style="background-color: #f46e5c"
-                    v-if="scope.row.is_agree == 2"
-                  >
-                    {{ $t("mettingStatus")[2] }}
-                  </div>
-                  <!---->
-                  <div class="button1" v-if="scope.row.is_agree == 0">
-                    {{ $t("mettingStatus")[0] }}
-                  </div>
-                </span>
-              </template>
-            </el-table-column>
-            <!-- 部门 -->
-            <el-table-column
-              prop="department_name"
-              :label="$t('labe.Department')"
-              align="center"
-              show-overflow-tooltip
-            >
-              <template slot-scope="scope">
-                <span>{{ scope.row.department_name || "/" }}</span>
-              </template>
-            </el-table-column>
-            <!-- 操作 -->
-            <el-table-column
-              v-if="dataType === 2"
-              :label="$t('message.operation')"
-              align="center"
-              width="80"
-            >
-              <template slot-scope="scope">
-                <el-button
-                  type="text"
-                  class="right-delete"
-                  @click="deleteDep(scope.$index)"
-                  :disabled="dataType === 1"
-                >
-                  {{ $t("button.delete") }}
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button style="margin-right: 20px" @click="innerVisible = false">{{
-          $t("button.cancel")
-        }}</el-button>
-        <el-button v-show="dataType === 2" type="primary" @click="addMeetingPeople">{{
-          $t("button.confirm")
-        }}</el-button>
-      </div>
-    </el-dialog>
-    <!-- /选择参会人员 -->
-  </div>
+      </el-dialog>
+      <!-- /选择参会人员 -->
+    </div>
+  </el-form>
 </template>
 
 <script>
@@ -631,27 +753,44 @@ import {
   getRoomEquipmentApi,
   saveMeetEditApi,
   getSettingAppointmentConfigApi,
+  getResourceApi,
+  getStudentDegreeApi,
+  getActionTypeApi,
+  getCourseApi,
 } from "@/api/currentMeet";
 import bus from "@/utils/bus";
 import dayjs from "dayjs";
 import { mapGetters } from "vuex";
+
 export default {
   data() {
     return {
+      ruleFormRef: "", //校验表单
+      resourceValue: ["5"], // 软件资源多选框绑定的选项对应ID，可预设默认值的ID
+      actionValue: "1", // 实验类型单选框绑定的选项对应ID
+      courseValue: "1", // 课程称号单选框绑定的选项对应ID
       formLoading: false,
       saveLoading: false,
       ruleForm: {
         is_property: "",
         repe_type: 1,
         repe_types: "",
-        remark: "",
+        remark:
+          "说明：1）每个教学空间提示的人数为，最大学生数；2）课程性质为“开放实验”，则进入开放实验室模式，仅在满足正常授课的前提下审批；3）310、316教学空间兼具课程录播功能、支持在线回放，满足公开课、讲座等的录制需要；4）软件资源“成果展示平台”，仅限为学部学生双创成果等的对外展示提供统n一稳健的外网访问环境；5）数据科学教研门户，为实验室自研的教研平台。",
         service: [],
+        gradesInput: "", // 授课年级输入框绑定的内容
+        majorsInput: "", // 所在专业输入框绑定的内容
+        degreeValue: "", // 学生层次单选框绑定的选项对应ID
       },
       participantGuids: "", // 内部参会人员id
       participantVal: "", // 内部参会人员集合
       meetTypeList: [], // 会议类型
       serviceList: [], // 茶点服务
-      equipmentList: [], // 设备信息
+      equipmentList: [], // 设备信息,
+      resourceList: [], // 软件资源
+      studentDegreeList: [], //学生层次
+      actionTypeList: [], //实验类型
+      courseList: [], //课程称号
       category: [
         "",
         this.$t("categoryList.singleAppointment"),
@@ -700,6 +839,19 @@ export default {
       bgclass: "",
       participant_confirm: "0",
       is_agree: 0,
+
+      // 配置表单输入框、单选框的校验规则
+      rules: {
+        degreeValue: [
+          { required: true, message: "请选择学历", trigger: "change" },
+        ],
+        gradesInput: [
+          { required: true, message: "请输入授课年级", trigger: "blur" },
+        ],
+        majorsInput: [
+          { required: true, message: "请输入所在专业", trigger: "blur" },
+        ],
+      },
     };
   },
   props: {
@@ -762,7 +914,7 @@ export default {
     let query = this.$route.query;
     const id = Number(query.id);
     this.is_agree = Number(query.is_agree);
-    console.log(" this.is_agree", this.is_agree)
+    console.log(" this.is_agree", this.is_agree);
     if (this.dataType === 1 || id !== this.editId) {
       // 获取详情信息
       this.getDateilsInfo(id);
@@ -784,6 +936,14 @@ export default {
     this.getMeetingTypeInfo();
     // 获取部门信息
     this.getDepartmentInfo();
+    // 获取软件资源信息
+    this.getResourceInfo();
+    // 获取学生层次数据
+    this.getStudentDegreeInfo();
+    // 获取实验类型
+    this.getActionTypeInfo();
+    // 获取课程称号
+    this.getCourseInfo();
     // 关闭或刷新页面时提示用户保存
     let _this = this;
     window.onbeforeunload = function (e) {
@@ -801,13 +961,16 @@ export default {
     };
     // 关闭标签保存会议信息
     bus.$on("saveInfo", this.save);
+    // 查看mock数据获取
+    console.log("mock的resource", this.resourceList);
   },
   methods: {
     //获取预约配置
     getSettingAppointmentConfig() {
       this.pageLoading = true;
       getSettingAppointmentConfigApi().then(({ data }) => {
-        this.participant_confirm = data.participant_confirm == "0" ? false : true;
+        this.participant_confirm =
+          data.participant_confirm == "0" ? false : true;
         console.log(data);
         this.pageLoading = false;
       });
@@ -1010,7 +1173,9 @@ export default {
         case 3:
           dec += parseInt(step / month); // 重复每月
           let dates = parseFloat(start_time[0].split("-")[2]);
-          weekDec = `（${this.$t("repeatTypeList.month")}${dates}${this.$t("public.date")}）`;
+          weekDec = `（${this.$t("repeatTypeList.month")}${dates}${this.$t(
+            "public.date"
+          )}）`;
           break;
       }
       this.reapSessions = dec
@@ -1021,8 +1186,13 @@ export default {
     // 获取周
     getWeek(dateString) {
       let dateArray = dateString.split("-");
-      let dates = new Date(dateArray[0], parseInt(dateArray[1] - 1), dateArray[2]);
-      let week = this.$t("public.weeks") + this.$t("public.week").charAt(dates.getDay());
+      let dates = new Date(
+        dateArray[0],
+        parseInt(dateArray[1] - 1),
+        dateArray[2]
+      );
+      let week =
+        this.$t("public.weeks") + this.$t("public.week").charAt(dates.getDay());
       return week;
     },
     //  添加外部参会人弹窗
@@ -1166,7 +1336,9 @@ export default {
         });
         return false;
       }
-      this.ruleForm.out_participant = JSON.parse(JSON.stringify(this.outParticipantGuids));
+      this.ruleForm.out_participant = JSON.parse(
+        JSON.stringify(this.outParticipantGuids)
+      );
       this.outParticipantHandle();
       this.extVisible = false;
 
@@ -1202,12 +1374,18 @@ export default {
           //   same = false;
           // }
 
-          if (targetNode["email"] && targetNode["email"] == newArr[j]["email"]) {
+          if (
+            targetNode["email"] &&
+            targetNode["email"] == newArr[j]["email"]
+          ) {
             targetNode["isEmailEqual"] = true;
             newArr[j]["isEmailEqual"] = true;
             same = false;
           }
-          if (targetNode["phone"] && targetNode["phone"] == newArr[j]["phone"]) {
+          if (
+            targetNode["phone"] &&
+            targetNode["phone"] == newArr[j]["phone"]
+          ) {
             targetNode["isPhoneEqual"] = true;
             newArr[j]["isPhoneEqual"] = true;
             same = false;
@@ -1319,7 +1497,9 @@ export default {
       arr.forEach((item) => {
         if (item.children) {
           if (item.children.length !== 0) {
-            let names1 = depName ? `${depName} / ${item["name"]}` : item["name"];
+            let names1 = depName
+              ? `${depName} / ${item["name"]}`
+              : item["name"];
             this.transformDatabase(item.children, names1);
           } else {
             let names = depName ? `${depName}` : "";
@@ -1354,17 +1534,30 @@ export default {
       if (!value) return true;
       return data.name.indexOf(value) !== -1;
     },
-
+    // 表单验证方法
+    validateField(fieldName) {
+      this.$refs.ruleFormRef.validateField(fieldName);
+    },
     // 保存编辑
-    save(types) {
-      if (!this.ruleForm.title) {
+    async save(types) {
+      if (!this.ruleForm.title || !formEl) {
         this.$message({
           message: this.$t("tip.title"),
           type: "error",
         });
         return;
       }
-      let insidePar = JSON.parse(JSON.stringify(this.ruleForm.inside_participant));
+
+      await formEl.validate((valid, fields) => {
+        if (valid) {
+          console.log("提交成功!");
+        } else {
+          console.log("提交失败!", fields);
+        }
+      });
+      let insidePar = JSON.parse(
+        JSON.stringify(this.ruleForm.inside_participant)
+      );
       // 内部参会人
       insidePar.map((res) => {
         delete res.department_name;
@@ -1372,7 +1565,9 @@ export default {
 
       // 外部参会人
       let outPar = JSON.parse(JSON.stringify(this.ruleForm.out_participant));
-      let outParArr = outPar.filter((res) => res.name || res.email || res.phone);
+      let outParArr = outPar.filter(
+        (res) => res.name || res.email || res.phone
+      );
       outParArr.map((res) => {
         delete res.error;
         delete res.nameError;
@@ -1450,7 +1645,10 @@ export default {
     },
 
     setMeetTime(start, end, type) {
-      let time = type === 2 ? `${start.split(" ")[1]} - ${end.split(" ")[1]}` : `${start} - ${end}`;
+      let time =
+        type === 2
+          ? `${start.split(" ")[1]} - ${end.split(" ")[1]}`
+          : `${start} - ${end}`;
       return time;
     },
     // 获取会议类型
@@ -1463,6 +1661,31 @@ export default {
     getEquipmentInfo(roomId) {
       getRoomEquipmentApi({ id: roomId }).then((res) => {
         this.equipmentList = res.data.equipments;
+      });
+    },
+    // 获取软件资源信息
+    getResourceInfo() {
+      getResourceApi().then((res) => {
+        this.resourceList = res.data;
+        console.log("输出resourceList", this.resourceList);
+      });
+    },
+    // 获取学生层次信息
+    getStudentDegreeInfo() {
+      getStudentDegreeApi().then((res) => {
+        this.studentDegreeList = res.data;
+      });
+    },
+    // 获取实验类型信息
+    getActionTypeInfo() {
+      getActionTypeApi().then((res) => {
+        this.actionTypeList = res.data;
+      });
+    },
+    // 获取课程信息
+    getCourseInfo() {
+      getCourseApi().then((res) => {
+        this.courseList = res.data;
       });
     },
   },
@@ -1548,6 +1771,9 @@ export default {
       position: relative;
       margin-bottom: 16px;
       .edit-box-item {
+        .border {
+          display: block;
+        }
         position: relative;
         display: flex;
         align-items: center;
@@ -1629,7 +1855,7 @@ export default {
           }
         }
         .edit-box-label {
-          min-width: 140px;
+          min-width: 150px;
           text-align: right;
           padding-right: 4px;
           .warring {
@@ -1816,7 +2042,10 @@ export default {
           }
         }
       }
-
+      .booker-info {
+        margin-left: 150px;
+        color: #69788a;
+      }
       .edit-service-tips {
         margin-left: 58px;
         color: #abbac9;

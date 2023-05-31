@@ -12,6 +12,8 @@ import * as filter from './filter'
 import './directive'
 import i18n from './lang'
 import { tableAutoHeight } from './mixin'
+import "@/mock/index";
+
 Vue.config.productionTip = false;
 // 过滤器
 Object.keys(filter).forEach(key => {
