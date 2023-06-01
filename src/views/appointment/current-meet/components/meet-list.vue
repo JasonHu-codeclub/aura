@@ -99,16 +99,21 @@
         v-loading="dataLoading"
       >
         <!-- 序号 -->
-        <el-table-column :label="$t('message.serial')" type="index" width="60" align="center">
+        <el-table-column
+          :label="$t('message.serial')"
+          type="index"
+          width="60"
+          align="center"
+        >
         </el-table-column>
-        <!-- 主题 -->
+        <!-- 课程（项目|活动名称） -->
         <el-table-column
           prop="title"
           :label="$t('message.theme')"
           align="center"
           show-overflow-tooltip
         ></el-table-column>
-        <!-- 会议时间 -->
+        <!-- 预约时间 -->
         <el-table-column
           prop="start_time"
           :label="$t('message.meetingTime')"
@@ -117,23 +122,31 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.satrtTime }}<br />{{ scope.row.endTime }}</span>
+            <span>{{ scope.row.startTime }}<br />{{ scope.row.endTime }}</span>
           </template>
         </el-table-column>
-        <!-- 会议室 -->
+        <!-- 教室 -->
         <el-table-column
           prop="meeting_room_name"
           :label="$t('message.room')"
           align="center"
         ></el-table-column>
         <!-- 预约类型 -->
-        <el-table-column prop="category" :label="$t('message.AppointmentType')" align="center">
+        <el-table-column
+          prop="category"
+          :label="$t('message.AppointmentType')"
+          align="center"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.categoryStr }}</span>
           </template>
         </el-table-column>
         <!-- 状态 -->
-        <el-table-column prop="status" :label="$t('message.meetingStatus')" align="center">
+        <el-table-column
+          prop="status"
+          :label="$t('message.meetingStatus')"
+          align="center"
+        >
           <template slot-scope="scope">
             <span>{{ listStatus[scope.row.status]["name"] }}</span>
           </template>
@@ -214,8 +227,10 @@
               {{ $t("button.agree") }}
             </el-button>
             <el-button
-              v-if="dataType == 1  && participant_confirm == '1'"
-              :style="scope.row.is_agree > 0 ? 'color:#ACBBCA' : 'color:#F78776'"
+              v-if="dataType == 1 && participant_confirm == '1'"
+              :style="
+                scope.row.is_agree > 0 ? 'color:#ACBBCA' : 'color:#F78776'
+              "
               :disabled="scope.row.is_agree > 0"
               type="text"
               @click="refuseMeetingInfo(scope.row)"
@@ -279,7 +294,7 @@ import {
   meetingAgreeAttendApi,
   meetingRefushAttendApi,
   meetingOverApi,
-  getSettingAppointmentConfigApi
+  getSettingAppointmentConfigApi,
 } from "@/api/currentMeet";
 import Pagination from "@/components/Pagination";
 import dialogCancel from "./dialogCancel";
@@ -367,7 +382,8 @@ export default {
     // 获取数据
     this.getMyMeetingInfo();
     // 状态查询
-    this.statusList = this.dataType == 1 ? this.currentStatus : this.historyStatus;
+    this.statusList =
+      this.dataType == 1 ? this.currentStatus : this.historyStatus;
 
     this.resizeHeight(100);
   },
@@ -376,11 +392,12 @@ export default {
     this.getMyMeetingInfo();
   },
   methods: {
-        //获取预约配置
-        getSettingAppointmentConfig() {
+    //获取预约配置
+    getSettingAppointmentConfig() {
       this.pageLoading = true;
       getSettingAppointmentConfigApi().then(({ data }) => {
-        this.participant_confirm = data.participant_confirm == "0" ? false : true;
+        this.participant_confirm =
+          data.participant_confirm == "0" ? false : true;
         console.log(data);
         this.pageLoading = false;
       });
@@ -511,14 +528,18 @@ export default {
       const result = await myMeetingListApi(params);
       let meetings = result.data.meetings;
       meetings.map((v) => {
-        v.satrtTime = `${v.date} ${v.start}`;
+        v.startTime = `${v.date} ${v.start}`;
         v.endTime = `${v.end_date} ${v.end}`;
         v.categoryStr =
           v.category == 2
-            ? `${this.categoryList[v.category]}（${this.repetitionType[v.repetition_type]}）`
+            ? `${this.categoryList[v.category]}（${
+                this.repetitionType[v.repetition_type]
+              }）`
             : this.categoryList[v.category];
         v.participant_users.map((item) => {
-          v.personnel = v.personnel ? v.personnel + "，" + item.nickname : item.nickname;
+          v.personnel = v.personnel
+            ? v.personnel + "，" + item.nickname
+            : item.nickname;
         });
       });
       this.myMeetingInfo = meetings;
@@ -529,13 +550,15 @@ export default {
     detailsMeet(row) {
       // 判断单次还是重复预约 category会议类型 1=》单次预约，2=》重复预约 ，3=》跨日预约
       let meetType =
-        !!row.category && row.category == 2 && this.dataType != 2 ? "repeat" : "/details";
+        !!row.category && row.category == 2 && this.dataType != 2
+          ? "repeat"
+          : "/details";
       this.$router.push({
         path: meetType,
         query: {
           menu: this.dataType === 1 ? "current" : "history",
-          id: row.id, 
-          is_agree:row.is_agree
+          id: row.id,
+          is_agree: row.is_agree,
         },
       });
     },
@@ -543,9 +566,13 @@ export default {
     editMeetingInfo(row) {
       if (row.status === 1) {
         // 会议中提示
-        this.$alert(this.$t("message.meetingProgress"), this.$t("message.tips"), {
-          confirmButtonText: this.$t("button.confirm"),
-        }).catch(() => {});
+        this.$alert(
+          this.$t("message.meetingProgress"),
+          this.$t("message.tips"),
+          {
+            confirmButtonText: this.$t("button.confirm"),
+          }
+        ).catch(() => {});
         return false;
       }
       // 跳转编辑页
@@ -554,7 +581,7 @@ export default {
         query: {
           menu: "current",
           id: row.id,
-          is_agree:row.is_agree
+          is_agree: row.is_agree,
         },
       });
     },
@@ -565,11 +592,13 @@ export default {
       this.selectCurrentRowData = data;
       this.cancelTitle = this.$t("message.cancelTips");
       if (data.category == 2) {
-        this.cancelContent = `${this.$t("message.cancels")}${data.meeting_count}${this.$t(
-          "message.confirms"
-        )}<br/>${this.$t("tip.confirmTips")}`;
+        this.cancelContent = `${this.$t("message.cancels")}${
+          data.meeting_count
+        }${this.$t("message.confirms")}<br/>${this.$t("tip.confirmTips")}`;
       } else {
-        this.cancelContent = `${this.$t("tip.cancelMeeting")}<br/>${this.$t("tip.confirmTips")}`;
+        this.cancelContent = `${this.$t("tip.cancelMeeting")}<br/>${this.$t(
+          "tip.confirmTips"
+        )}`;
       }
     },
     // 取消会议请求

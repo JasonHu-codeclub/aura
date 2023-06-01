@@ -246,10 +246,10 @@
               </div>
             </div>
 
-            <!-- 内部参会人 -->
+            <!-- 授课教师 -->
             <div class="edit-box-item">
               <div class="edit-box-label">
-                {{ $t("message.internalParticipants") }}：
+                {{ $t("message.teacher") }}：
               </div>
               <div class="edit-box-value">
                 <span
@@ -266,9 +266,6 @@
                 </span>
               </div>
             </div>
-            <span class="booker-info">
-              {{ $t("message.departmentOfBooker") }}：
-            </span>
             <!-- <div class="mettingStatus" v-if="participant_confirm == '1'">
               <div>{{ $t("mettingStatus")[0] }}: {{ mettingStatusNum0 }}</div>
               <div>{{ $t("mettingStatus")[1] }} : {{ mettingStatusNum1 }}</div>
@@ -602,14 +599,14 @@
         </div>
       </el-dialog>
 
-      <!-- 内部参会人弹窗  -->
+      <!-- 授课教师弹窗  -->
       <!-- :title="dataType ==2 ? $t('message.addInteParticipants') : $t("message.internalParticipants")" -->
       <el-dialog
         :width="dataType === 2 ? '890px' : '640px'"
         :title="
           dataType == 2
-            ? $t('message.addInteParticipants')
-            : $t('message.internalParticipants')
+            ? $t('message.addTeacher')
+            : $t('message.checkTeacher')
         "
         :visible.sync="innerVisible"
         append-to-body
@@ -1394,7 +1391,7 @@ export default {
       }
       return same;
     },
-    // 显示内部参会人员弹框
+    // 显示授课教师弹框
     showInnerDialog() {
       if (this.ruleForm.is_secret) {
         // 详情
