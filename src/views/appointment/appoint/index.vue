@@ -324,6 +324,7 @@
       @closed="handleCloseAppointment"
     >
       <div class="appointment-box">
+        <!-- 重复预约设置 -->
         <div class="appointment-repeat" v-if="reservationType == 2">
           <div class="appointment-box-item">
             <span
@@ -455,6 +456,17 @@
           </div>
         </div>
       </div>
+      <!-- 邮件通知设置 -->
+      <div class="appointment-box-email">
+        <div class="appointment-email-title">给相关人员推送邮件通知</div>
+        <div>
+          <el-radio-group v-model="radio1">
+            <el-radio label="1" size="large">通知</el-radio>
+            <el-radio label="2" size="large">不通知</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <!-- dialog底部按钮 -->
       <div class="dialog-bottom">
         <div class="appointment-next-tips" v-if="reservationType == 3">
           {{ $t("message.nextTips") }}
@@ -480,140 +492,6 @@
       @handleClose="handleApproveClose"
       @hanldConfirm="hanldApproveMeeting"
     ></dialog-cancel>
-
-    <!-- 预约发送邮件通知弹窗 -->
-    <el-dialog
-      width="400px"
-      :title="
-        dataType == 2 ? $t('message.addTeacher') : $t('message.checkTeacher')
-      "
-      :visible.sync="innerVisible"
-      append-to-body
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      custom-class="res-dialog"
-    >
-      <div class="search-group" v-show="dataType === 2">
-        <div class="search-group-item">
-          {{ $t("labe.keyword") }}：
-          <el-input
-            class="inline-input"
-            v-model="searchName"
-            clearable
-            :placeholder="$t('placeholder.departmentName')"
-            @keyup.enter.native="searchHandle"
-            @clear="clearHandle"
-          ></el-input>
-        </div>
-        <el-button class="search-btn" type="primary" @click="searchHandle">{{
-          $t("button.search")
-        }}</el-button>
-      </div>
-      <div class="df join-content">
-        <div class="left" v-show="dataType === 2">
-          <el-tree
-            class="f1"
-            :data="queryPeople"
-            :props="defaultProps"
-            show-checkbox
-            :default-expand-all="isExpand"
-            :filter-node-method="filterNode"
-            :default-expanded-keys="defaultChecked"
-            ref="tree"
-            node-key="id"
-            @check="handleNodeClick"
-            highlight-current
-          >
-            <span class="custom-tree-node" slot-scope="{ node, data }">
-              <i class="el-icon-folder-opened" v-if="!node.isLeaf"></i>
-              <span>{{ node.label }}</span>
-            </span>
-          </el-tree>
-        </div>
-        <div class="right">
-          <el-table :data="participantGuids" border style="width: 100%">
-            <!-- 序号 -->
-            <el-table-column
-              :label="$t('message.serial')"
-              type="index"
-              width="60"
-              align="center"
-            ></el-table-column>
-            <!-- 姓名 -->
-            <el-table-column
-              prop="name"
-              :label="$t('message.fullName')"
-              align="center"
-              width="120"
-            >
-              <template slot-scope="scope">
-                <span>{{ scope.row.name || "/" }}</span>
-                <span v-if="participant_confirm == '1'">
-                  <div
-                    class="button1"
-                    style="background-color: #45b574"
-                    v-if="scope.row.is_agree == 1"
-                  >
-                    {{ $t("mettingStatus")[1] }}
-                  </div>
-                  <div
-                    class="button1"
-                    style="background-color: #f46e5c"
-                    v-if="scope.row.is_agree == 2"
-                  >
-                    {{ $t("mettingStatus")[2] }}
-                  </div>
-                  <!---->
-                  <div class="button1" v-if="scope.row.is_agree == 0">
-                    {{ $t("mettingStatus")[0] }}
-                  </div>
-                </span>
-              </template>
-            </el-table-column>
-            <!-- 部门 -->
-            <el-table-column
-              prop="department_name"
-              :label="$t('labe.Department')"
-              align="center"
-              show-overflow-tooltip
-            >
-              <template slot-scope="scope">
-                <span>{{ scope.row.department_name || "/" }}</span>
-              </template>
-            </el-table-column>
-            <!-- 操作 -->
-            <el-table-column
-              v-if="dataType === 2"
-              :label="$t('message.operation')"
-              align="center"
-              width="80"
-            >
-              <template slot-scope="scope">
-                <el-button
-                  type="text"
-                  class="right-delete"
-                  @click="deleteDep(scope.$index)"
-                  :disabled="dataType === 1"
-                >
-                  {{ $t("button.delete") }}
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button style="margin-right: 20px" @click="innerVisible = false">{{
-          $t("button.cancel")
-        }}</el-button>
-        <el-button
-          v-show="dataType === 2"
-          type="primary"
-          @click="addMeetingPeople"
-          >{{ $t("button.confirm") }}</el-button
-        >
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -779,7 +657,7 @@ export default {
       appStartTimes: "", // 预约开始时间
       appEndTimes: "", // 预约结束时间
       defaultValue: "", //设置开始起始时间
-      innerVisible: false, // 设置弹窗是否可见
+      radio1: "1", // 设置单选项绑定值
     };
   },
   created() {
@@ -849,7 +727,7 @@ export default {
         return this.$t("message.dialogTitle1");
       } else if (this.reservationType === 2) {
         return this.$t("message.dialogTitle2");
-      } else if (this.reservationType === 3) {
+      } else {
         return this.$t("message.dialogTitle3");
       }
     },
@@ -926,7 +804,6 @@ export default {
     // 单次预约，重复/跨日预约弹窗
     handleClick(num) {
       this.reservationType = num;
-      this.innerVisible = true; //设置弹窗可见
       if (!this.selectRoomData.day || !this.selectRowTime.time.startTime) {
         this.$message({
           message: this.$t("message.selectTime"),
@@ -1068,7 +945,9 @@ export default {
     confirmReservation() {
       let num = this.reservationType;
       this.isPass = true;
-      if (num == 2) {
+      if (num == 1) {
+        this.addReservation();
+      } else if (num == 2) {
         this.setStatus(this.repeatForm.repeatType, "repeatType");
         this.setStatus(this.repeatForm.repeatDate, "repeatDate");
       } else if (num == 3) {
@@ -1132,7 +1011,7 @@ export default {
       // return
 
       if (this.selectRoomData.approve_level != 0) {
-        // 会议需要审批时调用判断冲突接口
+        // 会议需要审批时 调用判断冲突接口
         this.addLoading = true;
         this.confirmLoading = true;
         const result = await conflictValidatorApi(dataJson);
@@ -1148,13 +1027,22 @@ export default {
             "public.noApproval"
           )}，${this.$t("public.continueAppointment")}`;
         } else {
+          if (this.reservationType == 1) {
+            this.repeatNexdayDialog = true; 
+            return;//避免单次预约单击后，不显示邮件提醒对话框直接预约
+          }
           this.addReservation();
         }
       } else {
+        if (this.reservationType == 1) {
+          this.repeatNexdayDialog = true; 
+          return; //避免单次预约单击后，不显示邮件提醒对话框直接预约
+        }
         this.approveMessage = this.$t("public.successful");
         this.addReservation();
       }
     },
+
     // 时间末端处理
     timesHandle(times) {
       let timeStr = times == "24:00" ? "23:59:59" : times + ":00";
@@ -1822,6 +1710,13 @@ export default {
     }
   }
 }
+.appointment-box-email {
+  padding-left: 25px;
+  margin-bottom: 15px;
+  .appointment-email-title {
+    margin-bottom: 20px;
+  }
+}
 .appointment-next {
   .appointment-box-item {
     position: relative;
@@ -1867,6 +1762,9 @@ export default {
   vertical-align: middle;
 }
 
+.dialog-footer {
+  position: relative;
+}
 .dialog-bottom {
   padding-top: 0;
   text-align: right;

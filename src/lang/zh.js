@@ -258,7 +258,10 @@ export default {
     majors: '所在专业',
     studentDegrees: '学生层次',
     actionTypes: '实验类型',
-    course: '课程称号'
+    course: '课程称号',
+    dialogTitle1: '邮件通知提醒',
+    dialogTitle2: '重复预约时间设置',
+    dialogTitle3: '跨日预约时间设置',
   },
   placeholder: {
     MeetingFloor: '教室所在楼层',
