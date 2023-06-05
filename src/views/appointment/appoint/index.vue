@@ -812,6 +812,7 @@ export default {
         return;
       }
       if (num === 1) {
+        this.appointmentTitle = this.$t("public.emailNotification")
         this.conflictValidator();
       } else if (num === 2) {
         this.repeatNexdayDialog = true;
@@ -1007,7 +1008,9 @@ export default {
         repetition_type: repeType || null, // number	重复类型 1=》每日，2=》每周，3=》每月
         repetition_end_date: endDate || null, // date	重复会议截止日期
       };
-      this.confirmLoading = true;
+      if(this.reservationType !== 1){
+        this.confirmLoading = true;// 避免单次预约的邮件弹窗的确认按钮一直加载
+      }
       // return
 
       if (this.selectRoomData.approve_level != 0) {

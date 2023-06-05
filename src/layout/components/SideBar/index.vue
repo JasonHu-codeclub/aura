@@ -21,7 +21,7 @@
         mode="vertical"
       >
         <side-bar-item
-          v-for="route in permission_routes"
+          v-for="route in routes_tempo"
           :key="route.path"
           :item="route"
           :base-path="route.path"
@@ -39,14 +39,15 @@ export default {
   components: { Logo, SideBarItem },
   data () {
     return {
-
     }
   },
   computed: {
+   
     ...mapGetters([
       'permission_routes',
       'sidebar'
     ]),
+    
     variables () {
       return variables
     },
@@ -62,6 +63,12 @@ export default {
     // 是否折叠
     isCollapse () {
       return !this.sidebar.opened
+    },
+    // 去除数据概览后的数组
+    routes_tempo () {
+      return this.permission_routes.filter((item)=>{
+        return item.path !== '/overview'
+      })
     }
   },
   watch: {},
@@ -72,7 +79,6 @@ export default {
 
   },
   mounted () {
-
   }
 }
 </script>

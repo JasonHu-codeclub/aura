@@ -445,6 +445,7 @@ export default {
     all:'全部',
     repeatReservation:'重复预约时间设置',
     crossReservation:'跨日预约时间设置',
+    emailNotification:'邮件通知提醒',
     waitingApproval:'您的会议已预约完成，正在等待审批',
     timePeriod :'此时间段已有',
     noApproval:'场申请未审批',

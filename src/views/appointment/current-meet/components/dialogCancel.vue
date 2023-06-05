@@ -15,6 +15,15 @@
         <span class="ancel-title-text">{{ title }}</span>
       </div>
       <div class="cancel-content" v-html="content"></div>
+      <div class="appointment-box-email">
+        <div class="appointment-email-title">给相关人员推送邮件通知</div>
+        <div>
+          <el-radio-group v-model="radio1">
+            <el-radio label="1" size="large">通知</el-radio>
+            <el-radio label="2" size="large">不通知</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
       <div v-if="showInput" class="cancel-reasons">
         <span class="cancel-reasons-label">{{
           $t("tip.ReasonsForRefusal")
@@ -49,6 +58,7 @@ export default {
     return {
       dialogVisible: false,
       reasons: "",
+      radio1: "1",
     };
   },
   props: {
@@ -137,6 +147,14 @@ export default {
       padding-left: 36px;
       margin-top: 12px;
       line-height: 30px;
+    }
+    .appointment-box-email {
+      padding-left: 36px;
+      margin-top: 20px;
+      margin-bottom: 15px;
+      .appointment-email-title {
+        margin-bottom: 20px;
+      }
     }
     .cancel-reasons {
       display: flex;

@@ -248,9 +248,7 @@
 
             <!-- 授课教师 -->
             <div class="edit-box-item">
-              <div class="edit-box-label">
-                {{ $t("message.teacher") }}：
-              </div>
+              <div class="edit-box-label">{{ $t("message.teacher") }}：</div>
               <div class="edit-box-value">
                 <span
                   class="edit-box-value border"
@@ -420,7 +418,7 @@
               >
               <el-input
                 type="textarea"
-                class="input edit-box-input"
+                class="input edit-remark"
                 v-model="ruleForm.remark"
                 :autosize="{ minRows: 4, maxRows: 20 }"
                 :placeholder="$t('message.EnterComments')"
@@ -604,9 +602,7 @@
       <el-dialog
         :width="dataType === 2 ? '890px' : '640px'"
         :title="
-          dataType == 2
-            ? $t('message.addTeacher')
-            : $t('message.checkTeacher')
+          dataType == 2 ? $t('message.addTeacher') : $t('message.checkTeacher')
         "
         :visible.sync="innerVisible"
         append-to-body
@@ -736,7 +732,39 @@
           >
         </div>
       </el-dialog>
-      <!-- /选择参会人员 -->
+
+      <!-- 邮件通知弹窗 -->
+      <el-dialog
+        width="520px"
+        :title="dialogTitle"
+        :visible.sync="dialogVisible"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        @closed="handleCloseAppointment"
+      >
+        <!-- 邮件通知设置 -->
+        <div class="appointment-box-email">
+          <div class="appointment-email-title">给相关人员推送邮件通知</div>
+          <div>
+            <el-radio-group v-model="radio1">
+              <el-radio label="1" size="large">通知</el-radio>
+              <el-radio label="2" size="large">不通知</el-radio>
+            </el-radio-group>
+          </div>
+        </div>
+        <!-- dialog底部按钮 -->
+        <div class="dialog-bottom">
+          <el-button @click="dialogVisible = false">{{
+            $t("button.cancel")
+          }}</el-button>
+          <el-button
+            type="primary"
+            :loading="confirmLoading"
+            @click="confirmSave"
+            >{{ $t("button.confirm") }}</el-button
+          >
+        </div>
+      </el-dialog>
     </div>
   </el-form>
 </template>
@@ -762,6 +790,10 @@ import { mapGetters } from "vuex";
 export default {
   data() {
     return {
+      dialogTitle: "", // 邮件提醒的标题
+      dialogVisible: false, 
+      confirmLoading: false,
+      radio1: "1", // 设置单选项绑定值
       ruleFormRef: "", //校验表单
       resourceValue: ["5"], // 软件资源多选框绑定的选项对应ID，可预设默认值的ID
       actionValue: "1", // 实验类型单选框绑定的选项对应ID
@@ -772,8 +804,7 @@ export default {
         is_property: "",
         repe_type: 1,
         repe_types: "",
-        remark:
-          "说明：1）每个教学空间提示的人数为，最大学生数；2）课程性质为“开放实验”，则进入开放实验室模式，仅在满足正常授课的前提下审批；3）310、316教学空间兼具课程录播功能、支持在线回放，满足公开课、讲座等的录制需要；4）软件资源“成果展示平台”，仅限为学部学生双创成果等的对外展示提供统n一稳健的外网访问环境；5）数据科学教研门户，为实验室自研的教研平台。",
+        remark: "",
         service: [],
         gradesInput: "", // 授课年级输入框绑定的内容
         majorsInput: "", // 所在专业输入框绑定的内容
@@ -958,6 +989,7 @@ export default {
     };
     // 关闭标签保存会议信息
     bus.$on("saveInfo", this.save);
+
     // 查看mock数据获取
     console.log("mock的resource", this.resourceList);
   },
@@ -984,6 +1016,9 @@ export default {
           return;
         }
         this.ruleForm = res.data.meeting;
+        if(!res.data.meeting.remark){
+          this.ruleForm.remark = '说明：1）每个教学空间提示的人数为，最大学生数；2）课程性质为“开放实验”，则进入开放实验室模式，仅在满足正常授课的前提下审批；3）310、316教学空间兼具课程录播功能、支持在线回放，满足公开课、讲座等的录制需要；4）软件资源“成果展示平台”，仅限为学部学生双创成果等的对外展示提供统一稳健的外网访问环境；5）数据科学教研门户，为实验室自研的教研平台。'
+        }
         // 等接口加上
         // this. is_agree= this.ruleFormis_agree
         // 会议审批描述
@@ -1536,7 +1571,9 @@ export default {
       this.$refs.ruleFormRef.validateField(fieldName);
     },
     // 保存编辑
-    async save(types) {
+    save(types) {
+      this.dialogTitle = this.$t('public.emailNotification')
+      this.dialogVisible = true;
       if (!this.ruleForm.title || !formEl) {
         this.$message({
           message: this.$t("tip.title"),
@@ -1545,13 +1582,6 @@ export default {
         return;
       }
 
-      await formEl.validate((valid, fields) => {
-        if (valid) {
-          console.log("提交成功!");
-        } else {
-          console.log("提交失败!", fields);
-        }
-      });
       let insidePar = JSON.parse(
         JSON.stringify(this.ruleForm.inside_participant)
       );
@@ -1636,6 +1666,11 @@ export default {
         }
       });
     },
+
+    // 邮件提醒确认
+    confirmSave(){
+      this.dialogVisible = false;
+    },
     // 离开前保存编辑
     saveForm() {
       this.save("leavePage");
@@ -1685,6 +1720,10 @@ export default {
         this.courseList = res.data;
       });
     },
+
+    handleCloseAppointment(){
+      this.dialogVisible = false;
+    }
   },
   beforeDestroy() {
     //组件销毁前需要解绑事件。否则会出现重复触发事件的问题
@@ -1966,6 +2005,9 @@ export default {
         .edit-box-input {
           width: 375px;
         }
+        // .edit-box-input:last-child{
+        //   width: 500px;
+        // }
         .edit-box-total {
           color: #34343f;
           margin-left: 6px;
@@ -2037,6 +2079,9 @@ export default {
             left: 0;
             z-index: 1;
           }
+        }
+        .edit-remark{
+          width: 500px;
         }
       }
       .booker-info {
@@ -2374,6 +2419,24 @@ export default {
   }
 }
 
+.appointment-box-email {
+  padding-left: 25px;
+  margin-bottom: 15px;
+  .appointment-email-title {
+    margin-bottom: 20px;
+  }
+}
+.dialog-bottom {
+  padding-top: 0;
+  text-align: right;
+  /deep/.el-button {
+    width: 80px;
+  }
+  .appointment-next-tips {
+    color: #58585d;
+    margin-bottom: 28px;
+  }
+}
 .scrollColor::-webkit-scrollbar {
   /*滚动条整体样式*/
   width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
