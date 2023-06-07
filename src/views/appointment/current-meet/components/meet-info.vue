@@ -310,6 +310,7 @@
               <div class="edit-box-label">{{ $t("message.resources") }}：</div>
               <div class="edit-box-value">
                 <el-select
+                  :disabled="dataType === 1 || ruleForm.can_update == 0"
                   v-model="resourceValue"
                   multiple
                   class="edit-box-input"
@@ -325,52 +326,61 @@
               </div>
             </div>
             <!-- 授课年级 -->
-            <div class="edit-box-item">
-              <div class="edit-box-label">{{ $t("message.grades") }}：</div>
-              <div class="edit-box-value">
-                <el-input
-                  v-model="ruleForm.gradesInput"
-                  maxlength="100"
-                  show-word-limit
-                  class="edit-box-input"
-                  @change="validateField('gradesInput')"
-                />
+              <div class="edit-box-item">
+                <div class="edit-box-label">{{ $t("message.grades") }}：</div>
+                <div class="edit-box-value">
+                  <el-form-item prop="gradesInput">
+                  <el-input
+                    :disabled="dataType === 1 || ruleForm.can_update == 0"
+                    v-model="ruleForm.gradesInput"
+                    maxlength="100"
+                    show-word-limit
+                    class="edit-box-input"
+                    @change="validateField('gradesInput')"
+                    />
+                  </el-form-item>
+                </div>
               </div>
-            </div>
             <!-- 所在专业 -->
             <div class="edit-box-item">
               <div class="edit-box-label">{{ $t("message.majors") }}：</div>
               <div class="edit-box-value">
-                <el-input
-                  v-model="ruleForm.majorsInput"
-                  maxlength="100"
-                  show-word-limit
-                  class="edit-box-input"
-                  @change="validateField('majorsInput')"
-                />
+                  <el-form-item prop="majorsInput">
+                  <el-input
+                    :disabled="dataType === 1 || ruleForm.can_update == 0"
+                    v-model="ruleForm.majorsInput"
+                    maxlength="100"
+                    show-word-limit
+                    class="edit-box-input"
+                    @change="validateField('majorsInput')"
+                  />
+                </el-form-item>
+                </div>
               </div>
-            </div>
             <!-- 学生层次 -->
             <div class="edit-box-item">
               <div class="edit-box-label">
                 {{ $t("message.studentDegrees") }}：
               </div>
               <div class="edit-box-value">
-                <el-select
-                  v-model="ruleForm.degreeValue"
-                  placeholder="请选择学历"
-                  class="edit-box-input"
-                  @change="validateField('degreeValue')"
-                >
-                  <el-option
-                    v-for="item in studentDegreeList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
+                  <el-form-item prop="degreeValue">
+                  <el-select
+                    :disabled="dataType === 1 || ruleForm.can_update == 0"
+                    v-model="ruleForm.degreeValue"
+                    placeholder="请选择学历"
+                    class="edit-box-input"
+                    @change="validateField('degreeValue')"
+                  >
+                    <el-option
+                      v-for="item in studentDegreeList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    />
+                  </el-select>
+                </el-form-item>
+                </div>
               </div>
-            </div>
             <!-- 实验类型 -->
             <div class="edit-box-item">
               <div class="edit-box-label">
@@ -378,6 +388,7 @@
               </div>
               <div class="edit-box-value">
                 <el-select
+                  :disabled="dataType === 1 || ruleForm.can_update == 0"
                   v-model="actionValue"
                   placeholder="请选择活动"
                   class="edit-box-input"
@@ -395,7 +406,11 @@
             <div class="edit-box-item">
               <div class="edit-box-label">{{ $t("message.course") }}：</div>
               <div class="edit-box-value">
-                <el-select v-model="courseValue" class="edit-box-input">
+                <el-select
+                  v-model="courseValue"
+                  class="edit-box-input"
+                  :disabled="dataType === 1 || ruleForm.can_update == 0"
+                >
                   <el-option
                     v-for="item in courseList"
                     :key="item.id"
@@ -417,6 +432,8 @@
                 >{{ $t("message.remarks2") }}：</span
               >
               <el-input
+                :disabled="dataType === 1 || ruleForm.can_update == 0"
+                style="font-size: 16px"
                 type="textarea"
                 class="input edit-remark"
                 v-model="ruleForm.remark"
@@ -791,7 +808,7 @@ export default {
   data() {
     return {
       dialogTitle: "", // 邮件提醒的标题
-      dialogVisible: false, 
+      dialogVisible: false,
       confirmLoading: false,
       radio1: "1", // 设置单选项绑定值
       ruleFormRef: "", //校验表单
@@ -1016,8 +1033,9 @@ export default {
           return;
         }
         this.ruleForm = res.data.meeting;
-        if(!res.data.meeting.remark){
-          this.ruleForm.remark = '说明：1）每个教学空间提示的人数为，最大学生数；2）课程性质为“开放实验”，则进入开放实验室模式，仅在满足正常授课的前提下审批；3）310、316教学空间兼具课程录播功能、支持在线回放，满足公开课、讲座等的录制需要；4）软件资源“成果展示平台”，仅限为学部学生双创成果等的对外展示提供统一稳健的外网访问环境；5）数据科学教研门户，为实验室自研的教研平台。'
+        if (!res.data.meeting.remark) {
+          this.ruleForm.remark =
+            "说明：1）每个教学空间提示的人数为，最大学生数；2）课程性质为“开放实验”，则进入开放实验室模式，仅在满足正常授课的前提下审批；3）310、316教学空间兼具课程录播功能、支持在线回放，满足公开课、讲座等的录制需要；4）软件资源“成果展示平台”，仅限为学部学生双创成果等的对外展示提供统一稳健的外网访问环境；5）数据科学教研门户，为实验室自研的教研平台。";
         }
         // 等接口加上
         // this. is_agree= this.ruleFormis_agree
@@ -1572,7 +1590,7 @@ export default {
     },
     // 保存编辑
     save(types) {
-      this.dialogTitle = this.$t('public.emailNotification')
+      this.dialogTitle = this.$t("public.emailNotification");
       this.dialogVisible = true;
       if (!this.ruleForm.title || !formEl) {
         this.$message({
@@ -1668,7 +1686,7 @@ export default {
     },
 
     // 邮件提醒确认
-    confirmSave(){
+    confirmSave() {
       this.dialogVisible = false;
     },
     // 离开前保存编辑
@@ -1721,9 +1739,9 @@ export default {
       });
     },
 
-    handleCloseAppointment(){
+    handleCloseAppointment() {
       this.dialogVisible = false;
-    }
+    },
   },
   beforeDestroy() {
     //组件销毁前需要解绑事件。否则会出现重复触发事件的问题
@@ -2080,7 +2098,7 @@ export default {
             z-index: 1;
           }
         }
-        .edit-remark{
+        .edit-remark {
           width: 500px;
         }
       }
